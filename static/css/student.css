@@ -1,0 +1,60 @@
+/* --- Toàn cục (áp dụng cho tất cả trang) --- */
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background-color: #E6E6E6;
+}
+
+/* --- Header --- */
+header {
+  background-color: #4a90e2;
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+
+/* --- Hình chữ nhật --- */
+.back_rect {
+    position: fixed;       /* luôn nằm cố định, không cuộn theo trang */
+    top: 0;                /* bắt đầu từ đỉnh màn hình */
+    left: 0;               /* bắt đầu từ trái màn hình */
+    width: 100px;           /* chiếm toàn bộ chiều rộng */
+    height: 100vh;         /* chiếm toàn bộ chiều cao màn hình */
+    background-color: #032B91; /* màu nền */
+    z-index: 0;
+}
+
+/* Sidebar chứa các icon dọc */
+.sidebar {
+    position: fixed; /* cố định */
+    top: 0;
+    left: 0;         /* hoặc right: 0 nếu muốn bên phải */
+    height: 100vh;   /* chiếm toàn chiều cao màn hình */
+    width: 80px;     /* độ rộng sidebar */
+    background-color: #032B91;
+    display: flex;
+    flex-direction: column; /* sắp xếp icon theo cột */
+    justify-content: center;  /* căn giữa theo chiều dọc */
+    align-items: center;    /* căn giữa icon theo chiều ngang */
+    z-index: 1;             /* nổi trên nền */
+}
+
+/* Icon trong sidebar */
+.sidebar img {
+    width: 40px;
+    height: 40px;
+    margin: 25px 0;   /* khoảng cách giữa các icon */
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.sidebar img:hover {
+    transform: scale(1.2); /* hiệu ứng hover */
+}
+/* --- Footer --- */
+footer {
+  background-color: #1e4fa1;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}

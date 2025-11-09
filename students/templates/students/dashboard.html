@@ -1,1 +1,20 @@
-<h1>This is student dashboard</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/student.css' %}">
+</head>
+<body>
+    <!-- <div class="back_rect"></div> -->
+    <nav class="sidebar">
+        <img src="{% static 'images/Home.svg' %}" alt="home_icon">
+        <img src="{% static 'images/User.svg' %}" alt="profile_icon">
+        <img src="{% static 'images/Session.svg' %}" alt="sessions_icon">
+        <img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon">
+        <img src="{% static 'images/Material.svg' %}" alt="library_icon">
+    </nav>
+</body>
+</html>
