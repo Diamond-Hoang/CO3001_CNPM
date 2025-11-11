@@ -8,13 +8,23 @@
     <link rel="stylesheet" href="{% static 'css/student.css' %}">
 </head>
 <body>
-    <!-- <div class="back_rect"></div> -->
     <nav class="sidebar">
-        <img src="{% static 'images/Home.svg' %}" alt="home_icon">
-        <img src="{% static 'images/User.svg' %}" alt="profile_icon">
-        <img src="{% static 'images/Session.svg' %}" alt="sessions_icon">
-        <img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon">
-        <img src="{% static 'images/Material.svg' %}" alt="library_icon">
+        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon"></a>
+        <a href="{% url 'profile' %}"> <img src="{% static 'images/User.svg' %}" alt="profile_icon"></a>
+        <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon"></a>
+        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon"></a>
+        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon"></a>
     </nav>
+
+    <div class="adjust_ellipse">
+        <img src="{% static 'images/Ellipse2.svg' %}" alt="ellipse2">
+        <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
+    </div>
+
+    <div class="notify_curve" >
+        <img src="{% static 'images/notify_curve.svg' %}" alt="curve">  
+    </div>
+
+
 </body>
 </html>
