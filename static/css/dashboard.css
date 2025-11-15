@@ -1,13 +1,4 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <!-- <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"> -->
-     <style>
-        
+
 * {
     margin: 0;
     padding: 0;
@@ -106,11 +97,11 @@ body {
 }
 
 .main-content {
-    margin-left: 150px;
-    margin-right: 120px;
+    margin-left: 100px;
+    margin-right: 50px;
     flex: 1;
     display: flex;
-    gap: 80px;
+    gap: 90px;
 }
 
 .section {
@@ -200,53 +191,3 @@ body {
     text-decoration: underline;
     font-size: 14px;
 }
-
-     </style>
-</head>
-<body>
-    <nav class="sidebar">
-        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Selected_house.svg' %}" alt="home_icon" class="sidebar-icon-active"></a>
-        <a href="{% url 'profile' %}"> <img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
-        <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
-        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
-        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
-    </nav>
-
-    <div class="adjust_ellipse">
-        <img src="{% static 'images/Ellipse2.svg' %}" alt="ellipse2">
-        <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
-    </div>
-
-     <div class="notify_curve" >
-        <img src="{% static 'images/notify_curve.svg' %}" alt="curve">  
-    </div>
-
-    <div class="main-content">
-        <div class="section">
-            <h2>Today Sessions</h2>
-            <div class="card">
-                <div class="session-item session-blue"></div>
-                <div class="session-item session-green"></div>
-                <div class="session-item session-mint"></div>
-                <div class="session-item session-pink"></div>
-                <div class="session-item session-peach"></div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>Advising Sessions</h2>
-            <div class="card">
-                <div class="session-item session-green"></div>
-                <div class="session-item session-light-blue"></div>
-                <div class="session-item session-light-pink"></div>
-                <div class="session-item session-light-purple"></div>
-                <div class="session-item session-mint"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer">
-        <a href="#">Technical Support</a>
-    </div>
-</body>
-</html>

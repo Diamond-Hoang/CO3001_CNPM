@@ -1,0 +1,257 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, sans-serif;
+    background: #e5e5e5;
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 55px;
+    background: #003399;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 180px;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 50;
+}
+
+.sidebar-icon {
+    width: 30px;
+    height: 30px;
+    margin: 15px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.sidebar-icon-active {
+    width: 30px;
+    height: 30px;
+    margin: 15px 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.sidebar-icon:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.adjust_ellipse {
+    position: fixed; 
+    width: 140px;      
+    height: 140px; 
+    top: 20px;
+    left: -10px;
+    z-index: 100;
+}
+
+.adjust_ellipse img {
+    width: 100%;
+    height: 100%;
+    display: block;    
+}
+
+.adjust_avatar {
+    position: absolute; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.adjust_avatar img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile_ellipse {
+    position: absolute; 
+    width: 270px;      
+    height: 300px; 
+    top: -170px;
+    left: 48%;
+    transform: translateX(-50%) rotate(-90deg);
+    z-index: 10;
+}
+
+.profile_ellipse img {
+    width: 100%;
+    height: 100%;
+    display: block;    
+}
+
+.adjust_profile {
+    position: absolute; 
+    top: 50%;
+    left: 53%;
+    transform: translate(-50%, -50%) rotate(90deg);
+    width: 155px;
+    height: 155px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.adjust_profile img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.notify_curve {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.notify_curve img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: auto;
+}
+
+.main-content {
+    margin-left: 100px;
+    margin-right: 20px;
+    flex: 1;
+    padding: 30px 60px;
+    padding-top: 140px;
+}
+
+.profile-container {
+    max-width: 1255px;
+    position: relative;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #5a8dd8 0%, #6b9de8 100%);
+    height: 75px;
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    overflow: visible;
+}
+
+.edit-avatar-btn {
+    position: absolute;
+    bottom: 3px;
+    right: 7px;
+    width: 30px;
+    height: 30px;
+    background: #003399;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.edit-avatar-btn img {
+    width: 14px;
+    height: 14px;
+}
+
+.info-table tr, .info-table th, .info-table {
+    border: 2px solid white;
+}
+
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    overflow: hidden;
+}
+
+.info-table td {
+    padding: 15px 25px;
+    font-size: 23px;
+}
+
+.info-table tr:nth-child(odd){
+    background: #cfd5ea;
+}
+
+.info-table tr:nth-child(even){
+    background: #e9ebf5;
+}
+
+.info-table td:first-child {
+    font-weight: bold;
+    width: 48%;
+    border-right: 2px solid white;
+}
+
+.info-table td:last-child {
+    position: relative;
+}
+
+.edit-field-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background: #003399;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.edit-field-btn:hover {
+    background: #0044bb;
+}
+
+.edit-field-btn img {
+    width: 14px;
+    height: 14px;
+    fill: white;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .main-content {
+        margin-left: 45px;
+        padding: 10px 15px;
+        padding-top: 50px;
+    }
+}
+
+@media screen and (max-width: 633px) {
+    .main-content {
+        padding-top: 120px;
+        margin-left: 80px;
+    }
+
+    .info-table td {
+        font-size: 20px;
+        padding: 6px 10px;
+    }
+}

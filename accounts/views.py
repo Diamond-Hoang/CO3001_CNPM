@@ -11,8 +11,8 @@ from django.urls import resolve
 # --------------------  USER DATABASE --------------------
 USERS = {
     "student01": {"password": "123", "role": "student"},
-    # "tutor01": {"password": "123", "role": "tutor"},
-    "admin01": {"password": "123", "role": "admin"},
+    "tutor01": {"password": "123", "role": "tutor"},
+    # "admin01": {"password": "123", "role": "admin"},
     "office01": {"password": "123", "role": "office"},
 }
 

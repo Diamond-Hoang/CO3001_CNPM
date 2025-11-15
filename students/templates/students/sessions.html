@@ -4,16 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'css/student.css' %}">
+    <title>My Session</title>
+    <link rel="stylesheet" href="{% static 'css/sessions.css' %}">
 </head>
 <body>
     <nav class="sidebar">
-        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon"></a>
-        <a href="{% url 'profile' %}"> <img src="{% static 'images/User.svg' %}" alt="profile_icon"></a>
-        <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon"></a>
-        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon"></a>
-        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon"></a>
+        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
+        <a href="{% url 'profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
+        <a href="{% url 'sessions' %}"><img src="{% static 'images/Selected_session.svg' %}" alt="sessions_icon" class="sidebar-icon-active"></a>
+        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
+        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
     </nav>
 
     <div class="adjust_ellipse">
@@ -21,10 +21,115 @@
         <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
     </div>
 
-    <div class="notify_curve" >
+    <div class="notify_curve">
         <img src="{% static 'images/notify_curve.svg' %}" alt="curve">  
     </div>
 
-
+    <div class="main-content">
+        <div class="table-header">My Sessions Table</div>
+        <table class="info-table">
+            <tr>
+                <th>Class</th>
+                <th>Subject</th>
+                <th>Tutor</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>CCO1</td>
+                <td>Calculus 1</td>
+                <td>Le Van A</td>
+                <td>2-3-4</td>
+                <td>7h00-9h00</td>
+                <td>15/30</td>
+                <td>Completed</td>
+                <td><a href="#" class="action">Feedback</a></td>
+            </tr>
+            <tr>
+                <td>CCO2</td>
+                <td>Calculus 2</td>
+                <td>Nguyen Thi B</td>
+                <td>3-5</td>
+                <td>7h00-9h00</td>
+                <td>15/30</td>
+                <td>Completed</td>
+                <td><a href="#" class="action">Feedback</a></td>
+            </tr>
+            <tr>
+                <td>CCO3</td>
+                <td>Linear Algebra</td>
+                <td>Tran Van C</td>
+                <td>2-5</td>
+                <td>7h00-9h00</td>
+                <td>15/30</td>
+                <td>Completed</td>
+                <td><a href="#" class="action">Feedback</a></td>
+            </tr>
+            <tr>
+                <td>CCO4 <a href="#"><img src="{% static 'images/reschedule.svg' %}" class="reschedule-icon" alt="reschedule_icon"></a></td>
+                <td>Software Engineering <a href="#"><img src="{% static 'images/session material.svg' %}" class="material-icon" alt="material_icon"></a></td>
+                <td>Hoang Thi D</td>
+                <td>3-6</td>
+                <td>7h00-9h00</td>
+                <td>15/30</td>
+                <td>Ongoing</td>
+                <td><a href="#" class="action">Cancel</a></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
 </body>
-</html>
+</html> 
+

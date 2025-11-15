@@ -4,16 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'css/student.css' %}">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 </head>
 <body>
     <nav class="sidebar">
-        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon"></a>
-        <a href="{% url 'profile' %}"> <img src="{% static 'images/User.svg' %}" alt="profile_icon"></a>
-        <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon"></a>
-        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon"></a>
-        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon"></a>
+        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
+        <a href="{% url 'profile' %}"><img src="{% static 'images/Selected_user.svg' %}" alt="profile_icon" class="sidebar-icon-active"></a>
+        <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
+        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
+        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
     </nav>
 
     <div class="adjust_ellipse">
@@ -21,10 +21,61 @@
         <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
     </div>
 
-    <div class="notify_curve" >
+    <div class="notify_curve">
         <img src="{% static 'images/notify_curve.svg' %}" alt="curve">  
     </div>
 
+    <div class="main-content">
+        <div class="profile-container">
+            <div class="profile_ellipse">
+                <img src="{% static 'images/Ellipse2.svg' %}" alt="ellipse2">
+                <div class="adjust_profile">
+                    <img src="{% static 'images/avatar.svg' %}"  alt="avatar">
+                    <div class="edit-avatar-btn">
+                        <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
+                    </div>
+                </div>
+            </div>
 
+            <div class="profile-header"></div>
+            <div class="profile-info">
+                <table class="info-table">
+                    <tr>
+                        <td>Full name</td>
+                        <td>Nguyen Van A</td>
+                    </tr>
+                    <tr>
+                        <td>Student's ID</td>
+                        <td>235xxxx</td>
+                    </tr>
+                    <tr>
+                        <td>Date of birth</td>
+                        <td>dd/mm/yyyy</td>
+                    </tr>
+                    <tr>
+                        <td>Major</td>
+                        <td>Computer Science</td>
+                    </tr>
+                    <tr>
+                        <td>Phone number</td>
+                        <td>0123456789</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>a.nguyenvan@hcmut.edu.vn</td>
+                    </tr>
+                    <tr>
+                        <td>Support needs</td>
+                        <td>
+                            Calculus 1
+                            <div class="edit-field-btn">
+                                <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

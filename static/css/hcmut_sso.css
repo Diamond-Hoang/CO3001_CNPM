@@ -1,0 +1,174 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, sans-serif;
+    background: #e8e8e8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: #0052A3;
+    color: white;
+    padding: 0px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header img {
+    width: auto;
+    height: 70px;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: left;
+    padding: 20px 20px;
+    padding-top: 0px;
+}
+
+.login-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 1495px;
+    padding: 28px;
+    height: 316px;
+    transition: height 0.3s ease;
+}
+
+/* Expand height when error is present */
+.login-container.has-error {
+    height: 356px;
+    min-height: 316px;
+}
+
+.login-body {
+    padding: 20px;
+    background: #d4d4d4;
+    border-radius: 4px;
+    width: 420px;
+}
+
+.login-body h2 {
+    color: #c62828;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    color: #7d7d7d;
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 385px;
+    padding: 6px 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 14px;
+    background: #ffffcc;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #666;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+}
+
+.btn-login {
+    background: #0066cc;
+    color: white;
+}
+
+.btn-login:hover {
+    background: #0052A3;
+}
+
+.btn-clear {
+    background: #0066cc;
+    color: white;
+}
+
+.btn-clear:hover {
+    background: #0052A3;
+}
+
+.btn-cancel {
+    background: transparent;
+    color: #0066cc;
+    text-decoration: underline;
+    border: none;
+    cursor: pointer;
+    padding: 8px 10px;
+    margin-left: auto;
+}
+
+.btn-cancel:hover {
+    color: #0052A3;
+}
+
+.footer {
+    background: #4a4a4a;
+    color: white;
+    padding: 15px 20px;
+    font-size: 20px;
+    height: 150px;
+}
+
+.error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 3px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+    opacity: 0;
+    transform: translateY(-10px);
+    }
+    to {
+    opacity: 1;
+    transform: translateY(0);
+    }
+}
