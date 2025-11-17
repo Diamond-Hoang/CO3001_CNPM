@@ -235,6 +235,22 @@ body {
     fill: white;
 }
 
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 55px;
+    right: 0;
+    background: #4a4a4a;
+    padding: 30px 60px;
+    color: white;
+}
+
+.footer a {
+    color: white;
+    text-decoration: underline;
+    font-size: 14px;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .main-content {
