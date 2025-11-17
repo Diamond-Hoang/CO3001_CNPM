@@ -148,40 +148,40 @@ body {
     text-align: left;
 }
 
-.info-table tr:nth-child(odd){
+.info-table tr {
     background: #e9ebf5;
 }
 
-.info-table tr:nth-child(even){
-    background: #cfd5ea;
-}
-
-.action {
+.action-view, .action-download, .action-divider {
     color: #032b91;
 }
 
-.reschedule-icon {
-    width: 30px;
-    height: auto;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+.filters-container {
     display: flex;
-    justify-content: center;
     align-items: center;
-    cursor: pointer;
+    gap: 15px;
+    margin-bottom: 10px;
+    margin-top: 5px;
 }
 
-.material-icon {
-    width: 22px;
-    height: auto;
-    position: absolute;
-    right: 52px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.filter-select {
+    padding: 10px 15px;
+    width: 180px;
+    border-radius: 6px;
+    border: 1px solid #bfc4ce;
+    font-size: 16px;
+    background: white;
+    color: rgb(132, 126, 126);
+}
+
+.filter-search-btn {
+    border: none;
+    background: none;
     cursor: pointer;
+    padding: 6px;
+}
+
+.filter-search-btn img {
+    width: 26px;
+    height: 26px;
 }

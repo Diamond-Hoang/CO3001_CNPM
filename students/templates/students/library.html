@@ -4,16 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'css/student.css' %}">
+    <title>Library</title>
+    <link rel="stylesheet" href="{% static 'css/library.css' %}">
 </head>
 <body>
     <nav class="sidebar">
-        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon"></a>
-        <a href="{% url 'profile' %}"> <img src="{% static 'images/User.svg' %}" alt="profile_icon"></a>
-        <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon"></a>
-        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon"></a>
-        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon"></a>
+        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
+        <a href="{% url 'profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
+        <a href="{% url 'sessions' %}"><img src="{% static 'images/session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
+        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
+        <a href="{% url 'library' %}"><img src="{% static 'images/Selected_material.svg' %}" alt="library_icon" class="sidebar-icon-active"></a>
     </nav>
 
     <div class="adjust_ellipse">
@@ -21,10 +21,131 @@
         <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
     </div>
 
-    <div class="notify_curve" >
+    <div class="notify_curve">
         <img src="{% static 'images/notify_curve.svg' %}" alt="curve">  
     </div>
+    
+    <div class="main-content">
+        <div class="table-header">Search for your materials</div>
+        <div class="filters-container">
+            <select class="filter-select">
+                <option value="">Subject</option>
+                <option>Calculus 1</option>
+                <option>Physics 1</option>
+                <option>Linear Algebra</option>
+            </select>
 
+            <select class="filter-select">
+                <option value="">Type</option>
+                <option>PDF</option>
+                <option>Video</option>
+            </select>
 
+            <select class="filter-select">
+                <option value="">Date</option>
+                <option>Newest</option>
+                <option>Oldest</option>
+            </select>
+
+            <select class="filter-select">
+                <option value="">Tutor</option>
+                <option>Le Van A</option>
+                <option>Nguyen Van F</option>
+                <option>Hoang Thi D</option>
+            </select>
+
+            <button class="filter-search-btn">
+                <img src="{% static 'images/search.svg' %}" alt="search" />
+            </button>
+        </div>
+
+        <table class="info-table">
+            <tr>
+                <th>Title</th>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Authored by</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>Calculus 1 Lecture Notes</td>
+                <td>Calculus 1</td>
+                <td>PDF</td>
+                <td>Le Van A</td>
+                <td>dd/mm/yyyy</td>
+                <td>
+                    <a href="#" class="action-view">View</a>
+                    <span class="action-divider">|</span>
+                    <a href="#" class="action-download">Download</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Physics 1</td>
+                <td>Physics 1</td>
+                <td>Video</td>
+                <td>Nguyen Van F</td>
+                <td>dd/mm/yyyy</td>
+                <td>
+                    <a href="#" class="action-view">View</a>
+                    <span class="action-divider">|</span>
+                    <a href="#" class="action-download">Download</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Linear Algebra Lecture Notes</td>
+                <td>Linear Algebra</td>
+                <td>PDF</td>
+                <td>Hoang Thi D</td>
+                <td>dd/mm/yyyy</td>
+                <td>
+                    <a href="#" class="action-view">View</a>
+                    <span class="action-divider">|</span>
+                    <a href="#" class="action-download">Download</a>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
 </body>
-</html>
+</html> 
+
