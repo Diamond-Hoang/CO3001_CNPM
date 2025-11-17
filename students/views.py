@@ -17,6 +17,11 @@ def sessions(request):
         return render(request, '403.html', status=403)
     return render(request, 'students/sessions.html')
 
+def session_material(request):
+    if request.user.userprofile.role != 'student':
+        return render(request, '403.html', status=403)
+    return render(request, 'students/session_material.html')
+
 def find_sessions(request):
     if request.user.userprofile.role != 'student':
         return render(request, '403.html', status=403)
