@@ -28,52 +28,31 @@
     <div class="main-content">
         <div class="table-header">Search for your materials</div>
         <div class="filters-container">
-            <select class="filter-select">
-                <option value="">Subject</option>
-                <option>Calculus 1</option>
-                <option>Physics 1</option>
-                <option>Linear Algebra</option>
-            </select>
-
-            <select class="filter-select">
-                <option value="">Type</option>
-                <option>PDF</option>
-                <option>Video</option>
-            </select>
-
-            <select class="filter-select">
-                <option value="">Date</option>
-                <option>Newest</option>
-                <option>Oldest</option>
-            </select>
-
-            <select class="filter-select">
-                <option value="">Tutor</option>
-                <option>Le Van A</option>
-                <option>Nguyen Van F</option>
-                <option>Hoang Thi D</option>
-            </select>
-
-            <button class="filter-search-btn">
-                <img src="{% static 'images/search.svg' %}" alt="search" />
-            </button>
+            <div class="search-wrapper">
+                <select class="filter-select">
+                    <option value="all">All</option>
+                    <option value="title">Title</option>
+                    <option value="subject">Subject</option>
+                    <option value="author">Author</option>
+                </select>
+                <input type="text" class="search-input" placeholder="Search">
+                <button class="filter-search-btn">
+                    <img src="{% static 'images/search.svg' %}" alt="search" />
+                </button>
+            </div>
         </div>
 
         <table class="info-table">
             <tr>
                 <th>Title</th>
                 <th>Subject</th>
-                <th>Type</th>
                 <th>Authored by</th>
-                <th>Date</th>
                 <th>Action</th>
             </tr>
             <tr>
-                <td>Calculus 1 Lecture Notes</td>
                 <td>Calculus 1</td>
-                <td>PDF</td>
-                <td>Le Van A</td>
-                <td>dd/mm/yyyy</td>
+                <td>Calculus 1</td>
+                <td>James Stewart</td>
                 <td>
                     <a href="#" class="action-view">View</a>
                     <span class="action-divider">|</span>
@@ -81,11 +60,9 @@
                 </td>
             </tr>
             <tr>
+                <td>General Physics 1</td>
                 <td>Physics 1</td>
-                <td>Physics 1</td>
-                <td>Video</td>
-                <td>Nguyen Van F</td>
-                <td>dd/mm/yyyy</td>
+                <td>Nguyen Thi Be Bay</td>
                 <td>
                     <a href="#" class="action-view">View</a>
                     <span class="action-divider">|</span>
@@ -93,11 +70,9 @@
                 </td>
             </tr>
             <tr>
-                <td>Linear Algebra Lecture Notes</td>
+                <td>Linear algebra and its applications</td>
                 <td>Linear Algebra</td>
-                <td>PDF</td>
-                <td>Hoang Thi D</td>
-                <td>dd/mm/yyyy</td>
+                <td>David Lay, Steven Lay, Judi McDonald</td>
                 <td>
                     <a href="#" class="action-view">View</a>
                     <span class="action-divider">|</span>
@@ -109,20 +84,8 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -133,12 +96,14 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -147,5 +112,4 @@
         </table>
     </div>
 </body>
-</html> 
-
+</html>
