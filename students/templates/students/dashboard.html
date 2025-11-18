@@ -21,8 +21,25 @@
         <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
     </div>
 
-     <div class="notify_curve" >
-        <img src="{% static 'images/notify_curve.svg' %}" alt="curve">  
+    <div class="notify_curve">
+        <img id="notifyBtn" src="{% static 'images/notify_curve.svg' %}" alt="curve">  
+    </div>
+
+    <!-- NOTIFICATION POPUP -->
+    <div id="notificationBox" class="notification-box hidden">
+        <div class="notify-header">
+            <span>Notifications</span>
+            <span class="checkmark">✔</span>
+            <span class="gear">⚙</span>
+        </div>
+
+        <div class="notify-body">
+            You have no notifications
+        </div>
+
+        <div class="notify-footer">
+            <a href="#">See all</a>
+        </div>
     </div>
 
     <div class="main-content">
@@ -52,5 +69,22 @@
     <div class="footer">
         <a href="#">Technical Support</a>
     </div>
+    
+    <script>
+        const notifyBtn = document.getElementById("notifyBtn");
+        const notificationBox = document.getElementById("notificationBox");
+
+        notifyBtn.addEventListener("click", function() {
+            notificationBox.classList.toggle("hidden");
+        });
+
+        // Click outside to close
+        document.addEventListener("click", function(e) {
+            if (!notificationBox.contains(e.target) && e.target !== notifyBtn) {
+                notificationBox.classList.add("hidden");
+            }
+        });
+    </script>
 </body>
+
 </html>

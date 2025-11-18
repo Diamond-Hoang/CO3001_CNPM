@@ -230,3 +230,65 @@ body {
     text-decoration: underline;
     font-size: 14px;
 }
+
+/* Notification popup */
+.notification-box {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    width: 300px;
+    height: 450px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 2000;
+}
+
+/* hide by default */
+.hidden {
+    display: none;
+}
+
+.notify-header {
+    padding: 12px 15px;
+    font-size: 18px;
+    font-weight: 500;
+    background: #f2f2f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notify-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 16px;
+}
+
+.notify-footer {
+    text-align: center;
+    padding: 12px;
+    background: #f2f2f2;
+}
+
+.notify-footer a {
+    font-size: 15px;
+    color: #0066cc;
+    text-decoration: none;
+    cursor: pointer;
+    transition: text-decoration 0.1;
+}
+
+.notify-footer a:hover {
+    text-decoration: underline;
+}
+
+.checkmark {
+    margin-left: 100px;
+}
