@@ -249,6 +249,8 @@ body {
     text-decoration: underline;
 }
 
-.checkmark {
-    margin-left: 100px;
+.checkmark img {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
 }
