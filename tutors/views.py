@@ -6,3 +6,4 @@ def dashboard(request):
     if request.user.userprofile.role != 'tutor':
         return render(request, '403.html', status=403)
     return render(request, 'tutors/dashboard.html')
+

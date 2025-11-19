@@ -134,11 +134,11 @@
             </tr>
         </table>
         <div class="request-btn">
-            <a href="#" >Request new session</a>
+            <a href="{% url 'request_session' %}" >Request new session</a>
         </div>
     </div>
     <div class="footer">
-        <a href="#">Technical Support</a>
+        <a href="{% url 'technical_report' %}">Technical Support</a>
     </div>
     <script>
         const notifyBtn = document.getElementById("notifyBtn");

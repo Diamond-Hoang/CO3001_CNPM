@@ -32,3 +32,17 @@ def library(request):
         return render(request, '403.html', status=403)
     return render(request, 'students/library.html')
 
+def feedback(request):
+    if request.user.userprofile.role != 'student':
+        return render(request, '403.html', status=403)
+    return render(request, 'students/feedback.html')
+
+def request_session(request):
+    if request.user.userprofile.role != 'student':
+        return render(request, '403.html', status=403)
+    return render(request, 'students/request_session.html')
+
+def technical_report(request):
+    if request.user.userprofile.role != 'student':
+        return render(request, '403.html', status=403)
+    return render(request, 'students/technical_report.html')
