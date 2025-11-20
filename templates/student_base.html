@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/student_base.css' %}">  
+    {% block extra_css %}{% endblock %}      
+</head>
+<body>
+    <div class="sidebar">
+        <span class="top_curve"></span>
+        <div class="profile">
+            <img src="{% static 'images/avatar.svg' %}" alt="profile">
+        </div>
+        <span class="bottom_curve"></span>
+        <nav class="item">
+            <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
+            <a href="{% url 'profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
+            <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
+            <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
+            <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
+        </nav>
+    </div>
+   
+    <div class="notify_curve">
+        <img id="notifyBtn" src="{% static 'images/notify_curve.svg' %}" alt="curve">  
+    </div>
+
+    <!-- NOTIFICATION POPUP -->
+    <div id="notificationBox" class="notification-box hidden">
+        <div class="notify-header">
+            <span>Notifications</span>
+            <span class="checkmark">
+                <img src="{% static 'images/check-mark.svg' %}" alt="check_mark">
+            </span>
+        </div>
+
+        <div class="notify-body">
+            You have no notifications
+        </div>
+
+        <div class="notify-footer">
+            <a href="#">See all</a>
+        </div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <div class="footer">
+        <a href="{% url 'technical_report' %}">Technical Support</a>
+    </div>
+    
+    <script>
+        const notifyBtn = document.getElementById("notifyBtn");
+        const notificationBox = document.getElementById("notificationBox");
+
+        notifyBtn.addEventListener("click", function() {
+            notificationBox.classList.toggle("hidden");
+        });
+
+        // Click outside to close
+        document.addEventListener("click", function(e) {
+            if (!notificationBox.contains(e.target) && e.target !== notifyBtn) {
+                notificationBox.classList.add("hidden");
+            }
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

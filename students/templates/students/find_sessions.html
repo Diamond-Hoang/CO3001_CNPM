@@ -1,160 +1,107 @@
+{% extends 'student_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Session</title>
-    <link rel="stylesheet" href="{% static 'css/find_sessions.css' %}">
-</head>
-<body>
-    <nav class="sidebar">
-        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
-        <a href="{% url 'profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
-        <a href="{% url 'sessions' %}"><img src="{% static 'images/session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
-        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/selected_find_session.svg' %}" alt="find_sessions_icon" class="sidebar-icon-active"></a>
-        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
-    </nav>
 
-    <div class="adjust_ellipse">
-        <img src="{% static 'images/Ellipse2.svg' %}" alt="ellipse2">
-        <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/find_sessions.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="search-container">
+        <img src="{% static 'images/search.svg' %}" alt="search_icon" class="search-icon">
+        <input type="text" placeholder="Search for your sessions" />
     </div>
 
-    <div class="notify_curve">
-        <img id="notifyBtn" src="{% static 'images/notify_curve.svg' %}" alt="curve">  
+    <div class="table-header">Available Sessions</div>
+    <table class="info-table">
+        <tr>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>Tutor</th>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Capacity</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <td>CCO5</td>
+            <td>Database System</td>
+            <td>Tran Thi E</td>
+            <td>2-3</td>
+            <td>13h00-15h00</td>
+            <td>1/30</td>
+            <td><a href="#" class="action">Join</a></td>
+        </tr>
+        <tr>
+            <td>CCO1</td>
+            <td>Data structure and algorithm</td>
+            <td>Hoang Thi D</td>
+            <td>2-4</td>
+            <td>13h00-15h00</td>
+            <td>1/30</td>
+            <td><a href="#" class="action">Join</a></td>
+        </tr>
+        <tr>
+            <td>CCO2</td>
+            <td>Physics 1</td>
+            <td>Nguyen Van A</td>
+            <td>5-6</td>
+            <td>13h00-15h00</td>
+            <td>1/30</td>
+            <td><a href="#" class="action">Join</a></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    <div class="request-btn">
+        <a href="{% url 'request_session' %}" >Request new session</a>
     </div>
-
-    <!-- NOTIFICATION POPUP -->
-    <div id="notificationBox" class="notification-box hidden">
-        <div class="notify-header">
-            <span>Notifications</span>
-            <span class="checkmark">
-                <img src="{% static 'images/check-mark.svg' %}" alt="check_mark">
-            </span>
-        </div>
-
-        <div class="notify-body">
-            You have no notifications
-        </div>
-
-        <div class="notify-footer">
-            <a href="#">See all</a>
-        </div>
-    </div>
-    
-    <div class="main-content">
-        <div class="search-container">
-            <img src="{% static 'images/search.svg' %}" alt="search_icon" class="search-icon">
-            <input type="text" placeholder="Search for your sessions" />
-        </div>
-
-        <div class="table-header">Available Sessions</div>
-        <table class="info-table">
-            <tr>
-                <th>Class</th>
-                <th>Subject</th>
-                <th>Tutor</th>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Capacity</th>
-                <th>Action</th>
-            </tr>
-            <tr>
-                <td>CCO5</td>
-                <td>Database System</td>
-                <td>Tran Thi E</td>
-                <td>2-3</td>
-                <td>13h00-15h00</td>
-                <td>1/30</td>
-                <td><a href="#" class="action">Join</a></td>
-            </tr>
-            <tr>
-                <td>CCO1</td>
-                <td>Data structure and algorithm</td>
-                <td>Hoang Thi D</td>
-                <td>2-4</td>
-                <td>13h00-15h00</td>
-                <td>1/30</td>
-                <td><a href="#" class="action">Join</a></td>
-            </tr>
-            <tr>
-                <td>CCO2</td>
-                <td>Physics 1</td>
-                <td>Nguyen Van A</td>
-                <td>5-6</td>
-                <td>13h00-15h00</td>
-                <td>1/30</td>
-                <td><a href="#" class="action">Join</a></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </table>
-        <div class="request-btn">
-            <a href="{% url 'request_session' %}" >Request new session</a>
-        </div>
-    </div>
-    <div class="footer">
-        <a href="{% url 'technical_report' %}">Technical Support</a>
-    </div>
-    <script>
-        const notifyBtn = document.getElementById("notifyBtn");
-        const notificationBox = document.getElementById("notificationBox");
-
-        notifyBtn.addEventListener("click", function() {
-            notificationBox.classList.toggle("hidden");
-        });
-
-        // Click outside to close
-        document.addEventListener("click", function(e) {
-            if (!notificationBox.contains(e.target) && e.target !== notifyBtn) {
-                notificationBox.classList.add("hidden");
-            }
-        });
-    </script>
-</body>
-</html> 
+</div>
+{% endblock %}
 
