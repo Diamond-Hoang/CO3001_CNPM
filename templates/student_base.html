@@ -16,11 +16,11 @@
         </div>
         <span class="bottom_curve"></span>
         <nav class="item">
-            <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
-            <a href="{% url 'profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
-            <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
-            <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
-            <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
+            <a href="{% url 'students:student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
+            <a href="{% url 'students:profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
+            <a href="{% url 'students:sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
+            <a href="{% url 'students:find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
+            <a href="{% url 'students:library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
         </nav>
     </div>
    
@@ -49,7 +49,7 @@
     {% block content %}{% endblock %}
 
     <div class="footer">
-        <a href="{% url 'technical_report' %}">Technical Support</a>
+        <a href="{% url 'students:technical_report' %}">Technical Support</a>
     </div>
     
     <script>

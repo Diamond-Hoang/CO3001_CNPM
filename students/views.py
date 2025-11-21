@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from .models import Student
+from tutoring_sessions.models import Session, Enrollment, Feedback, SessionMaterial
 
 @login_required
 def dashboard(request):
@@ -13,14 +15,31 @@ def profile(request):
     return render(request, 'students/profile.html')
 
 def sessions(request):
-    if request.user.userprofile.role != 'student':
-        return render(request, '403.html', status=403)
-    return render(request, 'students/sessions.html')
+    enrollments = Enrollment.objects.filter(
+        student=request.user.student,
+        is_active=True
+    ).select_related('session', 'session__subject', 'session__tutor').order_by('-enrolled_at')
+    
+    print(f"DEBUG: Found {enrollments.count()} enrollments")
+    for e in enrollments:
+        print(f"  - {e.session.class_code}")
+    
+    return render(request, 'students/sessions.html', {
+        'enrollments': enrollments,
+    })
 
-def session_material(request):
+@login_required
+def session_material(request, session_id):
     if request.user.userprofile.role != 'student':
         return render(request, '403.html', status=403)
-    return render(request, 'students/session_material.html')
+    
+    session = get_object_or_404(Session, id=session_id)
+    materials = SessionMaterial.objects.filter(session=session)  # ← Giờ đã có import rồi
+    
+    return render(request, 'students/session_material.html', {
+        'session': session,
+        'materials': materials,
+    })
 
 def find_sessions(request):
     if request.user.userprofile.role != 'student':

@@ -9,7 +9,7 @@
 
 {% block content %}
 
- <div class="main-content">
+<div class="main-content">
     <div class="table-header">My Sessions Table</div>
     <table class="info-table">
         <tr>
@@ -22,96 +22,38 @@
             <th>Status</th>
             <th>Action</th>
         </tr>
+        {% for enrollment in enrollments %}
         <tr>
-            <td>CCO1</td>
-            <td>Calculus 1</td>
-            <td>Le Van A</td>
-            <td>2-3-4</td>
-            <td>7h00-9h00</td>
-            <td>15/30</td>
-            <td>Completed</td>
-            <td><a href="{% url 'feedback' %}" class="action">Feedback</a></td>
+            <td>
+                {{ enrollment.session.class_code }}
+                {% if enrollment.session.status == 'ongoing' %}
+                <a href="#"><img src="{% static 'images/reschedule.svg' %}" class="reschedule-icon" alt="reschedule_icon"></a>
+                {% endif %}
+            </td>
+            <td>
+                {{ enrollment.session.subject.name }}
+                {% if enrollment.session.status == 'ongoing' %}
+                <a href="{% url 'students:session_material' enrollment.session.id %}"><img src="{% static 'images/session material.svg' %}" class="material-icon" alt="material_icon"></a>
+                {% endif %}
+            </td>
+            <td>{{ enrollment.session.tutor.full_name }}</td>
+            <td>{{ enrollment.session.days }}</td>
+            <td>{{ enrollment.session.start_time|time:"H\hi" }}-{{ enrollment.session.end_time|time:"H\hi" }}</td>
+            <td>{{ enrollment.session.capacity_display }}</td>
+            <td>{{ enrollment.session.get_status_display }}</td>
+            <td>
+                {% if enrollment.session.status == 'completed' %}
+                    <a href="{% url 'tutoring_sessions:feedback' enrollment.id %}" class="action">Feedback</a>
+                {% elif enrollment.session.status == 'ongoing' %}
+                    <a href="{% url 'tutoring_sessions:cancel_enrollment' enrollment.id %}" class="action" onclick="return confirm('Bạn có chắc muốn hủy session này?')">Cancel</a>
+                {% endif %}
+            </td>
         </tr>
+        {% empty %}
         <tr>
-            <td>CCO2</td>
-            <td>Calculus 2</td>
-            <td>Nguyen Thi B</td>
-            <td>3-5</td>
-            <td>7h00-9h00</td>
-            <td>15/30</td>
-            <td>Completed</td>
-            <td><a href="{% url 'feedback' %}" class="action">Feedback</a></td>
+            <td colspan="8" style="text-align: center;">Bạn chưa đăng ký session nào</td>
         </tr>
-        <tr>
-            <td>CCO3</td>
-            <td>Linear Algebra</td>
-            <td>Tran Van C</td>
-            <td>2-5</td>
-            <td>7h00-9h00</td>
-            <td>15/30</td>
-            <td>Completed</td>
-            <td><a href="{% url 'feedback' %}" class="action">Feedback</a></td>
-        </tr>
-        <tr>
-            <td>CCO4 <a href="#"><img src="{% static 'images/reschedule.svg' %}" class="reschedule-icon" alt="reschedule_icon"></a></td>
-            <td>Software Engineering <a href="{% url 'session_material' %}"><img src="{% static 'images/session material.svg' %}" class="material-icon" alt="material_icon"></a></td>
-            <td>Hoang Thi D</td>
-            <td>3-6</td>
-            <td>7h00-9h00</td>
-            <td>15/30</td>
-            <td>Ongoing</td>
-            <td><a href="#" class="action">Cancel</a></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
+        {% endfor %}
     </table>
 </div>
 

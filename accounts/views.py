@@ -70,7 +70,7 @@ def sso_callback(request):
 
     # Redirect by role
     if role == "student":
-        return redirect("student_dashboard")
+        return redirect("students:student_dashboard")
     elif role == "tutor":
         return redirect("tutor_dashboard")
     # elif role == "admin":
