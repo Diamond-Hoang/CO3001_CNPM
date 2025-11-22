@@ -1,7 +1,7 @@
 {% extends 'student_base.html' %}
 {% load static %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}<title>Sessions</title>{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/sessions.css' %}">
@@ -43,8 +43,10 @@
             <td>{{ enrollment.session.get_status_display }}</td>
             <td>
                 {% if enrollment.session.status == 'completed' %}
-                    <a href="{% url 'tutoring_sessions:feedback' enrollment.id %}" class="action">Feedback</a>
+                    <a href="{% url 'feedback:feedback' enrollment.id %}" class="action" >Feedback</a>
                 {% elif enrollment.session.status == 'ongoing' %}
+                    <a href="{% url 'tutoring_sessions:cancel_enrollment' enrollment.id %}" class="action" onclick="return confirm('Bạn có chắc muốn hủy session này?')">Cancel</a>
+                {% elif enrollment.session.status == 'scheduled' %}
                     <a href="{% url 'tutoring_sessions:cancel_enrollment' enrollment.id %}" class="action" onclick="return confirm('Bạn có chắc muốn hủy session này?')">Cancel</a>
                 {% endif %}
             </td>
@@ -57,4 +59,14 @@
     </table>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
 {% endblock %}

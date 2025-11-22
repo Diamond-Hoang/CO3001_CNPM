@@ -1,5 +1,4 @@
 from django.db import models
-from students.models import Student  # Import Student từ app students
 from tutoring_sessions.models import Enrollment
 # Create your models here.
 class Feedback(models.Model):

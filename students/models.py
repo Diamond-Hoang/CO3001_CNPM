@@ -6,8 +6,11 @@ class Student(models.Model):
     full_name = models.CharField(max_length=100)
     student_id = models.CharField(max_length=20, unique=True)
     phone = models.CharField(max_length=15, blank=True)
-    email = models.EmailField(blank=True, default='')
-    
+    email = models.EmailField(blank=True)
+    major = models.CharField(max_length=100, blank=True)
+    dob = models.DateField(null = True, blank = True)
+    sp_needs = models.CharField(max_length=100, blank=True)
+
     def __str__(self):
         return self.full_name
     

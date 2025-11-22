@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from students.models import Student  # Import Student từ app students
+from tutors.models import Tutor
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)
@@ -8,15 +9,6 @@ class Subject(models.Model):
     
     def __str__(self):
         return f"{self.code} - {self.name}"
-
-class Tutor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15, blank=True)
-    expertise = models.ManyToManyField(Subject, related_name='tutors')
-    
-    def __str__(self):
-        return self.full_name
 
 class Session(models.Model):
     STATUS_CHOICES = [
@@ -74,14 +66,3 @@ class SessionMaterial(models.Model):
     
     def __str__(self):
         return f"{self.session.class_code} - {self.title}"
-
-class Feedback(models.Model):
-    RATING_CHOICES = [(i, i) for i in range(1, 6)]
-    
-    enrollment = models.OneToOneField(Enrollment, on_delete=models.CASCADE)
-    rating = models.IntegerField(choices=RATING_CHOICES)
-    comment = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"Feedback from {self.enrollment.student.full_name}"

@@ -3,6 +3,7 @@
     --bg-color: #e5e5e5;
     --navbar-color: #003399;
     --text-color:#000;
+    --bg-color:#e8e8e8;
 }
 body{
     background-color: #e8e8e8;
@@ -23,6 +24,7 @@ body{
     height: 100vh;
     background: var(--navbar-color);
     transition: all 0.5s ease;
+    z-index: 999;
 }
 
 .sidebar .item{
@@ -35,6 +37,12 @@ body{
     top: 25%;
 }
 
+/* Wrapper cho mỗi icon để chứa label */
+.sidebar .item a {
+    position: relative;
+    display: flex;
+}
+
 .sidebar-icon {
     width: 50px;
     height: 50px;
@@ -42,6 +50,8 @@ body{
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s;
+    position: relative;
+    z-index: 1;
 }
 
 .sidebar-icon-active {
@@ -52,8 +62,30 @@ body{
     cursor: pointer;
 }
 
-.sidebar-icon:hover {
-    background: rgba(255, 255, 255, 0.3);
+/* Label hiển thị khi hover */
+.sidebar .item a::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #0099ff;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, left 0.3s;
+    font-size: 25px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: -1;
+    text-indent: 30px;
+}
+
+/* Hiển thị label khi hover */
+.sidebar .item a:hover::after {
+    opacity: 1;
 }
 
 .sidebar .profile{
@@ -63,8 +95,8 @@ body{
     height: 55px;
     width: 55px;
     border-radius: 50%;
-    border: 10px solid var(--white);
-    background-color: var(--white);
+    border: 10px solid var(--bg-color);
+    background-color: var(--bg-color);
     display: flex;
     text-align: center;
     justify-content: center;
@@ -75,6 +107,8 @@ body{
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 .sidebar .top_curve,
@@ -83,7 +117,7 @@ body{
     left:0px;
     width: 70px;
     height: 25px;
-    background: var(--white);
+    background: var(--bg-color);
 }
 
 .sidebar .top_curve{

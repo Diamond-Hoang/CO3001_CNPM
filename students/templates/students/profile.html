@@ -1,7 +1,7 @@
 {% extends 'student_base.html' %}
 {% load static %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}<title>Dashboard</title>{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
@@ -11,44 +11,45 @@
 
 <div class="main-content">
     <div class="profile-container">
-        <div class="adjust_profile">
-            <img src="{% static 'images/avatar.svg' %}"  alt="avatar">
+        <div class="profile-header"></div>
+        
+        <div class="avatar-wrapper">
+            <img src="{% static 'images/avatar.svg' %}" alt="avatar" class="profile-avatar">
             <div class="edit-avatar-btn">
                 <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
             </div>
         </div>
 
-        <div class="profile-header"></div>
         <div class="profile-info">
             <table class="info-table">
                 <tr>
                     <td>Full name</td>
-                    <td>Nguyen Van A</td>
+                    <td>{{ student.full_name }}</td>
                 </tr>
                 <tr>
                     <td>Student's ID</td>
-                    <td>235xxxx</td>
+                    <td>{{ student.student_id }}</td>
                 </tr>
                 <tr>
                     <td>Date of birth</td>
-                    <td>dd/mm/yyyy</td>
+                    <td>{{ student.dob|date:"d/m/Y"|default:"N/A" }}</td>
                 </tr>
                 <tr>
                     <td>Major</td>
-                    <td>Computer Science</td>
+                    <td>{{ student.major|default:"N/A" }}</td>
                 </tr>
                 <tr>
                     <td>Phone number</td>
-                    <td>0123456789</td>
+                    <td>{{ student.phone|default:"N/A" }}</td>
                 </tr>
                 <tr>
                     <td>Email</td>
-                    <td>a.nguyenvan@hcmut.edu.vn</td>
+                    <td>{{ student.email|default:"N/A" }}</td>
                 </tr>
                 <tr>
                     <td>Support needs</td>
                     <td>
-                        Calculus 1
+                        {{ student.sp_needs|default:"N/A" }}
                         <div class="edit-field-btn">
                             <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
                         </div>

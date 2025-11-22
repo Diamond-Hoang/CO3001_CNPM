@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{% static 'css/student_base.css' %}">  
+    <link rel="stylesheet" href="{% static 'css/student_base.css' %}"> 
+    {% block title %}{% endblock %} 
     {% block extra_css %}{% endblock %}      
 </head>
 <body>
@@ -16,11 +16,21 @@
         </div>
         <span class="bottom_curve"></span>
         <nav class="item">
-            <a href="{% url 'students:student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
-            <a href="{% url 'students:profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
-            <a href="{% url 'students:sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
-            <a href="{% url 'students:find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
-            <a href="{% url 'students:library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
+            <a href="{% url 'students:student_dashboard' %}" data-label="Home">
+                <img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon">
+            </a>
+            <a href="{% url 'students:profile' %}" data-label="Profile">
+                <img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon">
+            </a>
+            <a href="{% url 'students:sessions' %}" data-label="Sessions">
+                <img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon">
+            </a>
+            <a href="{% url 'students:find_sessions' %}" data-label="Find Sessions">
+                <img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon">
+            </a>
+            <a href="{% url 'students:library' %}" data-label="Library">
+                <img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon">
+            </a>
         </nav>
     </div>
    

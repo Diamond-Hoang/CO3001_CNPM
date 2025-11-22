@@ -4,6 +4,7 @@
     flex: 1;
     padding: 30px 60px;
     padding-top: 140px;
+    z-index: -1;
 }
 
 .table-header {
@@ -23,7 +24,8 @@
     border-spacing: 0;          
     border: 2px solid white;     
     border-radius: 10px;         
-    overflow: hidden;            
+    overflow: hidden;   
+    z-index: -1;
 }
 
 .info-table td, .info-table th {

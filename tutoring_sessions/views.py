@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Session, Enrollment, SessionMaterial, Feedback
+from django.db.models import Q, F
+from .models import Session, Enrollment
 from students.models import Student
+from feedback.models import Feedback
+
 
 @login_required
 def session_list(request):
@@ -39,85 +42,83 @@ def session_materials(request, session_id):
 @login_required
 def cancel_enrollment(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id, student=request.user.student)
+    session=enrollment.session
     enrollment.delete()
+    
+    if session.enrolled_count > 0:
+        session.enrolled_count -= 1
+        session.save()
     return redirect('students:sessions')
 
 @login_required
-def feedback(request, enrollment_id):
-    """Gửi feedback"""
-    student = get_object_or_404(Student, user=request.user)
-    enrollment = get_object_or_404(Enrollment, id=enrollment_id, student=student)
-    
-    if enrollment.session.status != 'completed':
-        messages.error(request, 'Chỉ có thể feedback khi session đã hoàn thành')
-        return redirect('students:sessions')
-    
-    if hasattr(enrollment, 'feedback'):
-        messages.info(request, 'Bạn đã feedback session này rồi')
-        return redirect('students:sessions')
-    
-    if request.method == 'POST':
-        rating = request.POST.get('rating')
-        comment = request.POST.get('comment', '')
-        would_recommend = request.POST.get('would_recommend') == 'on'
-        
-        Feedback.objects.create(
-            enrollment=enrollment,
-            rating=rating,
-            comment=comment,
-            would_recommend=would_recommend
-        )
-        
-        messages.success(request, 'Cảm ơn bạn đã gửi feedback!')
-        return redirect('students:sessions')
-    
-    return render(request, 'students/feedback.html', {
-        'enrollment': enrollment,
-    })
-
-@login_required
 def available_sessions(request):
-    """Các session có thể đăng ký"""
+    """Hiển thị các session còn chỗ"""
     student = get_object_or_404(Student, user=request.user)
     
+    # Lấy các session mà student đã enroll
     enrolled_session_ids = Enrollment.objects.filter(
         student=student, 
         is_active=True
     ).values_list('session_id', flat=True)
     
-    sessions = Session.objects.exclude(
+    # Lấy các session còn chỗ và chưa enroll
+    available_sessions = Session.objects.filter(
+        status='scheduled',
+    ).exclude(
         id__in=enrolled_session_ids
-    ).filter(
-        status='scheduled'
-    ).select_related('subject', 'tutor')
+    ).select_related('subject', 'tutor').order_by('class_code')
     
-    return render(request, 'tutoring_sessions/available_sessions.html', {
-        'sessions': sessions,
-    })
+    # Search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        available_sessions = available_sessions.filter(
+            Q(class_code__icontains=search_query) |
+            Q(subject__name__icontains=search_query) |
+            Q(subject__code__icontains=search_query) |
+            Q(tutor__full_name__icontains=search_query)
+        )
+    
+    context = {
+        'sessions': available_sessions,
+        'search_query': search_query,
+    }
+
+    return render(request, 'students/find_sessions.html', context)
 
 @login_required
 def enroll_session(request, session_id):
-    """Đăng ký session mới"""
+    """Tham gia vào session"""
+    if request.method != 'POST':
+        return redirect('tutoring_sessions:available_sessions')
+    
     student = get_object_or_404(Student, user=request.user)
     session = get_object_or_404(Session, id=session_id)
     
-    if session.is_full:
-        messages.error(request, 'Session đã đầy')
+    # Kiểm tra session còn chỗ không
+    if session.enrolled_count >= session.capacity:
+        messages.error(request, 'Session đã đầy, không thể tham gia!')
         return redirect('tutoring_sessions:available_sessions')
     
+    # Kiểm tra status
+    if session.status != 'scheduled':
+        messages.error(request, 'Chỉ có thể tham gia session đang scheduled!')
+        return redirect('tutoring_sessions:available_sessions')
+    
+    # Kiểm tra đã enroll chưa
     if Enrollment.objects.filter(student=student, session=session, is_active=True).exists():
-        messages.info(request, 'Bạn đã đăng ký session này rồi')
-        return redirect('students:my_sessions')
+        messages.warning(request, 'Bạn đã tham gia session này rồi!')
+        return redirect('tutoring_sessions:available_sessions')
     
-    if request.method == 'POST':
-        Enrollment.objects.create(student=student, session=session)
-        
-        session.enrolled_count += 1
-        session.save()
-        
-        messages.success(request, f'Đăng ký session {session.class_code} thành công!')
-        return redirect('students:my_sessions')
+    # Tạo enrollment
+    Enrollment.objects.create(
+        student=student,
+        session=session,
+        is_active=True
+    )
     
-    return render(request, 'tutoring_sessions/enroll_confirm.html', {
-        'session': session,
-    })
+    # Tăng enrolled_count
+    session.enrolled_count += 1
+    session.save()
+    
+    messages.success(request, f'Đã tham gia thành công vào {session.class_code}!')
+    return redirect('students:sessions')

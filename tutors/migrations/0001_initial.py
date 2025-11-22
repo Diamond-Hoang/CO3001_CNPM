@@ -10,26 +10,23 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('tutoring_sessions', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Student',
+            name='Tutor',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('full_name', models.CharField(max_length=100)),
-                ('student_id', models.CharField(max_length=20, unique=True)),
                 ('phone', models.CharField(blank=True, max_length=15)),
-                ('email', models.EmailField(blank=True, max_length=254)),
-                ('major', models.CharField(blank=True, max_length=100)),
-                ('dob', models.DateField(blank=True, null=True)),
-                ('sp_needs', models.CharField(blank=True, max_length=100)),
+                ('expertise', models.ManyToManyField(related_name='tutors', to='tutoring_sessions.subject')),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': 'Student',
-                'verbose_name_plural': 'Students',
+                'verbose_name': 'Tutor',
+                'verbose_name_plural': 'Tutors',
             },
         ),
     ]

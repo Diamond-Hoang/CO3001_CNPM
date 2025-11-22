@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Student
-from tutoring_sessions.models import Session, Enrollment, Feedback, SessionMaterial
+from tutoring_sessions.models import Session, Enrollment, SessionMaterial
 
 @login_required
 def dashboard(request):
@@ -12,17 +12,14 @@ def dashboard(request):
 def profile(request):
     if request.user.userprofile.role != 'student':
         return render(request, '403.html', status=403)
-    return render(request, 'students/profile.html')
+    student = Student.objects.get(user=request.user)
+    return render(request, 'students/profile.html', {'student': student})
 
 def sessions(request):
     enrollments = Enrollment.objects.filter(
         student=request.user.student,
         is_active=True
     ).select_related('session', 'session__subject', 'session__tutor').order_by('-enrolled_at')
-    
-    print(f"DEBUG: Found {enrollments.count()} enrollments")
-    for e in enrollments:
-        print(f"  - {e.session.class_code}")
     
     return render(request, 'students/sessions.html', {
         'enrollments': enrollments,

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Subject, Tutor, Student, Session, Enrollment, SessionMaterial, Feedback
+from .models import Subject, Tutor, Student, Session, Enrollment, SessionMaterial
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
@@ -23,4 +23,3 @@ class EnrollmentAdmin(admin.ModelAdmin):
     list_filter = ['is_active']
 
 admin.site.register(SessionMaterial)
-admin.site.register(Feedback)
