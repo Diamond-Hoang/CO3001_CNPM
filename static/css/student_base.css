@@ -30,11 +30,11 @@ body{
 .sidebar .item{
     position: relative;
     display: flex;
-    flex-direction: column;   /* icon theo cột */
-    align-items: center;      /* căn giữa ngang */
-    justify-items: center;
+    flex-direction: column;  
+    align-items: center;    
     gap: 20px;  
-    top: 25%;
+    top: calc(32px + 70px); 
+    bottom: 0;  
 }
 
 /* Wrapper cho mỗi icon để chứa label */
