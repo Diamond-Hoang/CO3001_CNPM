@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from tutoring_sessions.models import Enrollment
 from students.models import Student
-from .models import Feedback
+from .models import Feedback, SessionRequest
+from .forms import SessionRequestForm, TechnicalReportForm
 
 # Create your views here.
 @login_required
@@ -36,3 +37,39 @@ def feedback(request, enrollment_id):
     return render(request, 'students/feedback.html', {
         'enrollment': enrollment,
     })
+
+@login_required
+def request_session(request):
+    if request.method == 'POST':
+        form = SessionRequestForm(request.POST)
+        if form.is_valid():
+            session_request = form.save(commit=False)
+            session_request.student = request.user.student
+            session_request.save()
+            messages.success(request, 'Your session request has been submitted successfully!')
+            return redirect('feedback:request_session')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = SessionRequestForm()
+    
+    # Chỉ định rõ app chứa template
+    return render(request, 'students/request_session.html', {'form': form})
+
+@login_required
+def technical_report(request):
+    """View để submit technical report"""
+    if request.method == 'POST':
+        form = TechnicalReportForm(request.POST)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.user = request.user
+            report.save()
+            messages.success(request, 'Technical issue report sent! Thank you for reporting. We will process it as soon as possible.')
+            return redirect('feedback:technical_report')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = TechnicalReportForm()
+    
+    return render(request, 'students/technical_report.html', {'form': form})

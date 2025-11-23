@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'offices',
     'tutoring_sessions',
     'feedback',
+    'notification',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'notification.context_processors.notifications',
             ],
         },
     },
