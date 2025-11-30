@@ -1,0 +1,89 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+
+{% block title %}<title>Session Materials</title>{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/session_material.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="session-info-container">
+        <h1>{{ session.subject.name }}_{{ session.tutor.full_name }}_{{ session.class_code }}</h1>
+        <div style="margin-top: 10px; color: #666;">
+            <p><strong>Schedule:</strong> {{ session.days }} | {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}</p>
+            <p><strong>Room:</strong> {{ session.room|default:"TBA" }}</p>
+            <p><strong>Status:</strong> {{ session.get_status_display }}</p>
+        </div>
+    </div>
+
+    <div class="header">Session Materials</div>
+    <form method="POST" enctype="multipart/form-data" style="margin-bottom: 25px;">
+        {% csrf_token %}
+        
+        <input type="text" name="title" placeholder="Material title"
+            style="padding: 8px; width: 250px; margin-right: 10px;">
+
+        <input type="file" name="file" style="margin-right: 10px;">
+
+        <button type="submit" style="padding: 8px 20px; background: #28a745; color: white; border: none; border-radius: 4px;">
+            + Add Material
+        </button>
+    </form>
+    {% if materials %}
+    <table class="info-table">
+        {% for material in materials %}
+        <tr>
+            <td>
+                {% if material.file %}
+                    {% if material.file.url|slice:"-4:" == ".pdf" %}
+                        <img src="{% static 'images/dashicons_pdf.svg' %}" alt="pdf_icon" class="material-pdf-icon">
+                    {% elif material.file.url|slice:"-4:" == ".mp4" or material.file.url|slice:"-4:" == ".avi" or material.file.url|slice:"-5:" == ".webm" %}
+                        <img src="{% static 'images/video.svg' %}" alt="video_icon" class="material-video-icon">
+                    {% elif material.file.url|slice:"-4:" == ".doc" or material.file.url|slice:"-5:" == ".docx" %}
+                        <img src="{% static 'images/doc_icon.svg' %}" alt="doc_icon" class="material-pdf-icon">
+                    {% elif material.file.url|slice:"-4:" == ".ppt" or material.file.url|slice:"-5:" == ".pptx" %}
+                        <img src="{% static 'images/ppt_icon.svg' %}" alt="ppt_icon" class="material-pdf-icon">
+                    {% else %}
+                        <img src="{% static 'images/file_icon.svg' %}" alt="file_icon" class="material-pdf-icon">
+                    {% endif %}
+                {% else %}
+                    <img src="{% static 'images/file_icon.svg' %}" alt="file_icon" class="material-pdf-icon">
+                {% endif %}
+                
+                <span style="margin-left: 10px; font-weight: 500;">{{ material.title }}</span>
+                
+                <span style="float: right; color: #999; font-size: 12px;">
+                    Uploaded: {{ material.uploaded_at|date:"d/m/Y H:i" }}
+                </span>
+                
+                {% if material.file %}
+                <a href="{{ material.file.url }}" 
+                   target="_blank" 
+                   download 
+                   style="float: right; margin-right: 20px; padding: 5px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">
+                    Download
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% if material.description %}
+        <tr>
+            <td style="padding-left: 50px; color: #666; font-size: 14px; font-style: italic;">
+                {{ material.description }}
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+    {% else %}
+    <div style="text-align: center; padding: 40px; color: #999;">
+        <p style="font-size: 18px;">Chưa có tài liệu nào cho session này.</p>
+        <p style="font-size: 14px;">Tài liệu sẽ được cập nhật bởi giáo viên.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}<title>Library</title>{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+
+    <div class="table-header">Search for your materials</div>
+
+    <form method="get" class="filters-container">
+        <div class="search-wrapper">
+            <!-- <select name="filter" class="filter-select">
+                <option value="all" {% if filter == 'all' %}selected{% endif %}>All</option>
+                <option value="title" {% if filter == 'title' %}selected{% endif %}>Title</option>
+                <option value="subject" {% if filter == 'subject' %}selected{% endif %}>Subject</option>
+                <option value="author" {% if filter == 'author' %}selected{% endif %}>Author</option>
+            </select> -->
+
+            <input type="text" name="search" value="{{ search }}" class="search-input" placeholder="Search">
+
+            <button class="filter-search-btn">
+                <img src="{% static 'images/search.svg' %}" alt="search" />
+            </button>
+        </div>
+    </form>
+
+
+    <table class="info-table">
+        <tr>
+            <th>Title</th>
+            <th>Subject</th>
+            <th>Authored by</th>
+            <th>Action</th>
+        </tr>
+
+        {% for material in materials %}
+        <tr>
+            <td>{{ material.title }}</td>
+            <td>{{ material.subject.name }}</td>
+            <td>{{ material.authors_display }}</td>
+            <td>
+                {% if material.has_file %}
+                    <a href="{{ material.file.url }}" class="action-view" target="_blank">View</a>
+                    <span class="action-divider">|</span>
+                    <a href="{{ material.file.url }}" class="action-download" download>Download</a>
+                {% elif material.has_external_url %}
+                    <a href="{{ material.external_url }}" class="action-view" target="_blank">Open Link</a>
+                {% else %}
+                    <span>No file</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" style="text-align:center; padding:20px;">No materials found</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+{% endblock %}

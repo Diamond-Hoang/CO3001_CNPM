@@ -66,3 +66,28 @@ class SessionMaterial(models.Model):
     
     def __str__(self):
         return f"{self.session.class_code} - {self.title}"
+    
+class AdvisingSession(models.Model):
+    """Lớp phụ đạo thêm dựa trên session chính"""
+    main_session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name='advising_sessions')
+    tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
+    date = models.DateField()  # Ngày cụ thể
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    location = models.CharField(max_length=200, blank=True)
+    notes = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-date', '-start_time']
+    
+    def __str__(self):
+        return f"Advising: {self.main_session.class_code} - {self.date}"
+    
+    @property
+    def is_today(self):
+        from django.utils import timezone
+        today = timezone.now().date()
+        return self.date == today
+    

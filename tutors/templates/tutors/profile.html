@@ -1,0 +1,353 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+{% load avatar_tags %}
+
+{% block title %}<title>Dashboard</title>{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="profile-container">
+        <div class="profile-header"></div>
+        
+        <div class="avatar-wrapper">
+            <img src="{% if tutor.avatar|valid_avatar %}{{ tutor.avatar.url }}{% else %}{% static 'images/avatar.svg' %}{% endif %}"
+                 alt="avatar" 
+                 class="profile-avatar"
+                 id="avatar-display">
+            <form id="avatar-form" enctype="multipart/form-data" style="display: none;">
+                {% csrf_token %}
+                <input type="file" name="avatar" id="avatar-input" accept="image/*">
+            </form>
+            <div class="edit-avatar-btn" id="edit-avatar-btn">
+                <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <table class="info-table">
+                <tr>
+                    <td>Full name</td>
+                    <td>{{ tutor.full_name }}</td>
+                </tr>
+                <tr>
+                    <td>Student's ID</td>
+                    <td>{{ tutor.tutor_id }}</td>
+                </tr>
+                <tr>
+                    <td>Date of birth</td>
+                    <td>{{  tutor.dob|date:"d/m/Y"|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>Major</td>
+                    <td>{{  tutor.major|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>Phone number</td>
+                    <td>{{  tutor.phone|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{  tutor.email|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>Expertise</td>
+                    <td>
+                        <span id="expertise-display">
+                            {% if tutor.expertise.all %}
+                                {% for subject in tutor.expertise.all %}
+                                    {{ subject.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </span>
+                        <div class="edit-field-btn" id="expertise-btn">
+                            <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for editing expertise -->
+<div id="expertise-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal" id="close-expertise-modal">&times;</span>
+        <h3>Chỉnh sửa môn học chuyên môn</h3>
+        <form id="expertise-form">
+            {% csrf_token %}
+            <div id="expertise-checkboxes">
+                {% for subject in all_subjects %}
+                <label class="expertise-checkbox">
+                    <input type="checkbox" name="expertise" value="{{ subject.id }}" 
+                           {% if subject in tutor.expertise.all %}checked{% endif %}>
+                    {{ subject.name }}
+                </label>
+                {% endfor %}
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" id="cancel-expertise">Hủy</button>
+                <button type="submit" class="btn-save">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Script loaded');
+    
+    // Avatar upload functionality
+    const editAvatarBtn = document.getElementById('edit-avatar-btn');
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarDisplay = document.getElementById('avatar-display');
+    
+    if (editAvatarBtn) {
+        editAvatarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Avatar button clicked');
+            avatarInput.click();
+        });
+    }
+    
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch("{% url 'tutors:update_avatar' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    avatarDisplay.src = data.avatar_url;
+                    showNotification('Avatar đã được cập nhật thành công!', 'success');
+                } else {
+                    showNotification('Có lỗi xảy ra khi cập nhật avatar', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Có lỗi xảy ra', 'error');
+            });
+        }
+    });
+    
+    // Expertise edit functionality
+    const editExpertiseBtn = document.getElementById('expertise-btn');
+    const expertiseModal = document.getElementById('expertise-modal');
+    const closeExpertiseModal = document.getElementById('close-expertise-modal');
+    const cancelExpertiseBtn = document.getElementById('cancel-expertise');
+    const expertiseForm = document.getElementById('expertise-form');
+    const expertiseDisplay = document.getElementById('expertise-display');
+    
+    if (editExpertiseBtn) {
+        editExpertiseBtn.addEventListener('click', function() {
+            expertiseModal.style.display = 'flex';
+        });
+    }
+    
+    if (closeExpertiseModal) {
+        closeExpertiseModal.addEventListener('click', function() {
+            expertiseModal.style.display = 'none';
+        });
+    }
+    
+    if (cancelExpertiseBtn) {
+        cancelExpertiseBtn.addEventListener('click', function() {
+            expertiseModal.style.display = 'none';
+        });
+    }
+    
+    window.addEventListener('click', function(e) {
+        if (e.target === expertiseModal) {
+            expertiseModal.style.display = 'none';
+        }
+    });
+    
+    if (expertiseForm) {
+        expertiseForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(expertiseForm);
+            
+            fetch("{% url 'tutors:update_expertise' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    expertiseDisplay.textContent = data.expertise || 'N/A';
+                    expertiseModal.style.display = 'none';
+                    showNotification('Chuyên môn đã được cập nhật thành công!', 'success');
+                } else {
+                    showNotification('Có lỗi xảy ra khi cập nhật chuyên môn', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Có lỗi xảy ra', 'error');
+            });
+        });
+    }
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: ${type === 'success' ? '#4CAF50' : '#f44336'};
+            color: white;
+            border-radius: 5px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+</script>
+
+<style>
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: #000;
+}
+
+#expertise-checkboxes {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.expertise-checkbox {
+    display: block;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.expertise-checkbox:hover {
+    background-color: #f5f5f5;
+}
+
+.expertise-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel, .btn-save {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-cancel {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-save {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-save:hover {
+    background-color: #45a049;
+}
+</style>
+
+{% endblock %}

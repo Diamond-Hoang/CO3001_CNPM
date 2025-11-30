@@ -8,8 +8,9 @@ class Student(models.Model):
     phone = models.CharField(max_length=15, blank=True)
     email = models.EmailField(blank=True)
     major = models.CharField(max_length=100, blank=True)
-    dob = models.DateField(null = True, blank = True)
+    dob = models.DateField(null=True, blank=True)
     sp_needs = models.CharField(max_length=100, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)  # Thêm trường avatar
 
     def __str__(self):
         return self.full_name

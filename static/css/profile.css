@@ -1,3 +1,4 @@
+/* Main Content */
 .main-content {
     margin-left: 100px;
     margin-right: 20px;
@@ -5,14 +6,12 @@
     padding: 30px 60px;
     padding-top: 100px;
     margin-bottom: 90px;
-    z-index: -1;
 }
 
 .profile-container {
     width: 100%;
     position: relative;
     margin-top: 100px;
-    z-index: -1;
 }
 
 .profile-header {
@@ -21,6 +20,7 @@
     border-radius: 10px 10px 0 0;
 }
 
+/* Avatar */
 .avatar-wrapper {
     position: absolute;
     top: -100px;
@@ -36,6 +36,7 @@
     border-radius: 50%;
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     background: white;
+    object-fit: cover;
 }
 
 .edit-avatar-btn {
@@ -51,6 +52,7 @@
     align-items: center;
     cursor: pointer;
     transition: background 0.3s;
+    z-index: 10;
 }
 
 .edit-avatar-btn:hover {
@@ -60,12 +62,10 @@
 .edit-avatar-btn img {
     width: 14px;
     height: 14px;
+    filter: brightness(0) invert(1);
 }
 
-/* .profile-info {
-    margin-top: 80px;
-} */
-
+/* Profile Info Table */
 .info-table tr, .info-table th, .info-table {
     border: 2px solid white;
 }
@@ -100,6 +100,7 @@
     position: relative;
 }
 
+/* Edit Field Button */
 .edit-field-btn {
     position: absolute;
     right: 20px;
@@ -114,6 +115,7 @@
     align-items: center;
     cursor: pointer;
     transition: background 0.3s;
+    z-index: 10;
 }
 
 .edit-field-btn:hover {
@@ -123,7 +125,112 @@
 .edit-field-btn img {
     width: 14px;
     height: 14px;
-    fill: white;
+    filter: brightness(0) invert(1);
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.close-modal {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.close-modal:hover {
+    color: #000;
+}
+
+#sp-needs-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 20px;
+}
+
+#sp-needs-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cancel,
+.btn-save {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.btn-cancel:hover {
+    background: #e0e0e0;
+}
+
+.btn-save {
+    background: #007bff;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #0056b3;
 }
 
 /* Responsive Design */
@@ -132,6 +239,16 @@
         margin-left: 45px;
         padding: 10px 15px;
         padding-top: 50px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .info-table td {
+        font-size: 18px;
+        padding: 10px 15px;
     }
 }
 
@@ -144,5 +261,23 @@
     .info-table td {
         font-size: 20px;
         padding: 6px 10px;
+    }
+    
+    .avatar-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .modal-content {
+        padding: 15px;
+    }
+    
+    .modal-content h3 {
+        font-size: 18px;
     }
 }

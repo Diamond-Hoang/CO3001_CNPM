@@ -59,17 +59,35 @@ def request_session(request):
 @login_required
 def technical_report(request):
     """View để submit technical report"""
+
+    # 🔥 Chọn base template dựa vào role
+    if request.user.userprofile.role == 'tutor':
+        base_template = 'tutor_base.html'
+        dashboard_url = 'tutors:tutor_dashboard'
+    else:
+        base_template = 'student_base.html'
+        dashboard_url = 'students:student_dashboard'
+
     if request.method == 'POST':
         form = TechnicalReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             report.user = request.user
             report.save()
-            messages.success(request, 'Technical issue report sent! Thank you for reporting. We will process it as soon as possible.')
+
+            messages.success(
+                request,
+                'Technical issue report sent! Thank you for reporting. We will process it as soon as possible.'
+            )
             return redirect('feedback:technical_report')
         else:
             messages.error(request, 'Please correct the errors below.')
+
     else:
         form = TechnicalReportForm()
-    
-    return render(request, 'students/technical_report.html', {'form': form})
+
+    return render(request, 'feedback/technical_report.html', {
+        'form': form,
+        'base_template': base_template,
+        'dashboard_url': dashboard_url,   # 🔥 Gửi xuống template
+    })

@@ -117,3 +117,30 @@ class TechnicalReport(models.Model):
         self.status = 'resolved'
         self.resolved_at = timezone.now()
         self.save()
+
+# tutoring_sessions/models.py hoặc feedback/models.py
+
+class StudentProgress(models.Model):
+    enrollment = models.ForeignKey('tutoring_sessions.Enrollment', on_delete=models.CASCADE, related_name='progress_records')
+    student = models.ForeignKey('students.Student', on_delete=models.CASCADE)
+    session = models.ForeignKey('tutoring_sessions.Session', on_delete=models.CASCADE)
+    tutor = models.ForeignKey('tutors.Tutor', on_delete=models.CASCADE)
+    
+    # Progress metrics (out of 5)
+    attendance = models.IntegerField(default=0)  # Số buổi đã tham gia
+    topics_covered = models.IntegerField(default=0)  # Chủ đề đã học
+    comprehension_level = models.IntegerField(default=0)  # Mức độ hiểu bài
+    goals_achieved = models.IntegerField(default=0)  # Mục tiêu đạt được
+    
+    # Text fields
+    area_for_improvement = models.CharField(max_length=500, blank=True)
+    notes = models.TextField(blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ('student', 'session')
+    
+    def __str__(self):
+        return f"{self.student.full_name} - {self.session.class_code}"

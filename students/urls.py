@@ -11,4 +11,6 @@ urlpatterns = [
     path('find_sessions/', views.find_sessions, name='find_sessions'),
     path('library/', views.library, name='library'),
     path('sessions/feedback/', views.feedback, name='feedback'),
+    path('update-avatar/', views.update_avatar, name='update_avatar'),
+    path('update-support-needs/', views.update_support_needs, name='update_support_needs'),
 ]

@@ -1,5 +1,6 @@
 {% extends 'student_base.html' %}
 {% load static %}
+{% load avatar_tags %}
 
 {% block title %}<title>Dashboard</title>{% endblock %}
 
@@ -13,8 +14,15 @@
         <div class="profile-header"></div>
         
         <div class="avatar-wrapper">
-            <img src="{% static 'images/avatar.svg' %}" alt="avatar" class="profile-avatar">
-            <div class="edit-avatar-btn">
+            <img src="{% if student.avatar|valid_avatar %}{{ student.avatar.url }}{% else %}{% static 'images/avatar.svg' %}{% endif %}"
+                 alt="avatar" 
+                 class="profile-avatar"
+                 id="avatar-display">
+            <form id="avatar-form" enctype="multipart/form-data" style="display: none;">
+                {% csrf_token %}
+                <input type="file" name="avatar" id="avatar-input" accept="image/*">
+            </form>
+            <div class="edit-avatar-btn" id="edit-avatar-btn">
                 <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
             </div>
         </div>
@@ -48,8 +56,8 @@
                 <tr>
                     <td>Support needs</td>
                     <td>
-                        {{ student.sp_needs|default:"N/A" }}
-                        <div class="edit-field-btn">
+                        <span id="sp-needs-display">{{ student.sp_needs|default:"N/A" }}</span>
+                        <div class="edit-field-btn" id="edit-sp-needs-btn">
                             <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
                         </div>
                     </td>
@@ -58,5 +66,174 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for editing support needs -->
+<div id="sp-needs-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Chỉnh sửa môn học cần giúp đỡ</h3>
+        <form id="sp-needs-form">
+            {% csrf_token %}
+            <textarea id="sp-needs-input" name="sp_needs" rows="4" placeholder="Nhập môn học hoặc lĩnh vực cần hỗ trợ...">{{ student.sp_needs }}</textarea>
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel">Hủy</button>
+                <button type="submit" class="btn-save">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Script loaded'); // Debug log
+    
+    // Avatar upload functionality
+    const editAvatarBtn = document.getElementById('edit-avatar-btn');
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarDisplay = document.getElementById('avatar-display');
+    
+    console.log('Edit avatar button:', editAvatarBtn); // Debug log
+    
+    if (editAvatarBtn) {
+        editAvatarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Avatar button clicked'); // Debug log
+            avatarInput.click();
+        });
+    }
+    
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch("{% url 'students:update_avatar' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    avatarDisplay.src = data.avatar_url;
+                    showNotification('Avatar đã được cập nhật thành công!', 'success');
+                } else {
+                    showNotification('Có lỗi xảy ra khi cập nhật avatar', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Có lỗi xảy ra', 'error');
+            });
+        }
+    });
+    
+    // Support needs edit functionality
+    const editSpNeedsBtn = document.getElementById('edit-sp-needs-btn');
+    const spNeedsModal = document.getElementById('sp-needs-modal');
+    const closeModal = document.querySelector('.close-modal');
+    const cancelBtn = document.querySelector('.btn-cancel');
+    const spNeedsForm = document.getElementById('sp-needs-form');
+    const spNeedsDisplay = document.getElementById('sp-needs-display');
+    
+    editSpNeedsBtn.addEventListener('click', function() {
+        spNeedsModal.style.display = 'flex';
+    });
+    
+    closeModal.addEventListener('click', function() {
+        spNeedsModal.style.display = 'none';
+    });
+    
+    cancelBtn.addEventListener('click', function() {
+        spNeedsModal.style.display = 'none';
+    });
+    
+    window.addEventListener('click', function(e) {
+        if (e.target === spNeedsModal) {
+            spNeedsModal.style.display = 'none';
+        }
+    });
+    
+    spNeedsForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(spNeedsForm);
+        
+        fetch("{% url 'students:update_support_needs' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                spNeedsDisplay.textContent = data.sp_needs || 'N/A';
+                spNeedsModal.style.display = 'none';
+                showNotification('Thông tin đã được cập nhật thành công!', 'success');
+            } else {
+                showNotification('Có lỗi xảy ra khi cập nhật thông tin', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Có lỗi xảy ra', 'error');
+        });
+    });
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: ${type === 'success' ? '#4CAF50' : '#f44336'};
+            color: white;
+            border-radius: 5px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+</script>
+
+<style>
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+</style>
 
 {% endblock %}

@@ -1,1 +1,230 @@
-<h2>This is tutor dashboard</h2>
+{% extends 'tutor_base.html' %}
+{% load static %}
+
+{% block title %}<title>Dashboard</title>{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .main-content {
+        padding: 30px;
+        background-color: #e8e8e8;
+        min-height: 100vh;
+    }
+
+    .section {
+        margin-bottom: 40px;
+    }
+
+    .section h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .session-item {
+        height: 120px;
+        border-radius: 10px;
+        padding: 15px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+    }
+
+    .session-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .session-item h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 5px 0;
+    }
+
+    .session-item p {
+        font-size: 13px;
+        margin: 3px 0;
+        opacity: 0.9;
+    }
+
+    .session-time {
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 5px;
+    }
+
+    /* Color variations */
+    .session-blue {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .session-green {
+        background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    }
+
+    .session-mint {
+        background: linear-gradient(135deg, #2ebf91 0%, #8ec5fc 100%);
+    }
+
+    .session-pink {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .session-peach {
+        background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%);
+    }
+
+    .session-purple {
+        background: linear-gradient(135deg, #a044ff 0%, #6a3093 100%);
+    }
+
+    .session-orange {
+        background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+    }
+
+    .session-teal {
+        background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+    }
+
+    .session-light-blue {
+        background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+    }
+
+    .session-light-pink {
+        background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+    }
+
+    .session-light-purple {
+        background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+
+    .empty-state p {
+        font-size: 16px;
+    }
+
+    .add-advising-link {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 25px;
+        background-color: #0047AB;
+        color: white;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .add-advising-link:hover {
+        background-color: #003380;
+        transform: translateY(-2px);
+    }
+
+    .date-badge {
+        display: inline-block;
+        background-color: rgba(255,255,255,0.3);
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <!-- Today Sessions -->
+    <div class="section">
+        <h2>📚 Today Sessions</h2>
+        <div class="card">
+            {% if today_sessions %}
+                {% for session in today_sessions %}
+                <div class="session-item session-{{ colors|random }}">
+                    <div>
+                        <h3>{{ session.class_code }}</h3>
+                        <p>{{ session.subject.name }}</p>
+                    </div>
+                    <div class="session-time">
+                        🕐 {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>Không có buổi học nào hôm nay</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Advising Sessions -->
+    <div class="section">
+        <h2>🎯 Advising Sessions (Next 7 Days)</h2>
+        <div class="card">
+            {% if upcoming_advising %}
+                {% for advising in upcoming_advising %}
+                <div class="session-item session-{{ colors|random }}">
+                    <div>
+                        <h3>{{ advising.main_session.class_code }}</h3>
+                        <p>{{ advising.main_session.subject.name }}</p>
+                        {% if advising.location %}
+                        <p>📍 {{ advising.location }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="date-badge">
+                            {% if advising.date == today %}
+                                Today
+                            {% else %}
+                                {{ advising.date|date:"d/m" }}
+                            {% endif %}
+                        </div>
+                        <div class="session-time">
+                            🕐 {{ advising.start_time|time:"H:i" }} - {{ advising.end_time|time:"H:i" }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>Chưa có advising session nào được lên lịch</p>
+                    <a href="{% url 'tutors:create_advising_session' %}" class="add-advising-link">
+                        + Tạo Advising Session
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+{% endblock %}

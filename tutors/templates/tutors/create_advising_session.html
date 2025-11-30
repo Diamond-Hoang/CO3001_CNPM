@@ -1,0 +1,267 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+
+{% block title %}<title>Create Advising Session</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .main-content {
+        padding: 30px;
+        background-color: #e8e8e8;
+        min-height: 100vh;
+    }
+
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #0047AB;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .form-subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #0047AB;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .info-box {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196F3;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 4px;
+    }
+
+    .info-box p {
+        margin: 5px 0;
+        color: #1565C0;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 40px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background-color: #0047AB;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #003380;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+
+    .required {
+        color: red;
+    }
+
+    .session-preview {
+        display: none;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    .session-preview.show {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="form-container">
+        <h2 class="form-title">Create Advising Session</h2>
+        <p class="form-subtitle">Tạo buổi phụ đạo thêm cho lớp chính của bạn</p>
+
+        <div class="info-box">
+            <strong>📌 Lưu ý:</strong>
+            <p>• Advising session là buổi học phụ đạo thêm cho một ngày cụ thể</p>
+            <p>• Chọn từ các lớp chính mà bạn đang giảng dạy</p>
+            <p>• Học sinh trong lớp chính sẽ được thông báo về buổi phụ đạo</p>
+        </div>
+
+        <form method="post" id="advisingForm">
+            {% csrf_token %}
+
+            <!-- Main Session -->
+            <div class="form-group">
+                <label for="main_session">Chọn lớp chính <span class="required">*</span></label>
+                <select id="main_session" name="main_session" required onchange="showSessionInfo()">
+                    <option value="">-- Chọn lớp --</option>
+                    {% for session in tutor_sessions %}
+                    <option value="{{ session.id }}" 
+                            data-subject="{{ session.subject.name }}"
+                            data-code="{{ session.class_code }}"
+                            data-students="{{ session.enrolled_count }}">
+                        {{ session.class_code }} - {{ session.subject.name }} ({{ session.enrolled_count }} students)
+                    </option>
+                    {% endfor %}
+                </select>
+                <div id="sessionPreview" class="session-preview"></div>
+            </div>
+
+            <!-- Date -->
+            <div class="form-group">
+                <label for="date">Ngày học phụ đạo <span class="required">*</span></label>
+                <input type="date" id="date" name="date" required min="{{ today|date:'Y-m-d' }}">
+            </div>
+
+            <!-- Time -->
+            <div class="form-group">
+                <label for="start_time">Giờ bắt đầu <span class="required">*</span></label>
+                <input type="time" id="start_time" name="start_time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="end_time">Giờ kết thúc <span class="required">*</span></label>
+                <input type="time" id="end_time" name="end_time" required>
+            </div>
+
+            <!-- Location -->
+            <div class="form-group">
+                <label for="location">Địa điểm</label>
+                <input type="text" id="location" name="location" placeholder="VD: Phòng B1-201, Google Meet link, ...">
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+                <label for="notes">Ghi chú</label>
+                <textarea id="notes" name="notes" placeholder="Nội dung buổi học, tài liệu cần chuẩn bị, ..."></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">Tạo Advising Session</button>
+                <a href="{% url 'tutors:sessions' %}" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set min date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+        dateInput.value = today;
+    });
+
+    // Show session info when selected
+    function showSessionInfo() {
+        const select = document.getElementById('main_session');
+        const preview = document.getElementById('sessionPreview');
+        const option = select.options[select.selectedIndex];
+        
+        if (select.value) {
+            const subject = option.getAttribute('data-subject');
+            const code = option.getAttribute('data-code');
+            const students = option.getAttribute('data-students');
+            
+            preview.innerHTML = `
+                <strong>Thông tin lớp:</strong><br>
+                Mã lớp: ${code}<br>
+                Môn học: ${subject}<br>
+                Số học sinh: ${students}
+            `;
+            preview.classList.add('show');
+        } else {
+            preview.classList.remove('show');
+        }
+    }
+
+    // Validate time
+    document.getElementById('advisingForm').addEventListener('submit', function(e) {
+        const startTime = document.getElementById('start_time').value;
+        const endTime = document.getElementById('end_time').value;
+        
+        if (startTime && endTime && startTime >= endTime) {
+            e.preventDefault();
+            alert('Giờ kết thúc phải sau giờ bắt đầu!');
+        }
+    });
+</script>
+
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+{% endblock %}
