@@ -1,128 +1,560 @@
 {% extends 'student_base.html' %}
 {% load static %}
 
-{% block title %} <title>Find_Sessions</title> {% endblock %}
+{% block title %}<title>Find Sessions</title>{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/find_sessions.css' %}">
 <style>
-    .messages {
-        list-style: none;
-        padding: 0;
-        margin-bottom: 20px;
+    .find-sessions-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 40px 20px;
+        margin-left: 150px;
+        margin-right: 120px;
+        margin-bottom: 90px;
+    }
+
+     @media (max-width: 100%) {
+        .find-sessions-container {
+            padding-left: 100px;
+            padding-right: 80px;
+        }
     }
     
-    .messages li {
-        padding: 12px 20px;
-        border-radius: 4px;
-        margin-bottom: 10px;
+    @media (max-width: 100%) {
+        .find-sessions-container {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
     }
     
-    .messages .success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
+    @media (max-width: 100%) {
+        .find-sessions-container {
+            padding: 30px 20px 60px 20px;
+        }
     }
-    
-    .messages .error {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
     }
-    
-    .messages .warning {
-        background-color: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffeaa7;
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
-    
-    .action.disabled {
-        background-color: #6c757d;
-        cursor: not-allowed;
+
+    .page-title::before {
+        font-size: 32px;
+    }
+
+    /* Search Bar */
+    .search-wrapper {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-form {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        width: 20px;
+        height: 20px;
+        opacity: 0.5;
         pointer-events: none;
     }
-    
-    .full-capacity {
-        color: #dc3545;
+
+    .search-input {
+        flex: 1;
+        padding: 15px 20px 15px 50px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .search-input::placeholder {
+        color: #999;
+    }
+
+    .search-btn {
+        padding: 15px 35px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Request Button */
+    .request-session-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .request-session-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .request-session-btn::before {
+        content: "+";
+        font-size: 24px;
         font-weight: bold;
+    }
+
+    /* Messages/Notifications */
+    .messages-container {
+        margin-bottom: 25px;
+    }
+
+    .message-item {
+        padding: 16px 24px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideInDown 0.3s ease-out;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-item::before {
+        font-size: 20px;
+    }
+
+    .message-success {
+        background: #d4edda;
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+
+    .message-success::before {
+        content: "✓";
+    }
+
+    .message-error {
+        background: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+
+    .message-error::before {
+        content: "✕";
+    }
+
+    .message-warning {
+        background: #fff3cd;
+        color: #856404;
+        border-left: 4px solid #ffc107;
+    }
+
+    .message-warning::before {
+        content: "⚠";
+    }
+
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Sessions Table */
+    .sessions-table-wrapper {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .sessions-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .sessions-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .sessions-table th {
+        padding: 18px 20px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .sessions-table tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s;
+    }
+
+    .sessions-table tbody tr:hover {
+        background-color: #f8f9ff;
+        transform: scale(1.01);
+    }
+
+    .sessions-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .sessions-table td {
+        padding: 18px 20px;
+        color: #333;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .class-code {
+        font-weight: 600;
+        color: #667eea;
+        font-size: 15px;
+    }
+
+    .capacity-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .capacity-available {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .capacity-full {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .capacity-limited {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    /* Action Buttons */
+    .btn-join {
+        display: inline-block;
+        padding: 8px 20px;
+        background: white;
+        color: #28a745;
+        border: 2px solid #28a745;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .btn-join:hover {
+        background: #28a745;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-full {
+        display: inline-block;
+        padding: 8px 20px;
+        background: #f8d7da;
+        color: #721c24;
+        border: 2px solid #dc3545;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    .empty-state h3 {
+        font-size: 22px;
+        color: #666;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        font-size: 15px;
+        color: #999;
+        margin-bottom: 30px;
+    }
+
+    .empty-state-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s;
+    }
+
+    .empty-state-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Request Section */
+    .request-section {
+        text-align: center;
+        padding: 30px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border-radius: 12px;
+        margin-top: 30px;
+    }
+
+    .request-section h3 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .request-section p {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .sessions-table {
+            font-size: 13px;
+        }
+
+        .sessions-table th,
+        .sessions-table td {
+            padding: 14px 12px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .find-sessions-container {
+            padding: 20px 10px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+
+        .request-session-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .search-form {
+            flex-direction: column;
+        }
+
+        .search-btn {
+            width: 100%;
+        }
+
+        .sessions-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .sessions-table {
+            min-width: 900px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<div class="main-content">
+<div class="find-sessions-container">
+    <div class="page-header">
+        <h1 class="page-title">Find Sessions</h1>
+        <a href="{% url 'feedback:request_session' %}" class="request-session-btn">
+            Request New Session
+        </a>
+    </div>
+
     {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message-item message-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
-    <div class="search-container">
-        <form method="GET" action="{% url 'tutoring_sessions:available_sessions' %}">
-            <img src="{% static 'images/search.svg' %}" alt="search_icon" class="search-icon">
-            <input type="text" name="search" placeholder="Search for sessions" 
-                   value="{{ search_query }}" />
+    <div class="search-wrapper">
+        <form method="GET" action="{% url 'tutoring_sessions:available_sessions' %}" class="search-form">
+            <img src="{% static 'images/search.svg' %}" alt="search" class="search-icon">
+            <input type="text" 
+                   name="search" 
+                   placeholder="Search by class code, subject, or tutor name..." 
+                   value="{{ search_query }}" 
+                   class="search-input">
+            <button type="submit" class="search-btn">Search</button>
         </form>
     </div>
 
-    <div class="table-header">Available Sessions</div>
-    <table class="info-table">
-        <tr>
-            <th>Class</th>
-            <th>Subject</th>
-            <th>Tutor</th>
-            <th>Day</th>
-            <th>Time</th>
-            <th>Capacity</th>
-            <th>Action</th>
-        </tr>
-        {% for session in sessions %}
-        <tr>
-            <td>{{ session.class_code }}</td>
-            <td>{{ session.subject.name }}</td>
-            <td>{{ session.tutor.full_name }}</td>
-            <td>{{ session.days }}</td>
-            <td>{{ session.start_time|time:"H\hi" }}-{{ session.end_time|time:"H\hi" }}</td>
-            <td {% if session.enrolled_count >= session.capacity %}class="full-capacity"{% endif %}>
-                {{ session.capacity_display }}
-            </td>
-            <td>
-                {% if session.enrolled_count < session.capacity %}
-                    <form method="POST" action="{% url 'tutoring_sessions:enroll_session' session.id %}" style="display: inline;">
-                        {% csrf_token %}
-                        <a href="#"
-                        class="join-link"
-                        onclick="event.preventDefault();
-                                    if (confirm('Bạn có chắc muốn tham gia session này?')) {
-                                        this.closest('form').submit();
-                                    }">
-                            Join
-                        </a>
-                    </form>
-                {% else %}
-                    <span class="action disabled">Full</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="7" style="text-align: center;">
-                
-                {% if search_query %}
-                    Không tìm thấy session nào phù hợp với "{{ search_query }}"
-                {% else %}
-                    Hiện tại không có session nào khả dụng
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    
-    <div class="request-btn">
-        <a href="{% url 'feedback:request_session' %}">Request new session</a>
+    <div class="sessions-table-wrapper">
+        {% if sessions %}
+        <table class="sessions-table">
+            <thead>
+                <tr>
+                    <th>Class Code</th>
+                    <th>Subject</th>
+                    <th>Tutor</th>
+                    <th>Days</th>
+                    <th>Time</th>
+                    <th>Capacity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in sessions %}
+                <tr>
+                    <td>
+                        <span class="class-code">{{ session.class_code }}</span>
+                    </td>
+                    <td>{{ session.subject.name }}</td>
+                    <td>{{ session.tutor.full_name }}</td>
+                    <td>{{ session.days }}</td>
+                    <td>{{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}</td>
+                    <td>
+                        {% if session.enrolled_count >= session.capacity %}
+                            <span class="capacity-badge capacity-full">
+                                {{ session.capacity_display }}
+                            </span>
+                        {% elif session.enrolled_count >= session.capacity|floatformat:0|add:"-2" %}
+                            <span class="capacity-badge capacity-limited">
+                                {{ session.capacity_display }}
+                            </span>
+                        {% else %}
+                            <span class="capacity-badge capacity-available">
+                                {{ session.capacity_display }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if session.enrolled_count < session.capacity %}
+                            <form method="POST" action="{% url 'tutoring_sessions:enroll_session' session.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <a href="#"
+                                   class="btn-join"
+                                   onclick="event.preventDefault();
+                                           if (confirm('Are you sure you want to join this session?')) {
+                                               this.closest('form').submit();
+                                           }">
+                                    Join Session
+                                </a>
+                            </form>
+                        {% else %}
+                            <span class="btn-full">Full</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            {% if search_query %}
+                <h3>No Results Found</h3>
+                <p>No sessions match your search for "{{ search_query }}". Try different keywords or browse all sessions.</p>
+            {% else %}
+                <h3>No Sessions Available</h3>
+                <p>There are currently no sessions available. Check back later or request a new session!</p>
+            {% endif %}
+            <a href="{% url 'feedback:request_session' %}" class="empty-state-btn">
+                + Request New Session
+            </a>
+        </div>
+        {% endif %}
     </div>
+
+    {% if sessions %}
+    <div class="request-section">
+        <h3>Can't find what you're looking for?</h3>
+        <p>Request a new session and we'll try to match you with a tutor</p>
+        <a href="{% url 'feedback:request_session' %}" class="request-session-btn">
+            Request New Session
+        </a>
+    </div>
+    {% endif %}
 </div>
+
 {% endblock %}

@@ -19,13 +19,13 @@ class Session(models.Model):
     ]
     
     DAY_CHOICES = [
-        ('2', 'Thứ 2'),
-        ('3', 'Thứ 3'),
-        ('4', 'Thứ 4'),
-        ('5', 'Thứ 5'),
-        ('6', 'Thứ 6'),
-        ('7', 'Thứ 7'),
-        ('cn', 'Chủ nhật'),
+        ('0', 'Monday'),
+        ('1', 'Tuesday'),
+        ('2', 'Wednesday'),
+        ('3', 'Thursday'),
+        ('4', 'Friday'),
+        ('5', 'Saturday'),
+        ('6', 'Sunday'),
     ]
     
     class_code = models.CharField(max_length=20)
@@ -41,6 +41,10 @@ class Session(models.Model):
     
     def __str__(self):
         return f"{self.class_code} - {self.subject.name}"
+    
+    def get_days_display(self):
+        mapping = dict(self.DAY_CHOICES)
+        return ", ".join(mapping[d] for d in self.days.split("-"))
     
     @property
     def capacity_display(self):

@@ -41,6 +41,7 @@ body{
 .sidebar .item a {
     position: relative;
     display: flex;
+    transition: all 0.3s ease;
 }
 
 .sidebar-icon {
@@ -52,6 +53,7 @@ body{
     transition: background 0.3s;
     position: relative;
     z-index: 1;
+    transition: all 0.3s ease;
 }
 
 .sidebar-icon-active {
@@ -81,6 +83,7 @@ body{
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: -1;
     text-indent: 30px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 /* Hiển thị label khi hover */
@@ -88,6 +91,38 @@ body{
     opacity: 1;
 }
 
+.sidebar .item a:hover .sidebar-icon {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+} 
+
+.sidebar .item a:hover {
+    transform: translateX(5px);
+}
+
+/* Animation cho sidebar icons */
+/* .sidebar .item a {
+    transition: all 0.3s ease;
+}
+
+.sidebar .item a:hover {
+    transform: translateX(5px);
+}
+
+.sidebar-icon {
+    transition: all 0.3s ease;
+}
+
+.sidebar .item a:hover .sidebar-icon {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+} */
+
+/* Cải thiện tooltip */
+/* .sidebar .item a::after {
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+} */
+ 
 .sidebar .profile{
     position: relative;
     top: 32px;

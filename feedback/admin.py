@@ -1,9 +1,13 @@
 from django.contrib import admin
 from .models import Feedback
-from .models import SessionRequest, TechnicalReport
+from .models import SessionRequest, TechnicalReport, StudentProgress
 
 # Register your models here.
-admin.site.register(Feedback)
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ['enrollment', 'rating', 'created_at']
+    search_fields = ['enrollment__student__full_name', 'enrollment__session__subject']
+
 @admin.register(SessionRequest)
 class SessionRequestAdmin(admin.ModelAdmin):
     list_display = ['subject', 'student', 'delivery_mode', 'date', 'start_time', 'end_time', 'created_at']
@@ -47,3 +51,21 @@ class TechnicalReportAdmin(admin.ModelAdmin):
         updated = queryset.update(status='pending')
         self.message_user(request, f'{updated} report(s) marked as pending.')
     mark_as_pending.short_description = "Mark selected reports as pending"
+
+@admin.register(StudentProgress)
+class StudentProgressAdmin(admin.ModelAdmin):
+    list_display = [
+        'student',
+        'session',
+        'tutor',
+        'attendance',
+        'topics_covered',
+        'comprehension_level',
+        'goals_achieved',
+        'created_at'
+    ]
+    list_filter = ['tutor', 'session', 'created_at']
+    search_fields = ['student__full_name', 'session__class_code', 'tutor__full_name']
+
+    # 🔥 Remove enrollment, keep only these as autocomplete
+    autocomplete_fields = ['student', 'session', 'tutor']

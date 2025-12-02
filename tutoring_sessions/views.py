@@ -22,14 +22,6 @@ def session_list(request):
     })
 
 @login_required
-def session_detail(request, session_id):
-    """Chi tiết session"""
-    session = get_object_or_404(Session, id=session_id)
-    return render(request, 'tutoring_sessions/session_detail.html', {
-        'session': session,
-    })
-
-@login_required
 def cancel_enrollment(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id, student=request.user.student)
     session=enrollment.session
@@ -182,47 +174,43 @@ def reschedule_session(request, enrollment_id):
 
 @login_required
 def tutor_reschedule_session(request, session_id):
-    """Tutor reschedule session - thay đổi thời gian/ngày học"""
     session = get_object_or_404(Session, id=session_id, tutor__user=request.user)
-    
-    # Chỉ cho phép reschedule nếu session đang scheduled hoặc ongoing
+
     if session.status not in ['scheduled', 'ongoing']:
         messages.error(request, 'Không thể thay đổi lịch của session đã hoàn thành hoặc đã hủy.')
         return redirect('tutors:sessions')
-    
+
     if request.method == 'POST':
-        new_days = request.POST.get('days')
+        selected_value = request.POST.get('days')  # chỉ lấy 1 checkbox được chọn
         new_start_time = request.POST.get('start_time')
         new_end_time = request.POST.get('end_time')
-        
-        # Validate dữ liệu
-        if not all([new_days, new_start_time, new_end_time]):
+
+        if not all([selected_value, new_start_time, new_end_time]):
             messages.error(request, 'Vui lòng điền đầy đủ thông tin.')
-            return redirect('tutors:sessions', session_id=session_id)
-        
-        # Cập nhật thông tin session
-        session.days = new_days
+            return redirect('tutors:sessions')
+
+        # Chuyển giá trị (0,1,2...) thành tên ngày
+        day_dict = dict(Session.DAY_CHOICES)
+        session.days = day_dict.get(selected_value, selected_value)  # ví dụ "Monday"
         session.start_time = new_start_time
         session.end_time = new_end_time
         session.save()
-        
-        # Gửi thông báo cho tất cả students trong session (optional)
-        enrollments = Enrollment.objects.filter(session=session, is_active=True)
-        for enrollment in enrollments:
-            # TODO: Gửi notification cho student
-            pass
-        
+
         messages.success(request, f'Đã cập nhật lịch học cho lớp {session.class_code}!')
         return redirect('tutors:sessions')
-    
-    # Danh sách các ngày trong tuần
+
     day_choices = Session.DAY_CHOICES
-    
+    # Lấy giá trị hiện tại (tên ngày) để check mặc định
+    current_day_label = session.days
+
     context = {
         'session': session,
         'day_choices': day_choices,
+        'current_day_label': current_day_label,
     }
     return render(request, 'tutoring_sessions/tutor_reschedule.html', context)
+
+
 
 @login_required
 def tutor_cancel_session(request, session_id):

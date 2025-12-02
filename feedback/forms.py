@@ -62,7 +62,7 @@ class TechnicalReportForm(forms.ModelForm):
                 'class': 'report-textarea',
                 'id': 'problemText',
                 'maxlength': '150',
-                'placeholder': 'Mô tả vấn đề kỹ thuật của bạn...',
+                'placeholder': 'Describe your technical issue',
                 'rows': 6,
             }),
         }

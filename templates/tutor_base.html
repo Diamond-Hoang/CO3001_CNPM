@@ -8,6 +8,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/student_base.css' %}"> 
     {% block title %}{% endblock %} 
+    
+    <style>
+        /* Animation cho sidebar icons */
+        .sidebar .item a {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .item a:hover {
+            transform: translateX(5px);
+        }
+        
+        .sidebar-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .item a:hover .sidebar-icon {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+        }
+        
+        /* Cải thiện tooltip */
+        .sidebar .item a::after {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+    
     {% block extra_css %}{% endblock %}      
 </head>
 <body>
@@ -27,8 +53,8 @@
             <a href="{% url 'tutors:sessions' %}" data-label="Sessions">
                 <img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon">
             </a>
-            <a href="{% url 'tutors:availability_schedule' %}" data-label="Find Sessions">
-                <img src="{% static 'images/Availability.svg' %}" alt="find_sessions_icon" class="sidebar-icon">
+            <a href="{% url 'tutors:availability_schedule' %}" data-label="Set Availability">
+                <img src="{% static 'images/Availability.svg' %}" alt="set_availability" class="sidebar-icon">
             </a>
             <a href="{% url 'library:list' %}" data-label="Library">
                 <img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon">

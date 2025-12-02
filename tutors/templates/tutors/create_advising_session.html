@@ -5,57 +5,98 @@
 
 {% block extra_css %}
 <style>
+    .main-content,
+    .form-container,
+    .form-container *,
+    .form-group,
+    .form-group *,
+    .form-row,
+    .form-row * {
+        box-sizing: border-box;
+    }
+
     .main-content {
-        padding: 30px;
-        background-color: #e8e8e8;
-        min-height: 100vh;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 50px 120px 90px 150px;
+        z-index: -1;
+    }
+    
+    @media (max-width: 100%) {
+        .main-content {
+            padding-left: 100px;
+            padding-right: 80px;
+        }
+    }
+    
+    @media (max-width: 100%) {
+        .main-content {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+    }
+    
+    @media (max-width: 100%) {
+        .main-content {
+            padding: 30px 20px 60px 20px;
+        }
     }
 
     .form-container {
-        max-width: 800px;
+        width: 100%;
+        max-width: 100%;
         margin: 0 auto;
-        background-color: white;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        padding: 45px;
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0, 71, 171, 0.12);
+        border: 1px solid rgba(0, 71, 171, 0.08);
     }
 
     .form-title {
-        font-size: 28px;
+        font-size: 32px;
         font-weight: 700;
-        color: #0047AB;
+        background: linear-gradient(135deg, #0047AB 0%, #0066ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 10px;
         text-align: center;
+        letter-spacing: -0.5px;
     }
 
     .form-subtitle {
         text-align: center;
         color: #666;
-        margin-bottom: 30px;
-        font-size: 14px;
+        margin-bottom: 35px;
+        font-size: 15px;
+        font-weight: 500;
     }
 
     .form-group {
         margin-bottom: 25px;
+        width: 100%;
     }
 
     .form-group label {
         display: block;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
         color: #333;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
 
     .form-group input,
     .form-group select,
     .form-group textarea {
         width: 100%;
-        padding: 12px;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        font-size: 16px;
-        transition: border-color 0.3s;
+        padding: 14px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background-color: white;
+        font-family: inherit;
     }
 
     .form-group input:focus,
@@ -63,77 +104,173 @@
     .form-group textarea:focus {
         outline: none;
         border-color: #0047AB;
+        box-shadow: 0 0 0 4px rgba(0, 71, 171, 0.1);
+        background-color: #ffffff;
+    }
+
+    .form-group input:hover,
+    .form-group select:hover,
+    .form-group textarea:hover {
+        border-color: #b0b0b0;
     }
 
     .form-group textarea {
         resize: vertical;
-        min-height: 100px;
+        min-height: 120px;
+        line-height: 1.6;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
     }
 
     .info-box {
-        background-color: #e3f2fd;
-        border-left: 4px solid #2196F3;
-        padding: 15px;
-        margin-bottom: 25px;
-        border-radius: 4px;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 5px solid #2196F3;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+    }
+
+    .info-box strong {
+        color: #1565C0;
+        font-size: 16px;
+        display: block;
+        margin-bottom: 10px;
     }
 
     .info-box p {
-        margin: 5px 0;
+        margin: 8px 0;
         color: #1565C0;
+        font-size: 14px;
+        line-height: 1.6;
     }
 
     .button-group {
         display: flex;
         gap: 15px;
         justify-content: center;
-        margin-top: 30px;
+        margin-top: 35px;
+        flex-wrap: wrap;
     }
 
     .btn {
-        padding: 12px 40px;
+        padding: 14px 45px;
         font-size: 16px;
         font-weight: 600;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.3s ease;
         text-decoration: none;
         display: inline-block;
+        text-align: center;
     }
 
     .btn-primary {
-        background-color: #0047AB;
+        background: linear-gradient(135deg, #0047AB 0%, #0066ff 100%);
         color: white;
+        box-shadow: 0 4px 12px rgba(0, 71, 171, 0.3);
     }
 
     .btn-primary:hover {
-        background-color: #003380;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 71, 171, 0.4);
+        background: linear-gradient(135deg, #003380 0%, #0052cc 100%);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
     }
 
     .btn-secondary {
-        background-color: #6c757d;
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
         color: white;
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
     }
 
     .btn-secondary:hover {
-        background-color: #545b62;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+        background: linear-gradient(135deg, #545b62 0%, #4e555b 100%);
+    }
+
+    .btn-secondary:active {
+        transform: translateY(0);
     }
 
     .required {
-        color: red;
+        color: #e74c3c;
+        font-weight: 700;
     }
 
     .session-preview {
         display: none;
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        margin-top: 10px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 18px;
+        border-radius: 10px;
+        margin-top: 12px;
+        border: 2px solid #dee2e6;
+        animation: slideDown 0.3s ease-out;
     }
 
     .session-preview.show {
         display: block;
+    }
+
+    .session-preview strong {
+        color: #0047AB;
+        display: block;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    .session-preview br {
+        line-height: 1.8;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 30px 20px;
+        }
+
+        .form-title {
+            font-size: 26px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 15px;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
     }
 </style>
 {% endblock %}
@@ -142,14 +279,14 @@
 
 <div class="main-content">
     <div class="form-container">
-        <h2 class="form-title">Create Advising Session</h2>
-        <p class="form-subtitle">Tạo buổi phụ đạo thêm cho lớp chính của bạn</p>
+        <h2 class="form-title">📚 Create Advising Session</h2>
+        <p class="form-subtitle">Create an additional tutoring session for your main class</p>
 
         <div class="info-box">
-            <strong>📌 Lưu ý:</strong>
-            <p>• Advising session là buổi học phụ đạo thêm cho một ngày cụ thể</p>
-            <p>• Chọn từ các lớp chính mà bạn đang giảng dạy</p>
-            <p>• Học sinh trong lớp chính sẽ được thông báo về buổi phụ đạo</p>
+            <strong>📌 Important Notes:</strong>
+            <p>• Advising session is an additional tutoring session for a specific date</p>
+            <p>• Choose from the main classes you are currently teaching</p>
+            <p>• Students in the main class will be notified about the tutoring session</p>
         </div>
 
         <form method="post" id="advisingForm">
@@ -157,9 +294,9 @@
 
             <!-- Main Session -->
             <div class="form-group">
-                <label for="main_session">Chọn lớp chính <span class="required">*</span></label>
+                <label for="main_session">Select Main Class <span class="required">*</span></label>
                 <select id="main_session" name="main_session" required onchange="showSessionInfo()">
-                    <option value="">-- Chọn lớp --</option>
+                    <option value="">-- Select Class --</option>
                     {% for session in tutor_sessions %}
                     <option value="{{ session.id }}" 
                             data-subject="{{ session.subject.name }}"
@@ -174,37 +311,39 @@
 
             <!-- Date -->
             <div class="form-group">
-                <label for="date">Ngày học phụ đạo <span class="required">*</span></label>
+                <label for="date">Tutoring Date <span class="required">*</span></label>
                 <input type="date" id="date" name="date" required min="{{ today|date:'Y-m-d' }}">
             </div>
 
-            <!-- Time -->
-            <div class="form-group">
-                <label for="start_time">Giờ bắt đầu <span class="required">*</span></label>
-                <input type="time" id="start_time" name="start_time" required>
-            </div>
+            <!-- Time Row -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="start_time">Start Time <span class="required">*</span></label>
+                    <input type="time" id="start_time" name="start_time" required>
+                </div>
 
-            <div class="form-group">
-                <label for="end_time">Giờ kết thúc <span class="required">*</span></label>
-                <input type="time" id="end_time" name="end_time" required>
+                <div class="form-group">
+                    <label for="end_time">End Time <span class="required">*</span></label>
+                    <input type="time" id="end_time" name="end_time" required>
+                </div>
             </div>
 
             <!-- Location -->
             <div class="form-group">
-                <label for="location">Địa điểm</label>
-                <input type="text" id="location" name="location" placeholder="VD: Phòng B1-201, Google Meet link, ...">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="E.g., Room B1-201, Google Meet link, ...">
             </div>
 
             <!-- Notes -->
             <div class="form-group">
-                <label for="notes">Ghi chú</label>
-                <textarea id="notes" name="notes" placeholder="Nội dung buổi học, tài liệu cần chuẩn bị, ..."></textarea>
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" placeholder="Session content, required materials, preparation notes, ..."></textarea>
             </div>
 
             <!-- Buttons -->
             <div class="button-group">
-                <button type="submit" class="btn btn-primary">Tạo Advising Session</button>
-                <a href="{% url 'tutors:sessions' %}" class="btn btn-secondary">Hủy</a>
+                <button type="submit" class="btn btn-primary">Create Advising Session</button>
+                <a href="{% url 'tutors:sessions' %}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>
@@ -234,10 +373,10 @@
             const students = option.getAttribute('data-students');
             
             preview.innerHTML = `
-                <strong>Thông tin lớp:</strong><br>
-                Mã lớp: ${code}<br>
-                Môn học: ${subject}<br>
-                Số học sinh: ${students}
+                <strong>Class Information:</strong>
+                Class Code: ${code}<br>
+                Subject: ${subject}<br>
+                Number of Students: ${students}
             `;
             preview.classList.add('show');
         } else {
@@ -252,7 +391,7 @@
         
         if (startTime && endTime && startTime >= endTime) {
             e.preventDefault();
-            alert('Giờ kết thúc phải sau giờ bắt đầu!');
+            alert('End time must be after start time!');
         }
     });
 </script>

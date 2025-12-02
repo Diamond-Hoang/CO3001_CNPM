@@ -23,13 +23,13 @@ def dashboard(request):
     
     # Today's regular sessions (lọc theo ngày trong tuần)
     weekday_map = {
-        0: '2',   # Monday
-        1: '3',   # Tuesday
-        2: '4',   # Wednesday
-        3: '5',   # Thursday
-        4: '6',   # Friday
-        5: '7',   # Saturday
-        6: 'cn',  # Sunday
+        0: 'Monday',   # Monday
+        1: 'Tuesday',   # Tuesday
+        2: 'Wednesday',   # Wednesday
+        3: 'Thursday',   # Thursday
+        4: 'Friday',   # Friday
+        5: 'Saturday',   # Saturday
+        6: 'Sunday',  # Sunday
     }
     today_weekday = weekday_map[today.weekday()]
     
@@ -328,7 +328,7 @@ def student_progress(request, student_id, session_id):
         progress.notes = request.POST.get('notes', '')
         progress.save()
         messages.success(request, f'Đã cập nhật progress cho {student.full_name}!')
-        return redirect('tutors/sessions.html', session_id=session.id)
+        return redirect('tutors:sessions')
     
     context = {
         'student': student,

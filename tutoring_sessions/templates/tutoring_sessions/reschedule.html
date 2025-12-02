@@ -180,29 +180,29 @@
 {% block content %}
 <div class="reschedule-container">
     <div class="current-session">
-        <h3>📚 Lớp hiện tại</h3>
+        <h3>Current Session</h3>
         <div class="session-info">
             <div class="session-info-item">
-                <strong>Mã lớp:</strong>
+                <strong>Class Code:</strong>
                 <span>{{ current_session.class_code }}</span>
             </div>
             <div class="session-info-item">
-                <strong>Môn học:</strong>
+                <strong>Subject:</strong>
                 <span>{{ current_session.subject.name }}</span>
             </div>
             <div class="session-info-item">
-                <strong>Giảng viên:</strong>
+                <strong>Tutor:</strong>
                 <span>{{ current_session.tutor.full_name }}</span>
             </div>
             <div class="session-info-item">
-                <strong>Thời gian:</strong>
-                <span>{{ current_session.days }} - {{ current_session.start_time|time:"H\hi" }} đến {{ current_session.end_time|time:"H\hi" }}</span>
+                <strong>Time:</strong>
+                <span>{{ current_session.days }} - {{ current_session.start_time|time:"H\hi" }} to {{ current_session.end_time|time:"H\hi" }}</span>
             </div>
         </div>
     </div>
     
     <div class="available-sessions">
-        <h3>🔄 Chọn lớp mới (cùng môn học và giảng viên)</h3>
+        <h3>Select a New Session (Same Subject and Tutor)</h3>
         
         {% if available_sessions %}
         <form method="post">
@@ -219,20 +219,20 @@
                         <div class="card-content">
                             <div class="card-header">{{ session.class_code }}</div>
                             <div class="card-info">
-                                <strong>Thứ:</strong> {{ session.days }}
+                                <strong>Day:</strong> {{ session.days }}
                             </div>
                             <div class="card-info">
-                                <strong>Giờ học:</strong> {{ session.start_time|time:"H\hi" }} - {{ session.end_time|time:"H\hi" }}
+                                <strong>Time:</strong> {{ session.start_time|time:"H\hi" }} - {{ session.end_time|time:"H\hi" }}
                             </div>
                             <div class="card-info">
-                                <strong>Sĩ số:</strong>
+                                <strong>Capacity:</strong>
                                 {% widthratio session.enrolled_count session.capacity 100 as percentage %}
                                 <span class="capacity-indicator {% if percentage >= 80 %}capacity-low{% else %}capacity-good{% endif %}">
                                     {{ session.capacity_display }}
                                 </span>
                             </div>
                             <div class="card-info">
-                                <strong>Trạng thái:</strong> {{ session.get_status_display }}
+                                <strong>Status:</strong> {{ session.get_status_display }}
                             </div>
                         </div>
                     </label>
@@ -241,17 +241,17 @@
             </div>
             
             <div class="buttons-container">
-                <button type="submit" class="btn btn-primary" onclick="return confirm('Bạn có chắc muốn chuyển sang lớp này?')">
-                    Xác nhận chuyển lớp
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Are you sure you want to switch to this session?')">
+                    Confirm Reschedule
                 </button>
-                <a href="{% url 'students:sessions' %}" class="btn btn-secondary">Hủy</a>
+                <a href="{% url 'students:sessions' %}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
         {% else %}
         <div class="no-sessions">
-            <p>❌ Không có lớp nào khác phù hợp để chuyển.</p>
-            <p>Các lớp phải cùng môn học và giảng viên với lớp hiện tại.</p>
-            <a href="{% url 'students:sessions' %}" class="btn btn-secondary" style="margin-top: 20px;">Quay lại</a>
+            <p>No other suitable sessions are available.</p>
+            <p>Sessions must have the same subject and tutor as the current one.</p>
+            <a href="{% url 'students:sessions' %}" class="btn btn-secondary" style="margin-top: 20px;">Back</a>
         </div>
         {% endif %}
     </div>

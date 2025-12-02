@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from tutoring_sessions.models import Enrollment
+from tutoring_sessions.models import Enrollment, Session
 from students.models import Student
-from .models import Feedback, SessionRequest
+from .models import Feedback
 from .forms import SessionRequestForm, TechnicalReportForm
+from django.db.models import Avg
 
 # Create your views here.
 @login_required
@@ -91,3 +92,70 @@ def technical_report(request):
         'base_template': base_template,
         'dashboard_url': dashboard_url,   # 🔥 Gửi xuống template
     })
+
+@login_required
+def view_feedback(request, session_id):
+    """
+    View to display all feedback for a specific session
+    Only accessible by the tutor of that session
+    """
+    # Get session and verify it belongs to the logged-in tutor
+    session = get_object_or_404(Session, id=session_id, tutor=request.user.tutor)
+    
+    # Get all enrollments for this session with their feedback
+    # Note: For OneToOneField, use 'feedback' not 'feedback_set'
+    enrollments = Enrollment.objects.filter(session=session).select_related(
+        'student', 'student__user'
+    )
+    
+    # Separate enrollments with and without feedback
+    feedbacks_with_comments = []
+    feedbacks_without_comments = []
+    
+    for enrollment in enrollments:
+        try:
+            feedback = enrollment.feedback
+            if feedback.comment:
+                feedbacks_with_comments.append({
+                    'student': enrollment.student,
+                    'rating': feedback.rating,
+                    'comment': feedback.comment,
+                    'created_at': feedback.created_at
+                })
+            else:
+                feedbacks_without_comments.append({
+                    'student': enrollment.student,
+                    'rating': feedback.rating,
+                    'created_at': feedback.created_at
+                })
+        except Feedback.DoesNotExist:
+            # Student hasn't submitted feedback yet
+            pass
+    
+    # Calculate statistics
+    all_feedbacks = Feedback.objects.filter(enrollment__session=session)
+    total_feedbacks = all_feedbacks.count()
+    total_students = enrollments.count()
+    
+    stats = {
+        'average_rating': all_feedbacks.aggregate(Avg('rating'))['rating__avg'] or 0,
+        'total_feedbacks': total_feedbacks,
+        'total_students': total_students,
+        'feedback_rate': (total_feedbacks / total_students * 100) if total_students > 0 else 0,
+        'rating_distribution': {
+            5: all_feedbacks.filter(rating=5).count(),
+            4: all_feedbacks.filter(rating=4).count(),
+            3: all_feedbacks.filter(rating=3).count(),
+            2: all_feedbacks.filter(rating=2).count(),
+            1: all_feedbacks.filter(rating=1).count(),
+        }
+    }
+    
+    context = {
+        'session': session,
+        'feedbacks_with_comments': feedbacks_with_comments,
+        'feedbacks_without_comments': feedbacks_without_comments,
+        'stats': stats,
+    }
+    
+    return render(request, 'feedback/view_feedback.html', context)

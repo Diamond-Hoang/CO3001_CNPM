@@ -26,21 +26,20 @@
     .card {
         background-color: white;
         border-radius: 15px;
-        padding: 25px;
+        padding: 15px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 15px;
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+        gap: 5px;
     }
 
     .session-item {
-        height: 120px;
+        height: 65px;
         border-radius: 10px;
         padding: 15px;
         color: white;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         transition: transform 0.3s, box-shadow 0.3s;
         cursor: pointer;
     }
@@ -145,7 +144,6 @@
         padding: 3px 10px;
         border-radius: 12px;
         font-size: 12px;
-        margin-top: 5px;
     }
 </style>
 {% endblock %}
@@ -155,23 +153,22 @@
 <div class="main-content">
     <!-- Today Sessions -->
     <div class="section">
-        <h2>📚 Today Sessions</h2>
+        <h2>Today Sessions</h2>
         <div class="card">
             {% if today_sessions %}
                 {% for session in today_sessions %}
                 <div class="session-item session-{{ colors|random }}">
                     <div>
-                        <h3>{{ session.class_code }}</h3>
-                        <p>{{ session.subject.name }}</p>
+                        <h3>{{ session.class_code }} {{ session.subject.name }}</h3>
                     </div>
                     <div class="session-time">
-                        🕐 {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}
+                        {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
                 <div class="empty-state">
-                    <p>Không có buổi học nào hôm nay</p>
+                    <p>There is no sessions for today</p>
                 </div>
             {% endif %}
         </div>
@@ -179,17 +176,13 @@
 
     <!-- Advising Sessions -->
     <div class="section">
-        <h2>🎯 Advising Sessions (Next 7 Days)</h2>
+        <h2>Advising Sessions</h2>
         <div class="card">
             {% if upcoming_advising %}
                 {% for advising in upcoming_advising %}
                 <div class="session-item session-{{ colors|random }}">
                     <div>
-                        <h3>{{ advising.main_session.class_code }}</h3>
-                        <p>{{ advising.main_session.subject.name }}</p>
-                        {% if advising.location %}
-                        <p>📍 {{ advising.location }}</p>
-                        {% endif %}
+                        <h3>{{ advising.main_session.class_code }} {{ advising.main_session.subject.name }}</h3>
                     </div>
                     <div>
                         <div class="date-badge">
@@ -200,16 +193,19 @@
                             {% endif %}
                         </div>
                         <div class="session-time">
-                            🕐 {{ advising.start_time|time:"H:i" }} - {{ advising.end_time|time:"H:i" }}
+                            {{ advising.start_time|time:"H:i" }} - {{ advising.end_time|time:"H:i" }}
+                            {% if advising.location %}
+                            At: {{ advising.location }}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
                 <div class="empty-state">
-                    <p>Chưa có advising session nào được lên lịch</p>
+                    <p>No advising session has been scheduled yet</p>
                     <a href="{% url 'tutors:create_advising_session' %}" class="add-advising-link">
-                        + Tạo Advising Session
+                        + Create Advising Session
                     </a>
                 </div>
             {% endif %}

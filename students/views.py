@@ -21,13 +21,13 @@ def dashboard(request):
     
     # Map Python weekday sang format của database
     weekday_map = {
-        0: '2',   # Monday
-        1: '3',   # Tuesday
-        2: '4',   # Wednesday
-        3: '5',   # Thursday
-        4: '6',   # Friday
-        5: '7',   # Saturday
-        6: 'cn',  # Sunday
+        0: 'Monday',   # Monday
+        1: 'Tuesday',   # Tuesday
+        2: 'Wednesday',   # Wednesday
+        3: 'Thursday',   # Thursday
+        4: 'Friday',   # Friday
+        5: 'Saturday',   # Saturday
+        6: 'Sunday',  # Sunday
     }
     
     today_code = weekday_map[today.weekday()]

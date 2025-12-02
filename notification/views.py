@@ -10,12 +10,21 @@ from .notification_service import NotificationService
 @login_required
 def notifications_list(request):
     """View to display all notifications"""
+     # 🔥 Chọn base template dựa vào role
+    if request.user.userprofile.role == 'tutor':
+        base_template = 'tutor_base.html'
+        dashboard_url = 'tutors:tutor_dashboard'
+    else:
+        base_template = 'student_base.html'
+        dashboard_url = 'students:student_dashboard'
     notifications = NotificationService.get_user_notifications(request.user)
     unread_count = NotificationService.get_unread_count(request.user)
     
     return render(request, 'notification/notifications.html', {
         'notifications': notifications,
         'unread_count': unread_count,
+        'base_template': base_template,
+        'dashboard_url': dashboard_url,
     })
 
 
