@@ -52,7 +52,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
     }
 
     .progress-label span {
@@ -138,7 +137,6 @@
         font-size: 16px;
         resize: vertical;
         min-height: 200px;
-        background-color: #FFFACD;
         font-family: Arial, sans-serif;
     }
 
@@ -181,7 +179,7 @@
         display: flex;
         align-items: center;
         gap: 20px;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
     }
 
     .slider-group input[type="range"] {
@@ -241,7 +239,7 @@
                 <div class="progress-label">
                     <span>Attendance</span>
                     <div class="progress-score">
-                        <span id="attendanceDisplay">{{ progress.attendance }}</span>/5
+                        <span id="attendanceDisplay">{{ progress.attendance }}</span>/10
                     </div>
                 </div>
                 <div class="slider-group">
@@ -249,14 +247,14 @@
                            name="attendance" 
                            id="attendanceSlider" 
                            min="0" 
-                           max="5" 
+                           max="10" 
                            value="{{ progress.attendance }}"
                            oninput="updateProgress('attendance', this.value)">
                 </div>
                 <div class="progress-bar-container">
                     <div class="progress-bar attendance" 
                          id="attendanceBar" 
-                         style="width: {{ progress.attendance|multiply:20 }}%"></div>
+                         style="width: {{ progress.attendance|multiply:10}}%"></div>
                 </div>
             </div>
 
@@ -265,7 +263,7 @@
                 <div class="progress-label">
                     <span>Topic covered</span>
                     <div class="progress-score">
-                        <span id="topicsDisplay">{{ progress.topics_covered }}</span>/5
+                        <span id="topicsDisplay">{{ progress.topics_covered }}</span>/10
                     </div>
                 </div>
                 <div class="slider-group">
@@ -273,14 +271,14 @@
                            name="topics_covered" 
                            id="topicsSlider" 
                            min="0" 
-                           max="5" 
+                           max="10" 
                            value="{{ progress.topics_covered }}"
                            oninput="updateProgress('topics', this.value)">
                 </div>
                 <div class="progress-bar-container">
                     <div class="progress-bar topics" 
                          id="topicsBar" 
-                         style="width: {{ progress.topics_covered|multiply:20 }}%"></div>
+                         style="width: {{ progress.topics_covered|multiply:10 }}%"></div>
                 </div>
             </div>
 
@@ -289,7 +287,7 @@
                 <div class="progress-label">
                     <span>Comprehension level</span>
                     <div class="progress-score">
-                        <span id="comprehensionDisplay">{{ progress.comprehension_level }}</span>/5
+                        <span id="comprehensionDisplay">{{ progress.comprehension_level }}</span>/10
                     </div>
                 </div>
                 <div class="slider-group">
@@ -297,14 +295,14 @@
                            name="comprehension_level" 
                            id="comprehensionSlider" 
                            min="0" 
-                           max="5" 
+                           max="10" 
                            value="{{ progress.comprehension_level }}"
                            oninput="updateProgress('comprehension', this.value)">
                 </div>
                 <div class="progress-bar-container">
                     <div class="progress-bar comprehension" 
                          id="comprehensionBar" 
-                         style="width: {{ progress.comprehension_level|multiply:20 }}%"></div>
+                         style="width: {{ progress.comprehension_level|multiply:10 }}%"></div>
                 </div>
             </div>
 
@@ -313,7 +311,7 @@
                 <div class="progress-label">
                     <span>Goals achieved</span>
                     <div class="progress-score">
-                        <span id="goalsDisplay">{{ progress.goals_achieved }}</span>/5
+                        <span id="goalsDisplay">{{ progress.goals_achieved }}</span>/10
                     </div>
                 </div>
                 <div class="slider-group">
@@ -321,14 +319,14 @@
                            name="goals_achieved" 
                            id="goalsSlider" 
                            min="0" 
-                           max="5" 
+                           max="10" 
                            value="{{ progress.goals_achieved }}"
                            oninput="updateProgress('goals', this.value)">
                 </div>
                 <div class="progress-bar-container">
                     <div class="progress-bar goals" 
                          id="goalsBar" 
-                         style="width: {{ progress.goals_achieved|multiply:20 }}%"></div>
+                         style="width: {{ progress.goals_achieved|multiply:10 }}%"></div>
                 </div>
             </div>
 
@@ -371,12 +369,12 @@
         document.getElementById(type + 'Display').textContent = value;
         
         // Update progress bar width
-        const percentage = (value / 5) * 100;
+        const percentage = (value / 10) * 100;
         document.getElementById(type + 'Bar').style.width = percentage + '%';
     }
 
     function clearForm() {
-        if (confirm('Bạn có chắc muốn xóa tất cả dữ liệu?')) {
+        if (confirm('Are you sure you want to delete all data?')) {
             // Reset all sliders
             ['attendance', 'topics', 'comprehension', 'goals'].forEach(type => {
                 const slider = document.getElementById(type + 'Slider');

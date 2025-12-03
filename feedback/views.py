@@ -10,19 +10,22 @@ from django.db.models import Avg
 # Create your views here.
 @login_required
 def feedback(request, enrollment_id):
-    """Gửi feedback"""
+    """Submit feedback for a completed session"""
     student = get_object_or_404(Student, user=request.user)
     enrollment = get_object_or_404(Enrollment, id=enrollment_id, student=student)
     
+    # Check if the session is completed
     if enrollment.session.status != 'completed':
-        messages.error(request, 'Chỉ có thể feedback khi session đã hoàn thành')
+        messages.error(request, 'Feedback can only be submitted when the session is completed.')
         return redirect('students:sessions')
     
+    # Check if feedback already exists (assuming OneToOneField from Enrollment to Feedback)
     if hasattr(enrollment, 'feedback'):
-        messages.info(request, 'Bạn đã feedback session này rồi')
+        messages.info(request, 'You have already submitted feedback for this session.')
         return redirect('students:sessions')
     
     if request.method == 'POST':
+        # Simple POST data processing (assuming fields are 'rating' and 'comment')
         rating = request.POST.get('rating')
         comment = request.POST.get('comment', '')
         
@@ -32,7 +35,7 @@ def feedback(request, enrollment_id):
             comment=comment,
         )
         
-        messages.success(request, 'Cảm ơn bạn đã gửi feedback!')
+        messages.success(request, 'Thank you for submitting your feedback!')
         return redirect('students:sessions')
     
     return render(request, 'students/feedback.html', {
@@ -41,6 +44,7 @@ def feedback(request, enrollment_id):
 
 @login_required
 def request_session(request):
+    """View to submit a new session request from a student"""
     if request.method == 'POST':
         form = SessionRequestForm(request.POST)
         if form.is_valid():
@@ -54,14 +58,14 @@ def request_session(request):
     else:
         form = SessionRequestForm()
     
-    # Chỉ định rõ app chứa template
+    # Specify the app containing the template
     return render(request, 'students/request_session.html', {'form': form})
 
 @login_required
 def technical_report(request):
-    """View để submit technical report"""
+    """View to submit a technical report"""
 
-    # 🔥 Chọn base template dựa vào role
+    # 🔥 Select base template based on role
     if request.user.userprofile.role == 'tutor':
         base_template = 'tutor_base.html'
         dashboard_url = 'tutors:tutor_dashboard'
@@ -90,31 +94,30 @@ def technical_report(request):
     return render(request, 'feedback/technical_report.html', {
         'form': form,
         'base_template': base_template,
-        'dashboard_url': dashboard_url,   # 🔥 Gửi xuống template
+        'dashboard_url': dashboard_url,  # 🔥 Pass to template
     })
 
 @login_required
 def view_feedback(request, session_id):
     """
-    View to display all feedback for a specific session
-    Only accessible by the tutor of that session
+    View to display all feedback for a specific session.
+    Only accessible by the tutor of that session.
     """
     # Get session and verify it belongs to the logged-in tutor
     session = get_object_or_404(Session, id=session_id, tutor=request.user.tutor)
     
-    # Get all enrollments for this session with their feedback
-    # Note: For OneToOneField, use 'feedback' not 'feedback_set'
+    # Get all enrollments for this session
     enrollments = Enrollment.objects.filter(session=session).select_related(
         'student', 'student__user'
     )
     
-    # Separate enrollments with and without feedback
+    # Separate enrollments with and without comments for display
     feedbacks_with_comments = []
-    feedbacks_without_comments = []
+    feedbacks_without_comments = [] # This holds ratings without detailed comments
     
     for enrollment in enrollments:
         try:
-            feedback = enrollment.feedback
+            feedback = enrollment.feedback # Access the related Feedback object
             if feedback.comment:
                 feedbacks_with_comments.append({
                     'student': enrollment.student,
@@ -138,10 +141,13 @@ def view_feedback(request, session_id):
     total_students = enrollments.count()
     
     stats = {
+        # Calculate average rating
         'average_rating': all_feedbacks.aggregate(Avg('rating'))['rating__avg'] or 0,
         'total_feedbacks': total_feedbacks,
         'total_students': total_students,
+        # Calculate feedback submission rate
         'feedback_rate': (total_feedbacks / total_students * 100) if total_students > 0 else 0,
+        # Calculate rating distribution
         'rating_distribution': {
             5: all_feedbacks.filter(rating=5).count(),
             4: all_feedbacks.filter(rating=4).count(),

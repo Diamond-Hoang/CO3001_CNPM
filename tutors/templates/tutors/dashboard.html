@@ -6,9 +6,19 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 <style>
+    /* CSS Variables for Flat Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --bg-light: #F0F4F8; /* Light background for the overall page */
+        --card-bg: white;
+        --text-dark: #333;
+        --text-muted: #666;
+    }
+    
     .main-content {
         padding: 30px;
-        background-color: #e8e8e8;
+        /* Replaced #e8e8e8 with a slightly more modern light background */
         min-height: 100vh;
     }
 
@@ -19,16 +29,17 @@
     .section h2 {
         font-size: 24px;
         font-weight: 700;
-        color: #333;
+        color: var(--text-dark);
         margin-bottom: 20px;
     }
 
     .card {
-        background-color: white;
+        background-color: var(--card-bg);
         border-radius: 15px;
         padding: 15px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         display: grid;
+        /* Kept the original grid structure */
         grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
         gap: 5px;
     }
@@ -42,6 +53,9 @@
         flex-direction: column;
         transition: transform 0.3s, box-shadow 0.3s;
         cursor: pointer;
+        /* Default background for all sessions before color class is applied */
+        background-color: var(--primary-blue);
+        box-shadow: 0 4px 10px rgba(52, 120, 246, 0.2); 
     }
 
     .session-item:hover {
@@ -67,55 +81,67 @@
         margin-top: 5px;
     }
 
-    /* Color variations */
+    /* Color variations - Replaced all gradients with solid flat colors */
+    /* Note: These colors use the original names but now use flat backgrounds */
     .session-blue {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #3478F6;
+        box-shadow: 0 4px 10px rgba(52, 120, 246, 0.2);
     }
 
     .session-green {
-        background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        background-color: #56ab2f;
+        box-shadow: 0 4px 10px rgba(86, 171, 47, 0.2);
     }
 
     .session-mint {
-        background: linear-gradient(135deg, #2ebf91 0%, #8ec5fc 100%);
+        background-color: #2ebf91;
+        box-shadow: 0 4px 10px rgba(46, 191, 145, 0.2);
     }
 
     .session-pink {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background-color: #f5576c;
+        box-shadow: 0 4px 10px rgba(245, 87, 108, 0.2);
     }
 
     .session-peach {
-        background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%);
+        background-color: #ffa751;
+        box-shadow: 0 4px 10px rgba(255, 167, 81, 0.2);
     }
 
     .session-purple {
-        background: linear-gradient(135deg, #a044ff 0%, #6a3093 100%);
+        background-color: #a044ff;
+        box-shadow: 0 4px 10px rgba(160, 68, 255, 0.2);
     }
 
     .session-orange {
-        background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+        background-color: #ff6a00;
+        box-shadow: 0 4px 10px rgba(255, 106, 0, 0.2);
     }
 
     .session-teal {
-        background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+        background-color: #0ba360;
+        box-shadow: 0 4px 10px rgba(11, 163, 96, 0.2);
     }
 
     .session-light-blue {
-        background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+        background-color: #66a6ff;
+        box-shadow: 0 4px 10px rgba(102, 166, 255, 0.2);
     }
 
     .session-light-pink {
-        background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        background-color: #a6c1ee;
+        box-shadow: 0 4px 10px rgba(166, 193, 238, 0.2);
     }
 
     .session-light-purple {
-        background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+        background-color: #e0c3fc;
+        box-shadow: 0 4px 10px rgba(224, 195, 252, 0.2);
     }
 
     .empty-state {
         text-align: center;
         padding: 40px;
-        color: #999;
+        color: var(--text-muted);
     }
 
     .empty-state p {
@@ -126,7 +152,8 @@
         display: inline-block;
         margin-top: 15px;
         padding: 10px 25px;
-        background-color: #0047AB;
+        /* Use the flat primary blue */
+        background-color: var(--primary-blue);
         color: white;
         border-radius: 20px;
         text-decoration: none;
@@ -134,13 +161,14 @@
     }
 
     .add-advising-link:hover {
-        background-color: #003380;
+        background-color: var(--primary-hover);
         transform: translateY(-2px);
     }
 
     .date-badge {
         display: inline-block;
-        background-color: rgba(255,255,255,0.3);
+        /* Light background for visibility against the session card */
+        background-color: rgba(255,255,255,0.4); 
         padding: 3px 10px;
         border-radius: 12px;
         font-size: 12px;
@@ -151,7 +179,6 @@
 {% block content %}
 
 <div class="main-content">
-    <!-- Today Sessions -->
     <div class="section">
         <h2>Today Sessions</h2>
         <div class="card">
@@ -174,7 +201,6 @@
         </div>
     </div>
 
-    <!-- Advising Sessions -->
     <div class="section">
         <h2>Advising Sessions</h2>
         <div class="card">

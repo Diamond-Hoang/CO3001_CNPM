@@ -5,32 +5,44 @@
 
 {% block extra_css %}
 <style>
+    /* CSS Variables for a clean Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --secondary-bg-light: #F0F4F8; /* Light background for sections */
+        --text-dark: #333;
+        --text-muted: #6C757D;
+        --success-color: #28a745;
+        --error-color: #dc3545;
+        --warning-color: #ffc107;
+    }
+
     .find-sessions-container {
         max-width: 100%;
         margin: 0 auto;
-        padding: 40px 20px;
-        margin-left: 150px;
-        margin-right: 120px;
-        margin-bottom: 90px;
+        padding: 40px 120px 90px 150px; /* Default desktop padding */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-     @media (max-width: 100%) {
+    /* Optimized Media Queries (Removed redundant max-width: 100% blocks) */
+    @media (max-width: 1200px) {
         .find-sessions-container {
             padding-left: 100px;
-            padding-right: 80px;
+            padding-right: 100px;
         }
     }
     
-    @media (max-width: 100%) {
+    @media (max-width: 992px) {
         .find-sessions-container {
             padding-left: 60px;
             padding-right: 60px;
         }
     }
     
-    @media (max-width: 100%) {
+    @media (max-width: 768px) {
         .find-sessions-container {
             padding: 30px 20px 60px 20px;
+            margin: 0; /* Reset margins for full width */
         }
     }
 
@@ -46,13 +58,14 @@
     .page-title {
         font-size: 28px;
         font-weight: 700;
-        color: #333;
+        color: var(--text-dark);
         display: flex;
         align-items: center;
         gap: 12px;
     }
 
     .page-title::before {
+        /* Placeholder for a large icon/emoji */
         font-size: 32px;
     }
 
@@ -62,7 +75,7 @@
         border-radius: 12px;
         padding: 25px;
         margin-bottom: 30px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
     .search-form {
@@ -79,6 +92,10 @@
         height: 20px;
         opacity: 0.5;
         pointer-events: none;
+        /* Image tag placeholder: 
+
+[Image of magnifying glass icon]
+ */
     }
 
     .search-input {
@@ -92,17 +109,19 @@
     }
 
     .search-input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 4px rgba(52, 120, 246, 0.15); /* Updated box-shadow color */
     }
 
     .search-input::placeholder {
         color: #999;
+        content: "Search by course name, code, or instructor..."; /* Translated placeholder text */
     }
 
     .search-btn {
         padding: 15px 35px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue); 
         color: white;
         border: none;
         border-radius: 10px;
@@ -114,8 +133,9 @@
     }
 
     .search-btn:hover {
+        background-color: var(--primary-hover);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated box-shadow color */
     }
 
     /* Request Button */
@@ -124,19 +144,21 @@
         align-items: center;
         gap: 10px;
         padding: 14px 28px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue); 
         color: white;
         text-decoration: none;
         border-radius: 10px;
         font-weight: 600;
         font-size: 15px;
         transition: all 0.3s;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(52, 120, 246, 0.3); /* Updated box-shadow color */
     }
 
     .request-session-btn:hover {
+        background-color: var(--primary-hover);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated box-shadow color */
     }
 
     .request-session-btn::before {
@@ -159,6 +181,8 @@
         gap: 12px;
         animation: slideInDown 0.3s ease-out;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 15px;
+        font-weight: 500;
     }
 
     .message-item::before {
@@ -168,7 +192,7 @@
     .message-success {
         background: #d4edda;
         color: #155724;
-        border-left: 4px solid #28a745;
+        border-left: 4px solid var(--success-color);
     }
 
     .message-success::before {
@@ -178,7 +202,7 @@
     .message-error {
         background: #f8d7da;
         color: #721c24;
-        border-left: 4px solid #dc3545;
+        border-left: 4px solid var(--error-color);
     }
 
     .message-error::before {
@@ -188,7 +212,7 @@
     .message-warning {
         background: #fff3cd;
         color: #856404;
-        border-left: 4px solid #ffc107;
+        border-left: 4px solid var(--warning-color);
     }
 
     .message-warning::before {
@@ -210,7 +234,7 @@
     .sessions-table-wrapper {
         background: white;
         border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         overflow: hidden;
         margin-bottom: 30px;
     }
@@ -221,7 +245,8 @@
     }
 
     .sessions-table thead {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
     }
 
     .sessions-table th {
@@ -236,13 +261,14 @@
     }
 
     .sessions-table tbody tr {
-        border-bottom: 1px solid #f0f0f0;
-        transition: all 0.3s;
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+        cursor: pointer;
     }
 
     .sessions-table tbody tr:hover {
-        background-color: #f8f9ff;
-        transform: scale(1.01);
+        background-color: #f8faff;
+        transform: none; /* Removed scale for a smoother table hover */
     }
 
     .sessions-table tbody tr:last-child {
@@ -251,14 +277,14 @@
 
     .sessions-table td {
         padding: 18px 20px;
-        color: #333;
+        color: var(--text-dark);
         font-size: 14px;
         vertical-align: middle;
     }
 
     .class-code {
         font-weight: 600;
-        color: #667eea;
+        color: var(--primary-blue);
         font-size: 15px;
     }
 
@@ -290,9 +316,9 @@
         display: inline-block;
         padding: 8px 20px;
         background: white;
-        color: #28a745;
-        border: 2px solid #28a745;
-        border-radius: 6px;
+        color: var(--success-color);
+        border: 2px solid var(--success-color);
+        border-radius: 8px;
         font-size: 13px;
         font-weight: 600;
         text-decoration: none;
@@ -301,7 +327,7 @@
     }
 
     .btn-join:hover {
-        background: #28a745;
+        background: var(--success-color);
         color: white;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
@@ -312,12 +338,12 @@
         padding: 8px 20px;
         background: #f8d7da;
         color: #721c24;
-        border: 2px solid #dc3545;
-        border-radius: 6px;
+        border: 2px solid var(--error-color);
+        border-radius: 8px;
         font-size: 13px;
         font-weight: 600;
         cursor: not-allowed;
-        opacity: 0.6;
+        opacity: 0.8; /* Slightly less opaque */
     }
 
     /* Empty State */
@@ -330,19 +356,22 @@
         font-size: 80px;
         margin-bottom: 20px;
         opacity: 0.3;
+        /* Content placeholder: 📚 or 🔍 */
     }
 
     .empty-state h3 {
         font-size: 22px;
-        color: #666;
+        color: var(--text-muted);
         margin-bottom: 12px;
         font-weight: 600;
+        /* Translated Text: No Sessions Found */
     }
 
     .empty-state p {
         font-size: 15px;
         color: #999;
         margin-bottom: 30px;
+        /* Translated Text: Try a different search or request a new session. */
     }
 
     .empty-state-btn {
@@ -350,7 +379,8 @@
         align-items: center;
         gap: 10px;
         padding: 14px 28px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
         color: white;
         text-decoration: none;
         border-radius: 10px;
@@ -360,30 +390,34 @@
     }
 
     .empty-state-btn:hover {
+        background-color: var(--primary-hover);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated box-shadow color */
     }
 
     /* Request Section */
     .request-section {
         text-align: center;
         padding: 30px;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        /* Replaced gradient with solid background color */
+        background-color: var(--secondary-bg-light); 
         border-radius: 12px;
         margin-top: 30px;
     }
 
     .request-section h3 {
         font-size: 20px;
-        color: #333;
+        color: var(--text-dark);
         margin-bottom: 10px;
         font-weight: 600;
+        /* Translated Text: Can't Find What You Need? */
     }
 
     .request-section p {
         font-size: 14px;
-        color: #666;
+        color: var(--text-muted);
         margin-bottom: 20px;
+        /* Translated Text: Request a new session for your subject. */
     }
 
     /* Responsive Design */
@@ -401,8 +435,6 @@
     @media (max-width: 768px) {
         .find-sessions-container {
             padding: 20px 10px;
-            margin-left: 20px;
-            margin-right: 20px;
         }
 
         .page-header {
@@ -421,6 +453,16 @@
 
         .search-form {
             flex-direction: column;
+        }
+        
+        /* Make search input full width when stacking */
+        .search-input {
+            width: 100%; 
+            padding-left: 20px; /* Adjust padding back for full width input without icon offset */
+        }
+        
+        .search-icon {
+            left: 10px; /* Move icon slightly if still needed */
         }
 
         .search-btn {
@@ -459,7 +501,7 @@
     {% endif %}
 
     <div class="search-wrapper">
-        <form method="GET" action="{% url 'tutoring_sessions:available_sessions' %}" class="search-form">
+        <form method="GET" action="{% url 'students:find_sessions' %}" class="search-form">
             <img src="{% static 'images/search.svg' %}" alt="search" class="search-icon">
             <input type="text" 
                    name="search" 

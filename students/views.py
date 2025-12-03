@@ -7,58 +7,59 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
+from django.db.models import Q, F
 
 @login_required
 def dashboard(request):
-    """Dashboard cho student - hiển thị today sessions và advising sessions"""
+    """Dashboard for student - display today sessions and advising sessions"""
     try:
         student = request.user.student
     except:
-        messages.error(request, 'Bạn không có quyền truy cập trang này.')
+        messages.error(request, 'You do not have permission to access this page.')
         return redirect('home')
     
     today = timezone.now().date()
     
-    # Map Python weekday sang format của database
+    # Map Python weekday to database format
     weekday_map = {
-        0: 'Monday',   # Monday
+        0: 'Monday',    # Monday
         1: 'Tuesday',   # Tuesday
-        2: 'Wednesday',   # Wednesday
-        3: 'Thursday',   # Thursday
-        4: 'Friday',   # Friday
-        5: 'Saturday',   # Saturday
-        6: 'Sunday',  # Sunday
+        2: 'Wednesday', # Wednesday
+        3: 'Thursday',  # Thursday
+        4: 'Friday',    # Friday
+        5: 'Saturday',  # Saturday
+        6: 'Sunday',    # Sunday
     }
     
     today_code = weekday_map[today.weekday()]
     
-    # Lấy các sessions mà student đã enroll
+    # Get sessions that the student has enrolled in
     enrolled_sessions = Enrollment.objects.filter(
         student=student,
         is_active=True
     ).select_related('session', 'session__subject', 'session__tutor')
     
-    # Filter sessions hôm nay
+    # Filter today's sessions
     today_sessions = []
     for enrollment in enrolled_sessions:
         session = enrollment.session
-        # Chỉ hiển thị sessions đang scheduled hoặc ongoing
+        # Only show sessions that are 'scheduled' or 'ongoing'
         if session.status in ['scheduled', 'ongoing']:
             days_list = session.days.split('-')
             if today_code in days_list:
                 today_sessions.append(session)
     
-    # Sort theo thời gian
+    # Sort by time
     today_sessions.sort(key=lambda x: x.start_time)
     
-    # Lấy advising sessions của các lớp mà student đã enroll
-    # Chỉ lấy advising sessions trong 7 ngày tới
+    # Get advising sessions for the classes the student has enrolled in
+    # Only retrieve advising sessions within the next 7 days
     next_week = today + timedelta(days=7)
     
-    # Lấy danh sách session IDs mà student đã enroll
+    # Get a list of session IDs that the student has enrolled in
     enrolled_session_ids = [e.session.id for e in enrolled_sessions]
     
-    # Lấy advising sessions
+    # Get advising sessions
     upcoming_advising = AdvisingSession.objects.filter(
         main_session_id__in=enrolled_session_ids,
         date__gte=today,
@@ -99,37 +100,12 @@ def session_material(request, session_id):
         return render(request, '403.html', status=403)
     
     session = get_object_or_404(Session, id=session_id)
-    materials = SessionMaterial.objects.filter(session=session)  # ← Giờ đã có import rồi
+    materials = SessionMaterial.objects.filter(session=session)  # ← Now imported
     
     return render(request, 'students/session_material.html', {
         'session': session,
         'materials': materials,
     })
-
-def find_sessions(request):
-    if request.user.userprofile.role != 'student':
-        return render(request, '403.html', status=403)
-    return render(request, 'students/find_sessions.html')
-
-def library(request):
-    if request.user.userprofile.role != 'student':
-        return render(request, '403.html', status=403)
-    return render(request, 'students/library.html')
-
-def feedback(request):
-    if request.user.userprofile.role != 'student':
-        return render(request, '403.html', status=403)
-    return render(request, 'students/feedback.html')
-
-def request_session(request):
-    if request.user.userprofile.role != 'student':
-        return render(request, '403.html', status=403)
-    return render(request, 'students/request_session.html')
-
-def technical_report(request):
-    if request.user.userprofile.role != 'student':
-        return render(request, '403.html', status=403)
-    return render(request, 'students/technical_report.html')
 
 @login_required
 def update_avatar(request):

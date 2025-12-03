@@ -5,21 +5,34 @@
 
 {% block extra_css %}
 <style>
+    /* CSS Variables for Flat Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --text-dark: #333;
+        --text-muted: #666;
+        --border-color: #e0e0e0;
+        --light-background: #f8f9fa;
+        --lighter-blue: #f0f2ff;
+    }
+
     .materials-container {
         max-width: 100%;
         margin: 0 auto;
         padding: 40px 20px;
         margin-left: 150px;
         margin-right: 120px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
     .session-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
         border-radius: 12px;
         padding: 30px;
         color: white;
         margin-bottom: 30px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(52, 120, 246, 0.3); /* Updated shadow color */
     }
     
     .session-header h1 {
@@ -39,10 +52,11 @@
     .detail-item {
         display: flex;
         align-items: center;
-        background: rgba(255, 255, 255, 0.15);
+        /* Replaced rgba background and removed backdrop-filter (blur) */
+        background-color: rgba(255, 255, 255, 0.25); /* Slightly transparent white for contrast on blue header */
         padding: 12px 15px;
         border-radius: 8px;
-        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
     .detail-item strong {
@@ -60,15 +74,16 @@
     .section-title {
         font-size: 22px;
         font-weight: 700;
-        color: #333;
+        color: var(--text-dark);
         margin-bottom: 25px;
         padding-bottom: 15px;
-        border-bottom: 2px solid #667eea;
+        /* Solid color border bottom */
+        border-bottom: 2px solid var(--primary-blue);
     }
     
     .upload-form {
-        background: #f8f9fa;
-        border: 2px dashed #dee2e6;
+        background: var(--light-background);
+        border: 2px dashed var(--border-color);
         border-radius: 10px;
         padding: 25px;
         margin-bottom: 30px;
@@ -76,8 +91,8 @@
     }
     
     .upload-form:hover {
-        border-color: #667eea;
-        background: #f0f2ff;
+        border-color: var(--primary-blue);
+        background: var(--lighter-blue);
     }
     
     .form-row {
@@ -92,7 +107,7 @@
         min-width: 200px;
         max-width: 100%;
         padding: 12px 15px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color);
         border-radius: 8px;
         font-size: 14px;
         transition: all 0.3s;
@@ -101,8 +116,8 @@
     
     .form-input:focus {
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(52, 120, 246, 0.1);
     }
     
     .file-input-wrapper {
@@ -115,7 +130,7 @@
         width: 100%;
         max-width: 100%;
         padding: 12px 15px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color);
         border-radius: 8px;
         font-size: 14px;
         cursor: pointer;
@@ -124,12 +139,13 @@
     }
     
     .file-input-wrapper input[type="file"]:hover {
-        border-color: #667eea;
+        border-color: var(--primary-blue);
     }
     
     .btn-upload {
         padding: 12px 30px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
         color: white;
         border: none;
         border-radius: 8px;
@@ -143,7 +159,8 @@
     
     .btn-upload:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        background-color: var(--primary-hover);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated shadow color */
     }
     
     .materials-list {
@@ -154,7 +171,7 @@
     
     .material-card {
         background: white;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border-color);
         border-radius: 10px;
         padding: 20px;
         transition: all 0.3s;
@@ -164,7 +181,7 @@
     }
     
     .material-card:hover {
-        border-color: #667eea;
+        border-color: var(--primary-blue);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         transform: translateY(-2px);
     }
@@ -176,13 +193,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #f8f9fa;
+        background: var(--light-background);
         border-radius: 10px;
     }
     
     .material-icon img {
         width: 32px;
         height: 32px;
+        /* Image tag placeholder: 
+
+[Image of PDF icon or link icon]
+ */
     }
     
     .material-content {
@@ -193,13 +214,13 @@
     .material-title {
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark);
         margin-bottom: 5px;
     }
     
     .material-description {
         font-size: 14px;
-        color: #666;
+        color: var(--text-muted);
         font-style: italic;
         margin-top: 8px;
         line-height: 1.5;
@@ -219,7 +240,7 @@
     
     .btn-download {
         padding: 10px 20px;
-        background: #667eea;
+        background: var(--primary-blue);
         color: white;
         text-decoration: none;
         border-radius: 6px;
@@ -230,9 +251,9 @@
     }
     
     .btn-download:hover {
-        background: #5568d3;
+        background: var(--primary-hover);
         transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 10px rgba(52, 120, 246, 0.3);
     }
     
     .empty-state {
@@ -245,11 +266,15 @@
         font-size: 64px;
         margin-bottom: 20px;
         opacity: 0.3;
+        /* Image tag placeholder: 
+
+[Image of empty state icon]
+ */
     }
     
     .empty-state h3 {
         font-size: 20px;
-        color: #666;
+        color: var(--text-muted);
         margin-bottom: 10px;
     }
     
@@ -261,6 +286,8 @@
     @media (max-width: 768px) {
         .materials-container {
             padding: 20px 15px;
+            margin-left: 0; /* Adjusted for mobile view */
+            margin-right: 0; /* Adjusted for mobile view */
         }
         
         .session-header {

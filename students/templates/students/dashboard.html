@@ -8,8 +8,9 @@
 <style>
     .main-content {
         padding: 30px;
-        background-color: #e8e8e8;
+        /* Đổi nền sang màu xanh xám rất nhạt cho hiện đại */
         min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .section {
@@ -19,34 +20,38 @@
     .section h2 {
         font-size: 24px;
         font-weight: 700;
-        color: #333;
+        color: #1a365d; /* Xanh đậm thay vì đen */
         margin-bottom: 20px;
     }
 
     .card {
         background-color: white;
-        border-radius: 15px;
+        border-radius: 16px; /* Bo góc mềm mại hơn chút */
         padding: 25px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        /* Shadow xanh nhẹ */
+        box-shadow: 0 4px 20px rgba(0, 71, 171, 0.08); 
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
         gap: 15px;
+        border: 1px solid #e2e8f0;
     }
 
     .session-item {
         height: 105px;
-        border-radius: 10px;
-        padding: 10px;
+        border-radius: 12px;
+        padding: 15px; /* Tăng padding chút cho thoáng */
         color: white;
         display: flex;
         flex-direction: column;
-        transition: transform 0.3s, box-shadow 0.3s;
+        transition: all 0.2s ease-in-out;
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
     }
 
     .session-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
     }
 
     .session-header {
@@ -56,7 +61,8 @@
     .session-item h3 {
         font-size: 18px;
         font-weight: 700;
-        margin: 0 0 8px 0;
+        margin: 0 0 6px 0;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
     .session-item p {
@@ -67,79 +73,96 @@
 
     .session-footer {
         padding-top: 10px;
-        border-top: 1px solid rgba(255,255,255,0.3);
+        margin-top: auto; /* Đẩy footer xuống đáy */
+        border-top: 1px solid rgba(255,255,255,0.2);
     }
 
     .session-time {
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
     }
 
     .tutor-name {
         font-size: 13px;
         opacity: 0.9;
-        margin-top: 5px;
+        margin-top: 4px;
     }
 
-    /* Color variations */
+    /* --- COLOR PALETTE (BLUE THEME VARIATIONS) --- */
+    /* Mình giữ nguyên tên class cũ để code backend không bị lỗi, 
+       nhưng đổi màu hiển thị sang các tông xanh khác nhau */
+
+    /* Xanh dương đậm (Primary) */
     .session-blue {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #2563EB; 
     }
 
+    /* Xanh ngọc lam (Teal) */
     .session-green {
-        background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        background-color: #00897B;
     }
 
+    /* Xanh lơ đậm (Cyan/Cerulean) */
     .session-mint {
-        background: linear-gradient(135deg, #2ebf91 0%, #8ec5fc 100%);
+        background-color: #0288D1;
     }
 
+    /* Xanh tím than (Indigo) - Thay cho màu hồng cũ */
     .session-pink {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background-color: #3949AB;
     }
 
+    /* Xanh đá (Slate Blue) - Thay cho màu đào cũ */
     .session-peach {
-        background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%);
+        background-color: #546E7A;
     }
 
+    /* Tím xanh (Deep Purple) */
     .session-purple {
-        background: linear-gradient(135deg, #a044ff 0%, #6a3093 100%);
+        background-color: #512DA8;
     }
 
+    /* Xanh Navy (Midnight Blue) - Thay cho màu cam cũ */
     .session-orange {
-        background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+        background-color: #1A237E;
     }
 
+    /* Xanh lá mạ đậm (Dark Cyan) */
     .session-teal {
-        background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+        background-color: #00695C;
     }
 
+    /* Xanh da trời (Sky Blue) */
     .session-light-blue {
-        background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+        background-color: #42A5F5;
     }
 
+    /* Xanh tím nhạt (Periwinkle) - Thay cho hồng nhạt cũ */
     .session-light-pink {
-        background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        background-color: #7986CB;
     }
 
+    /* Xanh xám (Blue Grey) - Thay cho tím nhạt cũ */
     .session-light-purple {
-        background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+        background-color: #78909C;
     }
 
+    /* --- EMPTY STATE --- */
     .empty-state {
         text-align: center;
-        padding: 32px 20px;
-        color: #999;
+        padding: 40px 20px;
+        color: #64748b; /* Màu chữ xám xanh */
     }
 
     .empty-state img {
         width: 80px;
         height: 80px;
-        opacity: 0.5;
+        opacity: 0.6;
         margin-bottom: 15px;
+        filter: hue-rotate(200deg); /* Chỉnh màu ảnh icon sang tone xanh nếu có thể */
     }
 
     .empty-state p {
@@ -150,37 +173,42 @@
     .empty-state a {
         display: inline-block;
         margin-top: 15px;
-        padding: 10px 25px;
-        background-color: #0047AB;
+        padding: 12px 30px;
+        background-color: #2563EB; /* Royal Blue */
         color: white;
-        border-radius: 20px;
+        border-radius: 50px; /* Bo tròn hẳn */
         text-decoration: none;
         transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        font-weight: 600;
     }
 
     .empty-state a:hover {
-        background-color: #003380;
+        background-color: #1d4ed8;
         transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
     }
 
     .date-badge {
         display: inline-block;
-        background-color: rgba(255,255,255,0.3);
-        padding: 4px 12px;
-        border-radius: 12px;
+        background-color: rgba(255,255,255,0.25);
+        padding: 4px 10px;
+        border-radius: 6px;
         font-size: 12px;
         font-weight: 600;
         margin-bottom: 5px;
+        backdrop-filter: blur(4px); /* Hiệu ứng mờ nhẹ nếu trình duyệt hỗ trợ */
     }
 
     .advising-badge {
         display: inline-block;
-        background-color: rgba(255,255,255,0.4);
-        padding: 3px 10px;
-        border-radius: 10px;
+        background-color: rgba(255,255,255,0.3);
+        padding: 2px 8px;
+        border-radius: 4px;
         font-size: 11px;
         font-weight: 600;
         margin-left: 5px;
+        border: 1px solid rgba(255,255,255,0.3);
     }
 </style>
 {% endblock %}

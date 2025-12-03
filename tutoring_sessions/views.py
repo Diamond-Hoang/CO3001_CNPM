@@ -9,7 +9,7 @@ from feedback.models import Feedback
 
 @login_required
 def session_list(request):
-    """Hiển thị danh sách sessions của student"""
+    """Display the list of sessions for a student"""
     student = get_object_or_404(Student, user=request.user)
     
     enrollments = Enrollment.objects.filter(
@@ -30,20 +30,21 @@ def cancel_enrollment(request, enrollment_id):
     if session.enrolled_count > 0:
         session.enrolled_count -= 1
         session.save()
+    messages.success(request, f'Successfully canceled enrollment from {session.class_code}.') # Added success message for clarity
     return redirect('students:sessions')
 
 @login_required
 def available_sessions(request):
-    """Hiển thị các session còn chỗ"""
+    """Display available sessions that have space"""
     student = get_object_or_404(Student, user=request.user)
     
-    # Lấy các session mà student đã enroll
+    # Get the IDs of sessions the student is already enrolled in
     enrolled_session_ids = Enrollment.objects.filter(
         student=student, 
         is_active=True
     ).values_list('session_id', flat=True)
     
-    # Lấy các session còn chỗ và chưa enroll
+    # Get sessions that are 'scheduled' and the student is not enrolled in
     available_sessions = Session.objects.filter(
         status='scheduled',
     ).exclude(
@@ -69,54 +70,54 @@ def available_sessions(request):
 
 @login_required
 def enroll_session(request, session_id):
-    """Tham gia vào session"""
+    """Enroll in a session"""
     if request.method != 'POST':
         return redirect('tutoring_sessions:available_sessions')
     
     student = get_object_or_404(Student, user=request.user)
     session = get_object_or_404(Session, id=session_id)
     
-    # Kiểm tra session còn chỗ không
+    # Check if session is full
     if session.enrolled_count >= session.capacity:
-        messages.error(request, 'Session đã đầy, không thể tham gia!')
+        messages.error(request, 'Session is full, cannot enroll!')
         return redirect('tutoring_sessions:available_sessions')
     
-    # Kiểm tra status
+    # Check status
     if session.status != 'scheduled':
-        messages.error(request, 'Chỉ có thể tham gia session đang scheduled!')
+        messages.error(request, 'Only scheduled sessions can be enrolled in!')
         return redirect('tutoring_sessions:available_sessions')
     
-    # Kiểm tra đã enroll chưa
+    # Check if already enrolled
     if Enrollment.objects.filter(student=student, session=session, is_active=True).exists():
-        messages.warning(request, 'Bạn đã tham gia session này rồi!')
+        messages.warning(request, 'You are already enrolled in this session!')
         return redirect('tutoring_sessions:available_sessions')
     
-    # Tạo enrollment
+    # Create enrollment
     Enrollment.objects.create(
         student=student,
         session=session,
         is_active=True
     )
     
-    # Tăng enrolled_count
+    # Increment enrolled_count
     session.enrolled_count += 1
     session.save()
     
-    messages.success(request, f'Đã tham gia thành công vào {session.class_code}!')
+    messages.success(request, f'Successfully enrolled in {session.class_code}!')
     return redirect('students:sessions')
 
 @login_required
 def reschedule_session(request, enrollment_id):
-    # Lấy enrollment hiện tại
+    # Get current enrollment
     enrollment = get_object_or_404(Enrollment, id=enrollment_id, student__user=request.user)
     current_session = enrollment.session
     
-    # Chỉ cho phép reschedule nếu session đang ongoing
+    # Only allow rescheduling if the session is ongoing (Note: This logic might need review based on actual use case)
     if current_session.status != 'ongoing':
-        messages.error(request, 'Chỉ có thể reschedule các session đang diễn ra.')
+        messages.error(request, 'Only ongoing sessions can be rescheduled.')
         return redirect('students:sessions')
     
-    # Lấy danh sách các session khác cùng môn, cùng tutor, chưa đầy
+    # Get a list of other sessions with the same subject, same tutor, and not full
     available_sessions = Session.objects.filter(
         subject=current_session.subject,
         tutor=current_session.tutor,
@@ -125,44 +126,44 @@ def reschedule_session(request, enrollment_id):
         id=current_session.id
     ).filter(
         enrolled_count__lt=F('capacity')
-    )
+    ).select_related('subject', 'tutor').order_by('class_code') # Added select_related for better performance/display
     
     if request.method == 'POST':
         new_session_id = request.POST.get('new_session_id')
         new_session = get_object_or_404(Session, id=new_session_id)
         
-        # Kiểm tra điều kiện
+        # Validation checks
         if new_session.subject != current_session.subject:
-            messages.error(request, 'Session mới phải cùng môn học.')
+            messages.error(request, 'The new session must be the same subject.')
             return redirect('tutoring_sessions:reschedule_session', enrollment_id=enrollment_id)
         
         if new_session.tutor != current_session.tutor:
-            messages.error(request, 'Session mới phải cùng giảng viên.')
+            messages.error(request, 'The new session must have the same tutor.')
             return redirect('tutoring_sessions:reschedule_session', enrollment_id=enrollment_id)
         
         if new_session.enrolled_count >= new_session.capacity:
-            messages.error(request, 'Session mới đã đầy.')
+            messages.error(request, 'The new session is full.')
             return redirect('tutoring_sessions:reschedule_session', enrollment_id=enrollment_id)
         
-        # Kiểm tra xem student đã đăng ký session mới chưa
+        # Check if the student is already enrolled in the new session
         if Enrollment.objects.filter(student=enrollment.student, session=new_session, is_active=True).exists():
-            messages.error(request, 'Bạn đã đăng ký session này rồi.')
+            messages.error(request, 'You are already enrolled in this session.')
             return redirect('tutoring_sessions:reschedule_session', enrollment_id=enrollment_id)
         
-        # Thực hiện reschedule
-        # Giảm enrolled_count của session cũ
+        # Perform reschedule
+        # Decrement enrolled_count of the old session
         current_session.enrolled_count -= 1
         current_session.save()
         
-        # Cập nhật enrollment
+        # Update enrollment
         enrollment.session = new_session
         enrollment.save()
         
-        # Tăng enrolled_count của session mới
+        # Increment enrolled_count of the new session
         new_session.enrolled_count += 1
         new_session.save()
         
-        messages.success(request, f'Đã chuyển sang lớp {new_session.class_code} thành công!')
+        messages.success(request, f'Successfully rescheduled to class {new_session.class_code}!')
         return redirect('students:sessions')
     
     context = {
@@ -177,30 +178,30 @@ def tutor_reschedule_session(request, session_id):
     session = get_object_or_404(Session, id=session_id, tutor__user=request.user)
 
     if session.status not in ['scheduled', 'ongoing']:
-        messages.error(request, 'Không thể thay đổi lịch của session đã hoàn thành hoặc đã hủy.')
+        messages.error(request, 'Cannot change the schedule for a completed or cancelled session.')
         return redirect('tutors:sessions')
 
     if request.method == 'POST':
-        selected_value = request.POST.get('days')  # chỉ lấy 1 checkbox được chọn
+        selected_value = request.POST.get('days')  # Only retrieve 1 selected checkbox value
         new_start_time = request.POST.get('start_time')
         new_end_time = request.POST.get('end_time')
 
         if not all([selected_value, new_start_time, new_end_time]):
-            messages.error(request, 'Vui lòng điền đầy đủ thông tin.')
+            messages.error(request, 'Please fill in all required information.')
             return redirect('tutors:sessions')
 
-        # Chuyển giá trị (0,1,2...) thành tên ngày
+        # Convert value (0, 1, 2...) to day name
         day_dict = dict(Session.DAY_CHOICES)
-        session.days = day_dict.get(selected_value, selected_value)  # ví dụ "Monday"
+        session.days = day_dict.get(selected_value, selected_value)  # e.g., "Monday"
         session.start_time = new_start_time
         session.end_time = new_end_time
         session.save()
 
-        messages.success(request, f'Đã cập nhật lịch học cho lớp {session.class_code}!')
+        messages.success(request, f'Successfully updated the schedule for class {session.class_code}!')
         return redirect('tutors:sessions')
 
     day_choices = Session.DAY_CHOICES
-    # Lấy giá trị hiện tại (tên ngày) để check mặc định
+    # Get current value (day label) for default check
     current_day_label = session.days
 
     context = {
@@ -214,60 +215,60 @@ def tutor_reschedule_session(request, session_id):
 
 @login_required
 def tutor_cancel_session(request, session_id):
-    """Tutor hủy session"""
-    # Kiểm tra user có phải tutor không
+    """Tutor cancels a session"""
+    # Check if user is a tutor
     if not hasattr(request.user, 'tutor'):
-        messages.error(request, 'Bạn không có quyền thực hiện hành động này.')
+        messages.error(request, 'You do not have permission to perform this action.')
         return redirect('home')
     
-    # Lấy session và kiểm tra quyền sở hữu
+    # Get session and check ownership
     session = get_object_or_404(Session, id=session_id, tutor=request.user.tutor)
     
-    # Chỉ cho phép hủy session scheduled hoặc ongoing
+    # Only allow cancellation for scheduled or ongoing sessions
     if session.status not in ['scheduled', 'ongoing']:
-        messages.error(request, f'Không thể hủy lớp có trạng thái "{session.get_status_display()}".')
+        messages.error(request, f'Cannot cancel a class with status "{session.get_status_display()}".')
         return redirect('tutors:sessions')
     
-    # Lấy danh sách enrollments đang active
+    # Get list of active enrollments
     active_enrollments = Enrollment.objects.filter(session=session, is_active=True)
     student_count = active_enrollments.count()
     
-    # Cập nhật status của session
+    # Update session status
     session.status = 'cancelled'
     session.enrolled_count = 0  # Reset enrolled count
     session.save()
     
-    # Deactivate tất cả enrollments
+    # Deactivate all enrollments
     active_enrollments.update(is_active=False)
     
-    # Thông báo thành công
+    # Success notification
     if student_count > 0:
-        messages.success(request, f'Đã hủy lớp {session.class_code}. {student_count} học sinh đã bị hủy đăng ký.')
+        messages.success(request, f'Canceled class {session.class_code}. {student_count} students have been unenrolled.')
     else:
-        messages.success(request, f'Đã hủy lớp {session.class_code}.')
+        messages.success(request, f'Canceled class {session.class_code}.')
     
     return redirect('tutors:sessions')
 
 @login_required
 def view_session_students(request, session_id):
-    """Xem danh sách students trong session"""
-    # Kiểm tra quyền truy cập
+    """View the list of students in a session"""
+    # Check access permission
     if not hasattr(request.user, 'tutor'):
-        messages.error(request, 'Bạn không có quyền truy cập trang này.')
+        messages.error(request, 'You do not have permission to access this page.')
         return redirect('home')
     
     session = get_object_or_404(Session, id=session_id, tutor=request.user.tutor)
     
-    # Lấy danh sách enrollments
+    # Get list of enrollments
     enrollments = Enrollment.objects.filter(
         session=session,
         is_active=True
     ).select_related('student', 'student__user').order_by('student__full_name')
     
-    # TODO: Thêm attendance_count nếu có model Attendance
-    # Tạm thời để mặc định
+    # TODO: Add attendance_count if Attendance model exists
+    # Default placeholder
     for enrollment in enrollments:
-        enrollment.attendance_count = 0  # Tính từ Attendance model
+        enrollment.attendance_count = 0  # Calculated from Attendance model
     
     context = {
         'session': session,

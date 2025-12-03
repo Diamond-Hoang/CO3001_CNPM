@@ -5,6 +5,22 @@
 
 {% block extra_css %}
 <style>
+    /* CSS Variables for a clean Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --text-dark: #333;
+        --text-muted: #6C757D;
+        --status-scheduled-bg: #fff3cd;
+        --status-scheduled-text: #856404;
+        --status-ongoing-bg: #d4edda;
+        --status-ongoing-text: #155724;
+        --status-completed-bg: #d1ecf1;
+        --status-completed-text: #0c5460;
+        --status-cancelled-bg: #f8d7da;
+        --status-cancelled-text: #721c24;
+    }
+
     .sessions-container {
         max-width: 100%;
         margin: 0 auto;
@@ -12,6 +28,7 @@
         margin-left: 150px;
         margin-right: 120px;
         margin-bottom: 90px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .page-header {
@@ -26,7 +43,7 @@
     .page-title {
         font-size: 28px;
         font-weight: 700;
-        color: #333;
+        color: var(--text-dark);
         display: flex;
         align-items: center;
         gap: 12px;
@@ -35,7 +52,7 @@
     .sessions-table-wrapper {
         background: white;
         border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Shadow rõ ràng hơn */
         overflow: hidden;
     }
 
@@ -44,8 +61,9 @@
         border-collapse: collapse;
     }
 
+    /* REMOVED GRADIENT, USED SOLID PRIMARY BLUE */
     .sessions-table thead {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: var(--primary-blue);
     }
 
     .sessions-table th {
@@ -60,13 +78,14 @@
     }
 
     .sessions-table tbody tr {
-        border-bottom: 1px solid #f0f0f0;
-        transition: all 0.3s;
+        border-bottom: 1px solid #e9ecef; /* Màu viền nhẹ nhàng hơn */
+        transition: all 0.2s ease;
+        cursor: pointer;
     }
 
     .sessions-table tbody tr:hover {
-        background-color: #f8f9ff;
-        transform: scale(1.01);
+        background-color: #f8faff;
+        transform: none; /* Bỏ scale, chỉ giữ hover background */
     }
 
     .sessions-table tbody tr:last-child {
@@ -75,14 +94,14 @@
 
     .sessions-table td {
         padding: 18px 20px;
-        color: #333;
+        color: var(--text-dark);
         font-size: 14px;
         vertical-align: middle;
     }
 
     .class-code {
         font-weight: 600;
-        color: #667eea;
+        color: var(--primary-blue);
         font-size: 15px;
         display: flex;
         align-items: center;
@@ -116,23 +135,23 @@
     }
 
     .status-scheduled {
-        background: #fff3cd;
-        color: #856404;
+        background: var(--status-scheduled-bg);
+        color: var(--status-scheduled-text);
     }
 
     .status-ongoing {
-        background: #d4edda;
-        color: #155724;
+        background: var(--status-ongoing-bg);
+        color: var(--status-ongoing-text);
     }
 
     .status-completed {
-        background: #d1ecf1;
-        color: #0c5460;
+        background: var(--status-completed-bg);
+        color: var(--status-completed-text);
     }
 
     .status-cancelled {
-        background: #f8d7da;
-        color: #721c24;
+        background: var(--status-cancelled-bg);
+        color: var(--status-cancelled-text);
     }
 
     /* Icon Buttons with Tooltips */
@@ -141,34 +160,34 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
-        background: #f0f2ff;
+        width: 25px; /* Kích thước lớn hơn chút */
+        height: 25px;
         border-radius: 8px;
-        transition: all 0.3s;
+        transition: all 0.2s ease;
         cursor: pointer;
         border: 2px solid transparent;
     }
 
     .icon-btn:hover {
-        background: #667eea;
-        border-color: #667eea;
+        background: var(--primary-blue);
+        border-color: var(--primary-blue);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 12px rgba(52, 120, 246, 0.3); /* Shadow từ màu mới */
     }
 
     .icon-btn img {
         width: 20px;
         height: 20px;
-        transition: all 0.3s;
+        transition: all 0.2s ease;
     }
 
     .icon-btn:hover img {
-        filter: brightness(1.5);
+        filter: brightness(1.5)
     }
 
     /* Tooltip */
     .icon-btn::after {
+        /* Translated Text: View Details */
         content: attr(data-tooltip);
         position: absolute;
         bottom: 100%;
@@ -183,7 +202,7 @@
         white-space: nowrap;
         opacity: 0;
         pointer-events: none;
-        transition: all 0.3s;
+        transition: all 0.2s ease;
         z-index: 1000;
     }
 
@@ -197,7 +216,7 @@
         border-top-color: #333;
         opacity: 0;
         pointer-events: none;
-        transition: all 0.3s;
+        transition: all 0.2s ease;
         z-index: 1000;
     }
 
@@ -211,7 +230,7 @@
     .action-btn {
         display: inline-block;
         padding: 8px 18px;
-        border-radius: 6px;
+        border-radius: 8px; /* Bo góc lớn hơn chút */
         font-size: 13px;
         font-weight: 600;
         text-decoration: none;
@@ -221,12 +240,12 @@
 
     .action-cancel {
         background: white;
-        color: #dc3545;
-        border-color: #dc3545;
+        color: var(--status-cancelled-text);
+        border-color: var(--status-cancelled-text);
     }
 
     .action-cancel:hover {
-        background: #dc3545;
+        background: var(--status-cancelled-text);
         color: white;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
@@ -234,15 +253,15 @@
 
     .action-feedback {
         background: white;
-        color: #667eea;
-        border-color: #667eea;
+        color: var(--primary-blue);
+        border-color: var(--primary-blue);
     }
 
     .action-feedback:hover {
-        background: #667eea;
+        background: var(--primary-blue);
         color: white;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 12px rgba(52, 120, 246, 0.3);
     }
 
     /* Empty State */
@@ -255,19 +274,22 @@
         font-size: 80px;
         margin-bottom: 20px;
         opacity: 0.3;
+        /* Note: Icon content will need to be translated in HTML */
     }
 
     .empty-state h3 {
         font-size: 22px;
-        color: #666;
+        color: var(--text-muted);
         margin-bottom: 12px;
         font-weight: 600;
+        /* Translated Text: No Sessions Found */
     }
 
     .empty-state p {
         font-size: 15px;
         color: #999;
         margin-bottom: 30px;
+        /* Translated Text: Your scheduled or completed sessions will appear here. */
     }
 
     /* Notification Toast */
@@ -288,11 +310,11 @@
     }
 
     .toast-notification.success {
-        border-left: 4px solid #4CAF50;
+        border-left: 4px solid var(--success-color, #4CAF50);
     }
 
     .toast-notification.error {
-        border-left: 4px solid #f44336;
+        border-left: 4px solid var(--error-color, #f44336);
     }
 
     .toast-notification.info {
@@ -307,7 +329,8 @@
         flex: 1;
         font-size: 14px;
         font-weight: 500;
-        color: #333;
+        color: var(--text-dark);
+        /* Note: Toast messages will need to be translated in JavaScript/HTML */
     }
 
     @keyframes slideInRight {
@@ -369,6 +392,12 @@
         }
 
         .icon-btn::after {
+            /* Tooltips hidden on small screens */
+            display: none;
+        }
+        
+        .icon-btn:hover::before {
+            /* Tooltip arrow hidden on small screens */
             display: none;
         }
     }

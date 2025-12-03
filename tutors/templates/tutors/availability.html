@@ -6,35 +6,54 @@
 
 {% block extra_css %}
 <style>
+    /* CSS Variables for Flat Blue Theme */
+    :root {
+        --primary-blue-dark: #0047AB; 
+        --primary-blue-medium: #0052cc;
+        --primary-hover: #003087;
+        --success-color: #4CAF50;
+        --success-hover: #45a049;
+        --error-color: #f44336;
+        --error-hover: #d32f2f;
+        --booked-color: #ffa500;
+        --available-color: #90ee90;
+        --default-cell-bg: #f5f8fb;
+        --cell-hover-bg: #e3eaf2;
+        --text-dark: #333;
+        --text-white: white;
+    }
+
     .main-content {
         max-width: 100%;
         margin: 0 auto;
         padding: 50px 120px 90px 150px;
         z-index: -1;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
-    @media (max-width: 100%) {
+    @media (max-width: 1200px) {
         .main-content {
             padding-left: 100px;
             padding-right: 80px;
         }
     }
     
-    @media (max-width: 100%) {
+    @media (max-width: 992px) {
         .main-content {
             padding-left: 60px;
             padding-right: 60px;
         }
     }
     
-    @media (max-width: 100%) {
+    @media (max-width: 768px) {
         .main-content {
             padding: 30px 20px 60px 20px;
         }
     }
     
     .schedule-header {
-        background: linear-gradient(135deg, #003087 0%, #0052cc 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-dark);
         padding: 30px;
         border-radius: 15px;
         margin-bottom: 30px;
@@ -42,7 +61,7 @@
     }
     
     .schedule-header h1 {
-        color: white;
+        color: var(--text-white);
         margin: 0 0 25px 0;
         font-size: 32px;
         font-weight: 700;
@@ -59,25 +78,27 @@
     .schedule-form select,
     .schedule-form input {
         padding: 12px 15px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.5); /* Lighter border for contrast on dark background */
         border-radius: 8px;
         font-size: 14px;
         background-color: rgba(255, 255, 255, 0.95);
         transition: all 0.3s ease;
         font-weight: 500;
+        color: var(--text-dark);
     }
     
     .schedule-form select:focus,
     .schedule-form input:focus {
         outline: none;
-        border-color: white;
-        background-color: white;
+        border-color: var(--text-white);
+        background-color: var(--text-white);
         box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
     }
     
     .btn-set-availability {
-        background: linear-gradient(135deg, #00c853 0%, #00a843 100%);
-        color: white;
+        /* Replaced gradient with solid color */
+        background-color: var(--success-color);
+        color: var(--text-white);
         padding: 12px 30px;
         border: none;
         border-radius: 8px;
@@ -93,7 +114,7 @@
     .btn-set-availability:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(0, 200, 83, 0.4);
-        background: linear-gradient(135deg, #00e05e 0%, #00c853 100%);
+        background-color: var(--success-hover);
     }
     
     .btn-set-availability:active {
@@ -101,7 +122,7 @@
     }
     
     .schedule-container {
-        background-color: white;
+        background-color: var(--text-white);
         border-radius: 15px;
         overflow: hidden;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
@@ -119,8 +140,9 @@
     }
     
     .schedule-table th {
-        background: linear-gradient(135deg, #003087 0%, #0052cc 100%);
-        color: white;
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-dark);
+        color: var(--text-white);
         padding: 18px 10px;
         text-align: center;
         font-weight: 700;
@@ -149,18 +171,19 @@
     }
     
     .schedule-table .time-column {
-        background: linear-gradient(135deg, #003087 0%, #0052cc 100%);
-        color: white;
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-medium);
+        color: var(--text-white);
         font-weight: 700;
         padding: 18px 15px;
         white-space: nowrap;
         font-size: 14px;
-        border-right: 2px solid #002066;
+        border-right: 2px solid var(--primary-hover);
     }
     
     .schedule-cell {
         min-height: 60px;
-        background-color: #f5f8fb;
+        background-color: var(--default-cell-bg);
         cursor: pointer;
         transition: all 0.3s ease;
         padding: 12px;
@@ -168,39 +191,44 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        color: var(--text-dark);
     }
     
     .schedule-cell:hover {
-        background-color: #e3eaf2;
+        background-color: var(--cell-hover-bg);
         transform: scale(1.02);
-        box-shadow: inset 0 0 0 2px #003087;
+        box-shadow: inset 0 0 0 2px var(--primary-blue-dark);
     }
     
     .schedule-cell.available {
-        background: linear-gradient(135deg, #90ee90 0%, #7ad87a 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--available-color);
         font-weight: 600;
     }
     
     .schedule-cell.available:hover {
-        background: linear-gradient(135deg, #7ad87a 0%, #6bc66b 100%);
+        /* Lighter green hover */
+        background-color: #80e880; 
     }
     
     .schedule-cell.booked {
-        background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--booked-color);
         cursor: not-allowed;
-        color: white;
+        color: var(--text-white);
         font-weight: 600;
     }
     
     .schedule-cell.has-subject {
-        background: linear-gradient(135deg, #003087 0%, #0052cc 100%);
-        color: white;
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-dark);
+        color: var(--text-white);
         font-weight: 600;
         box-shadow: 0 2px 8px rgba(0, 48, 135, 0.3);
     }
     
     .schedule-cell.has-subject:hover {
-        background: linear-gradient(135deg, #0052cc 0%, #0066ff 100%);
+        background-color: var(--primary-blue-medium);
     }
     
     .cell-content {
@@ -214,8 +242,9 @@
         position: absolute;
         top: 5px;
         right: 5px;
-        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
-        color: white;
+        /* Replaced gradient with solid color */
+        background-color: var(--error-color);
+        color: var(--text-white);
         border: none;
         border-radius: 50%;
         width: 24px;
@@ -232,7 +261,7 @@
     
     .delete-btn:hover {
         transform: scale(1.1) rotate(90deg);
-        background: linear-gradient(135deg, #ff0000 0%, #aa0000 100%);
+        background-color: var(--error-hover);
     }
     
     .schedule-cell:hover .delete-btn {
@@ -244,7 +273,7 @@
         gap: 25px;
         margin-top: 30px;
         padding: 20px 30px;
-        background: white;
+        background: var(--text-white);
         border-radius: 15px;
         flex-wrap: wrap;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -264,11 +293,17 @@
         border: 2px solid #ddd;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
+    /* Assign flat colors to legend items */
+    .legend-color.default { background-color: var(--default-cell-bg); }
+    .legend-color.available { background-color: var(--available-color); }
+    .legend-color.booked { background-color: var(--booked-color); }
+    .legend-color.has-subject { background-color: var(--primary-blue-dark); }
     
     .legend-item span {
         font-weight: 600;
         font-size: 14px;
-        color: #333;
+        color: var(--text-dark);
     }
     
     .notification {
@@ -277,7 +312,7 @@
         right: 30px;
         padding: 18px 25px;
         border-radius: 10px;
-        color: white;
+        color: var(--text-white);
         z-index: 9999;
         animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
@@ -287,11 +322,13 @@
     }
     
     .notification.success {
-        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--success-color);
     }
     
     .notification.error {
-        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--error-color);
     }
     
     @keyframes slideIn {

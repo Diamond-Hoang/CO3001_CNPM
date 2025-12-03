@@ -6,6 +6,19 @@
 
 {% block extra_css %}
 <style>
+    /* -------------------------------------- */
+    /* 1. CSS Variables (Easier Maintenance) */
+    /* -------------------------------------- */
+    :root {
+        --primary-blue: #3478F6; /* Vô cùng hiện đại và rõ ràng */
+        --primary-hover: #216CE7;
+        --secondary-bg: #F0F4F8; /* Nền xanh xám nhạt */
+        --text-dark: #333333;
+        --text-muted: #6C757D;
+        --success-color: #28A745;
+        --error-color: #DC3545;
+    }
+    
     .main-content,
     .main-content *,
     .profile-card,
@@ -15,43 +28,50 @@
         box-sizing: border-box;
     }
 
-    .main-content {
+    /* -------------------------------------- */
+    /* 2. Layout & Main Content */
+    /* -------------------------------------- */
+     .main-content {
         max-width: 100%;
         margin: 0 auto;
         padding: 50px 120px 90px 150px;
         z-index: -1;
     }
-    
+
     @media (max-width: 100%) {
         .main-content {
             padding-left: 100px;
             padding-right: 80px;
         }
     }
-    
+
     @media (max-width: 100%) {
         .main-content {
             padding-left: 60px;
             padding-right: 60px;
         }
     }
-    
+
     @media (max-width: 100%) {
         .main-content {
             padding: 30px 20px 60px 20px;
         }
     }
-    
+
     .profile-card {
         background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 18px; /* Bo góc lớn hơn chút */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow rõ ràng hơn */
         overflow: hidden;
     }
     
+    /* -------------------------------------- */
+    /* 3. Banner & Avatar */
+    /* -------------------------------------- */
     .profile-banner {
         height: 125px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Thay thế gradient bằng màu phẳng */
+        background-color: var(--primary-blue); 
         position: relative;
     }
     
@@ -71,19 +91,19 @@
         width: 160px;
         height: 160px;
         border-radius: 50%;
-        border: 6px solid white;
+        border: 8px solid white; /* Viền dày hơn cho nổi bật */
         object-fit: cover;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         background: white;
     }
     
-    .edit-avatar-overlay {
+      .edit-avatar-overlay {
         position: absolute;
         bottom: 10px;
         right: 10px;
         width: 40px;
         height: 40px;
-        background: #667eea;
+        background: var(--primary-blue);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -95,39 +115,42 @@
     }
     
     .edit-avatar-overlay:hover {
-        background: #5568d3;
-        transform: scale(1.1);
+        background: var(--primary-hover);
+        transform: scale(1.05); /* Hiệu ứng hover nhẹ nhàng hơn */
     }
     
     .edit-avatar-overlay img {
-        width: 18px;
-        height: 18px;
+        width: 20px; /* Icon lớn hơn */
+        height: 20px;
         filter: brightness(0) invert(1);
     }
     
+    /* -------------------------------------- */
+    /* 4. Profile Body & Info Grid */
+    /* -------------------------------------- */
     .profile-body {
-        padding: 30px 40px 40px;
+        padding: 40px;
     }
     
     .profile-name {
         text-align: center;
-        font-size: 28px;
+        font-size: 32px; /* Tên lớn hơn */
         font-weight: 700;
-        color: #333;
+        color: var(--text-dark);
         margin-bottom: 8px;
     }
     
     .profile-id {
         text-align: center;
         font-size: 16px;
-        color: #999;
+        color: var(--text-muted);
         margin-bottom: 30px;
     }
     
     .info-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 25px;
+        gap: 30px; /* Khoảng cách lớn hơn */
         margin-top: 30px;
     }
     
@@ -140,22 +163,22 @@
     .info-label {
         font-size: 13px;
         font-weight: 600;
-        color: #999;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
     
     .info-value {
         font-size: 16px;
-        color: #333;
+        color: var(--text-dark);
         font-weight: 500;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        min-height: 48px;
+        padding: 12px 15px;
+        background: var(--secondary-bg);
+        border-radius: 10px; /* Bo góc lớn hơn */
+        min-height: 52px; /* Chiều cao tối thiểu lớn hơn */
     }
     
     .info-value.editable {
@@ -167,10 +190,10 @@
     }
     
     .edit-btn {
-        width: 32px;
-        height: 32px;
-        min-width: 32px;
-        background: #5568d3;
+        width: 36px; /* Kích thước lớn hơn */
+        height: 36px;
+        min-width: 36px;
+        background: var(--primary-blue);
         border: 2px solid white;
         border-radius: 50%;
         display: flex;
@@ -178,22 +201,24 @@
         justify-content: center;
         cursor: pointer;
         transition: all 0.3s;
-        margin-left: 12px;
+        margin-left: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     
     .edit-btn:hover {
-        background: #667eea;
-        transform: scale(1.1);
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        background: var(--primary-hover);
+        transform: scale(1.05);
     }
     
     .edit-btn img {
-        width: 15px;
-        height: 15px;
+        width: 16px; /* Icon lớn hơn */
+        height: 16px;
         filter: brightness(0) invert(1);
     }
     
-    /* Modal Styles */
+    /* -------------------------------------- */
+    /* 5. Modal Styles */
+    /* -------------------------------------- */
     .modal {
         display: none;
         position: fixed;
@@ -202,36 +227,27 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.6); /* Nền tối hơn chút */
         justify-content: center;
         align-items: center;
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(6px); /* Blur mạnh hơn */
     }
     
     .modal-content {
         background-color: white;
         padding: 0;
-        border-radius: 16px;
+        border-radius: 18px;
         width: 90%;
-        max-width: 550px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        max-width: 500px; /* Giảm max-width chút cho gọn */
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
         animation: modalSlideIn 0.3s ease-out;
     }
     
-    @keyframes modalSlideIn {
-        from {
-            transform: translateY(-50px);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
+    /* Keyframes giữ nguyên */
     
     .modal-header {
         padding: 25px 30px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid #e9ecef; /* Đường kẻ mỏng hơn */
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -239,35 +255,28 @@
     
     .modal-header h3 {
         margin: 0;
-        font-size: 20px;
+        font-size: 22px;
         font-weight: 700;
-        color: #333;
+        color: var(--text-dark);
     }
     
     .close-modal {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        color: #999;
-        cursor: pointer;
-        border-radius: 50%;
-        transition: all 0.3s;
-        background: transparent;
-        border: none;
+        width: 36px;
+        height: 36px;
+        font-size: 26px;
+        color: var(--text-muted);
+        transition: all 0.2s;
     }
     
     .close-modal:hover {
-        background: #f5f5f5;
-        color: #333;
+        background: var(--secondary-bg);
+        color: var(--text-dark);
     }
     
     .modal-body {
         padding: 30px;
     }
-    
+
     .modal-body textarea {
         width: 100%;
         min-height: 150px;
@@ -280,7 +289,7 @@
         transition: all 0.3s ease;
         line-height: 1.6;
     }
-    
+
     .modal-body textarea:focus {
         outline: none;
         border-color: #667eea;
@@ -289,88 +298,71 @@
     
     .modal-footer {
         padding: 20px 30px;
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid #e9ecef;
         display: flex;
         justify-content: flex-end;
         gap: 12px;
-        background: #fafafa;
+        background: #fcfcfc; /* Nền footer sáng hơn */
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
     }
     
     .btn-modal {
-        padding: 12px 28px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
+        padding: 12px 24px;
+        border-radius: 10px; /* Bo góc nút lớn hơn */
         font-size: 15px;
         font-weight: 600;
-        transition: all 0.3s;
     }
     
     .btn-cancel {
-        background-color: white;
-        color: #666;
-        border: 2px solid #e0e0e0;
+        color: var(--text-muted);
+        border: 2px solid #ced4da;
     }
     
     .btn-cancel:hover {
-        background-color: #f5f5f5;
-        border-color: #ccc;
+        background-color: #f8f9fa;
+        border-color: #adb5bd;
     }
     
     .btn-save {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Thay thế gradient bằng màu phẳng */
+        background-color: var(--primary-blue);
         color: white;
     }
     
     .btn-save:hover {
+        background-color: var(--primary-hover);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 15px rgba(52, 120, 246, 0.4);
     }
     
-    /* Notification */
+    /* -------------------------------------- */
+    /* 6. Notification */
+    /* -------------------------------------- */
     .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 16px 24px;
-        border-radius: 10px;
-        color: white;
-        font-weight: 600;
-        z-index: 9999;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        animation: slideIn 0.3s ease-out;
+        top: 30px; /* Đẩy xuống chút */
+        right: 30px;
+        padding: 18px 28px;
+        border-radius: 12px;
+        font-weight: 700;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
     }
     
     .notification.success {
-        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        /* Thay thế gradient bằng màu phẳng */
+        background-color: var(--success-color);
     }
     
     .notification.error {
-        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        /* Thay thế gradient bằng màu phẳng */
+        background-color: var(--error-color);
     }
     
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
+    /* Keyframes giữ nguyên */
     
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-    
+    /* -------------------------------------- */
+    /* 7. Responsive Adjustments */
+    /* -------------------------------------- */
     @media (max-width: 768px) {
         .profile-banner {
             height: 140px;
@@ -383,14 +375,21 @@
         .profile-avatar {
             width: 120px;
             height: 120px;
+            border-width: 5px;
+        }
+        
+        .edit-avatar-overlay {
+            width: 38px;
+            height: 38px;
+            border-width: 3px;
         }
         
         .profile-body {
-            padding: 20px;
+            padding: 25px;
         }
         
         .profile-name {
-            font-size: 22px;
+            font-size: 24px;
         }
         
         .info-grid {

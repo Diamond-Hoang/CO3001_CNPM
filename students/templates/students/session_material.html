@@ -5,6 +5,14 @@
 
 {% block extra_css %}
 <style>
+    /* CSS Variables for a clean Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --text-dark: #333;
+        --text-muted: #666;
+    }
+
     .materials-container {
         max-width: 100%;
         margin: 0 auto;
@@ -12,15 +20,17 @@
         margin-left: 150px;
         margin-right: 120px;
         margin-bottom: 90px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
     .session-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
         border-radius: 12px;
         padding: 30px;
         color: white;
         margin-bottom: 30px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated box-shadow color */
     }
     
     .session-header h1 {
@@ -28,6 +38,7 @@
         font-weight: 700;
         margin: 0 0 20px 0;
         color: white;
+        /* Translated Text: Session Materials: [Course Name] */
     }
     
     .session-details {
@@ -43,28 +54,32 @@
         background: rgba(255, 255, 255, 0.15);
         padding: 12px 15px;
         border-radius: 8px;
-        backdrop-filter: blur(10px);
+        /* Kept backdrop-filter for frosted glass effect */
+        backdrop-filter: blur(10px); 
     }
     
     .detail-item strong {
         margin-right: 8px;
         font-weight: 600;
+        /* Translated Text placeholders: Subject, Instructor, Date */
     }
     
     .materials-section {
         background: white;
         border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     }
     
     .section-title {
         font-size: 22px;
         font-weight: 700;
-        color: #333;
+        color: var(--text-dark);
         margin-bottom: 25px;
         padding-bottom: 15px;
-        border-bottom: 2px solid #667eea;
+        /* Replaced gradient border with solid color */
+        border-bottom: 2px solid var(--primary-blue);
+        /* Translated Text: Available Resources */
     }
     
     .materials-list {
@@ -85,7 +100,7 @@
     }
     
     .material-card:hover {
-        border-color: #667eea;
+        border-color: var(--primary-blue);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         transform: translateY(-2px);
     }
@@ -104,6 +119,10 @@
     .material-icon img {
         width: 32px;
         height: 32px;
+        /* Image tag placeholder: 
+
+[Image of PDF icon or link icon]
+ */
     }
     
     .material-content {
@@ -114,22 +133,25 @@
     .material-title {
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark);
         margin-bottom: 5px;
+        /* Translated Text placeholder: Lecture Slides - Week 5 */
     }
     
     .material-description {
         font-size: 14px;
-        color: #666;
+        color: var(--text-muted);
         font-style: italic;
         margin-top: 8px;
         line-height: 1.5;
+        /* Translated Text placeholder: Summary of key concepts and practice problems. */
     }
     
     .material-meta {
         font-size: 13px;
         color: #999;
         margin-top: 5px;
+        /* Translated Text placeholder: Type: PDF | Size: 2.5 MB */
     }
     
     .material-actions {
@@ -140,7 +162,8 @@
     
     .btn-download {
         padding: 10px 20px;
-        background: #667eea;
+        /* Replaced background color */
+        background-color: var(--primary-blue);
         color: white;
         text-decoration: none;
         border-radius: 6px;
@@ -151,12 +174,13 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
+        /* Translated Text: Download */
     }
     
     .btn-download:hover {
-        background: #5568d3;
+        background-color: var(--primary-hover);
         transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 10px rgba(52, 120, 246, 0.3); /* Updated box-shadow color */
     }
     
     .empty-state {
@@ -169,18 +193,21 @@
         font-size: 64px;
         margin-bottom: 20px;
         opacity: 0.3;
+        /* Content placeholder: 📦 */
     }
     
     .empty-state h3 {
         font-size: 20px;
-        color: #666;
+        color: var(--text-muted);
         margin-bottom: 10px;
         font-weight: 600;
+        /* Translated Text: No Materials Available Yet */
     }
     
     .empty-state p {
         font-size: 14px;
         color: #999;
+        /* Translated Text: Check back later or contact your instructor for resources. */
     }
 
     /* Info badge for student view */
@@ -193,6 +220,7 @@
         border-radius: 20px;
         font-size: 14px;
         backdrop-filter: blur(10px);
+        /* Translated Text placeholder: Student View */
     }
 
     .student-info-badge::before {
@@ -203,8 +231,8 @@
     @media (max-width: 768px) {
         .materials-container {
             padding: 20px 15px;
-            margin-left: 20px;
-            margin-right: 20px;
+            margin-left: 0;
+            margin-right: 0;
         }
         
         .session-header {

@@ -6,9 +6,13 @@
 {% block extra_css %}
 <style>
     .main-content {
-        padding: 20px;
-        max-width: 1200px;
+        max-width: 100%;
         margin: 0 auto;
+        padding: 40px 20px;
+        margin-left: 150px;
+        margin-right: 120px;
+        margin-bottom: 90px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .page-header {
@@ -333,7 +337,6 @@
                             {{ notification.get_notification_type_display }}
                         </span>
                         <div class="notification-time">
-                            <span>🕒</span>
                             <span>{{ notification.created_at|timesince }} ago</span>
                         </div>
                     </div>
@@ -348,7 +351,7 @@
 
                     <div class="notification-footer">
                         {% if notification.is_broadcast %}
-                        <span class="broadcast-badge">📢 Broadcast</span>
+                        <span class="broadcast-badge">Broadcast</span>
                         {% endif %}
                         
                         {% if notification.is_read %}
@@ -366,7 +369,6 @@
             {% endfor %}
         {% else %}
             <div class="no-notifications">
-                <div class="no-notifications-icon">🔔</div>
                 <div class="no-notifications-text">No notifications yet</div>
                 <div class="no-notifications-subtext">
                     You'll see notifications here when you have updates
