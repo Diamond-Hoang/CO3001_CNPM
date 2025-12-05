@@ -9,7 +9,7 @@
     :root {
         --primary-blue: #3478F6;
         --primary-hover: #216CE7;
-        --secondary-bg-light: #F0F4F8; /* Light background for sections */
+        --secondary-bg-light: #F0F4F8;
         --text-dark: #333;
         --text-muted: #6C757D;
         --success-color: #28a745;
@@ -20,11 +20,10 @@
     .find-sessions-container {
         max-width: 100%;
         margin: 0 auto;
-        padding: 40px 120px 90px 150px; /* Default desktop padding */
+        padding: 40px 120px 90px 150px;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Optimized Media Queries (Removed redundant max-width: 100% blocks) */
     @media (max-width: 1200px) {
         .find-sessions-container {
             padding-left: 100px;
@@ -42,7 +41,7 @@
     @media (max-width: 768px) {
         .find-sessions-container {
             padding: 30px 20px 60px 20px;
-            margin: 0; /* Reset margins for full width */
+            margin: 0;
         }
     }
 
@@ -65,7 +64,6 @@
     }
 
     .page-title::before {
-        /* Placeholder for a large icon/emoji */
         font-size: 32px;
     }
 
@@ -92,10 +90,6 @@
         height: 20px;
         opacity: 0.5;
         pointer-events: none;
-        /* Image tag placeholder: 
-
-[Image of magnifying glass icon]
- */
     }
 
     .search-input {
@@ -110,17 +104,15 @@
 
     .search-input:focus {
         border-color: var(--primary-blue);
-        box-shadow: 0 0 0 4px rgba(52, 120, 246, 0.15); /* Updated box-shadow color */
+        box-shadow: 0 0 0 4px rgba(52, 120, 246, 0.15);
     }
 
     .search-input::placeholder {
         color: #999;
-        content: "Search by course name, code, or instructor..."; /* Translated placeholder text */
     }
 
     .search-btn {
         padding: 15px 35px;
-        /* Replaced gradient with solid color */
         background-color: var(--primary-blue); 
         color: white;
         border: none;
@@ -135,7 +127,7 @@
     .search-btn:hover {
         background-color: var(--primary-hover);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated box-shadow color */
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4);
     }
 
     /* Request Button */
@@ -144,7 +136,6 @@
         align-items: center;
         gap: 10px;
         padding: 14px 28px;
-        /* Replaced gradient with solid color */
         background-color: var(--primary-blue); 
         color: white;
         text-decoration: none;
@@ -152,13 +143,13 @@
         font-weight: 600;
         font-size: 15px;
         transition: all 0.3s;
-        box-shadow: 0 4px 15px rgba(52, 120, 246, 0.3); /* Updated box-shadow color */
+        box-shadow: 0 4px 15px rgba(52, 120, 246, 0.3);
     }
 
     .request-session-btn:hover {
         background-color: var(--primary-hover);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated box-shadow color */
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4);
     }
 
     .request-session-btn::before {
@@ -235,7 +226,6 @@
         background: white;
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
         margin-bottom: 30px;
     }
 
@@ -245,7 +235,6 @@
     }
 
     .sessions-table thead {
-        /* Replaced gradient with solid color */
         background-color: var(--primary-blue);
     }
 
@@ -268,7 +257,6 @@
 
     .sessions-table tbody tr:hover {
         background-color: #f8faff;
-        transform: none; /* Removed scale for a smoother table hover */
     }
 
     .sessions-table tbody tr:last-child {
@@ -287,6 +275,180 @@
         color: var(--primary-blue);
         font-size: 15px;
     }
+
+    /* ===== TUTOR HOVER CARD STYLES ===== */
+    .tutor-name-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tutor-name {
+        color: var(--text-dark);
+        cursor: pointer;
+        transition: all 0.2s;
+        border-bottom: 2px solid transparent;
+    }
+
+    .tutor-name:hover {
+        color: var(--primary-blue);
+        border-bottom-color: var(--primary-blue);
+    }
+
+    .tutor-info-card {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        padding: 0;
+        width: 320px;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        margin-top: 8px;
+    }
+
+    .tutor-name-wrapper:hover .tutor-info-card {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Arrow indicator */
+    .tutor-info-card::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid white;
+    }
+
+    .tutor-card-header {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-hover) 100%);
+        padding: 20px;
+        border-radius: 12px 12px 0 0;
+        text-align: center;
+    }
+
+    .tutor-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tutor-avatar-placeholder {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 4px solid white;
+        background: #667eea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+        margin: 0 auto 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tutor-card-name {
+        color: white;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 4px 0;
+    }
+
+    .tutor-card-id {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .tutor-card-body {
+        padding: 20px;
+    }
+
+    .tutor-info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+        font-size: 13px;
+    }
+
+    .tutor-info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .tutor-info-icon {
+        width: 18px;
+        height: 18px;
+        color: var(--primary-blue);
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .tutor-info-label {
+        font-weight: 600;
+        color: var(--text-muted);
+        min-width: 60px;
+    }
+
+    .tutor-info-value {
+        color: var(--text-dark);
+        flex: 1;
+    }
+
+    .tutor-expertise-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .expertise-tag {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-hover) 100%);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* Responsive adjustment for tooltip */
+    @media (max-width: 768px) {
+        .tutor-info-card {
+            left: 0;
+            transform: translateX(0) translateY(10px);
+            width: 280px;
+        }
+
+        .tutor-name-wrapper:hover .tutor-info-card {
+            transform: translateX(0) translateY(0);
+        }
+
+        .tutor-info-card::before {
+            left: 40px;
+        }
+    }
+
+    /* ===== END TUTOR HOVER CARD STYLES ===== */
 
     .capacity-badge {
         display: inline-block;
@@ -343,7 +505,7 @@
         font-size: 13px;
         font-weight: 600;
         cursor: not-allowed;
-        opacity: 0.8; /* Slightly less opaque */
+        opacity: 0.8;
     }
 
     /* Empty State */
@@ -356,7 +518,6 @@
         font-size: 80px;
         margin-bottom: 20px;
         opacity: 0.3;
-        /* Content placeholder: 📚 or 🔍 */
     }
 
     .empty-state h3 {
@@ -364,14 +525,12 @@
         color: var(--text-muted);
         margin-bottom: 12px;
         font-weight: 600;
-        /* Translated Text: No Sessions Found */
     }
 
     .empty-state p {
         font-size: 15px;
         color: #999;
         margin-bottom: 30px;
-        /* Translated Text: Try a different search or request a new session. */
     }
 
     .empty-state-btn {
@@ -379,7 +538,6 @@
         align-items: center;
         gap: 10px;
         padding: 14px 28px;
-        /* Replaced gradient with solid color */
         background-color: var(--primary-blue);
         color: white;
         text-decoration: none;
@@ -392,14 +550,13 @@
     .empty-state-btn:hover {
         background-color: var(--primary-hover);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated box-shadow color */
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4);
     }
 
     /* Request Section */
     .request-section {
         text-align: center;
         padding: 30px;
-        /* Replaced gradient with solid background color */
         background-color: var(--secondary-bg-light); 
         border-radius: 12px;
         margin-top: 30px;
@@ -410,14 +567,12 @@
         color: var(--text-dark);
         margin-bottom: 10px;
         font-weight: 600;
-        /* Translated Text: Can't Find What You Need? */
     }
 
     .request-section p {
         font-size: 14px;
         color: var(--text-muted);
         margin-bottom: 20px;
-        /* Translated Text: Request a new session for your subject. */
     }
 
     /* Responsive Design */
@@ -455,14 +610,13 @@
             flex-direction: column;
         }
         
-        /* Make search input full width when stacking */
         .search-input {
             width: 100%; 
-            padding-left: 20px; /* Adjust padding back for full width input without icon offset */
+            padding-left: 20px;
         }
         
         .search-icon {
-            left: 10px; /* Move icon slightly if still needed */
+            left: 10px;
         }
 
         .search-btn {
@@ -533,7 +687,70 @@
                         <span class="class-code">{{ session.class_code }}</span>
                     </td>
                     <td>{{ session.subject.name }}</td>
-                    <td>{{ session.tutor.full_name }}</td>
+                    <td>
+                        <div class="tutor-name-wrapper">
+                            <span class="tutor-name">{{ session.tutor.full_name }}</span>
+                            
+                            <!-- Tutor Info Card -->
+                            <div class="tutor-info-card">
+                                <div class="tutor-card-header">
+                                    {% if session.tutor.avatar %}
+                                        <img src="{{ session.tutor.avatar.url }}" alt="{{ session.tutor.full_name }}" class="tutor-avatar">
+                                    {% else %}
+                                        <div class="tutor-avatar-placeholder">
+                                            {{ session.tutor.full_name|slice:":1"|upper }}
+                                        </div>
+                                    {% endif %}
+                                    <h4 class="tutor-card-name">{{ session.tutor.full_name }}</h4>
+                                    <p class="tutor-card-id">ID: {{ session.tutor.tutor_id }}</p>
+                                </div>
+                                
+                                <div class="tutor-card-body">
+                                    {% if session.tutor.email %}
+                                    <div class="tutor-info-item">
+                                        <svg class="tutor-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <div class="tutor-info-value">{{ session.tutor.email }}</div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if session.tutor.phone %}
+                                    <div class="tutor-info-item">
+                                        <svg class="tutor-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                        </svg>
+                                        <div class="tutor-info-value">{{ session.tutor.phone }}</div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if session.tutor.major %}
+                                    <div class="tutor-info-item">
+                                        <svg class="tutor-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                        </svg>
+                                        <div class="tutor-info-value">{{ session.tutor.major }}</div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if session.tutor.expertise.all %}
+                                    <div class="tutor-info-item">
+                                        <svg class="tutor-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <div>
+                                            <div class="tutor-expertise-tags">
+                                                {% for subject in session.tutor.expertise.all %}
+                                                    <span class="expertise-tag">{{ subject.name }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                     <td>{{ session.days }}</td>
                     <td>{{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}</td>
                     <td>
@@ -587,16 +804,6 @@
         </div>
         {% endif %}
     </div>
-
-    {% if sessions %}
-    <div class="request-section">
-        <h3>Can't find what you're looking for?</h3>
-        <p>Request a new session and we'll try to match you with a tutor</p>
-        <a href="{% url 'feedback:request_session' %}" class="request-session-btn">
-            Request New Session
-        </a>
-    </div>
-    {% endif %}
 </div>
 
 {% endblock %}

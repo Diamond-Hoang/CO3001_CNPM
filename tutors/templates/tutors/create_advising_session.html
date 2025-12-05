@@ -72,19 +72,16 @@
     .form-title {
         font-size: 32px;
         font-weight: 700;
-        /* Removed gradient and used solid color */
-        color: var(--primary-blue-dark); 
+        
         background: none;
         -webkit-background-clip: unset;
         -webkit-text-fill-color: initial;
         background-clip: unset;
         margin-bottom: 10px;
-        text-align: center;
         letter-spacing: -0.5px;
     }
 
     .form-subtitle {
-        text-align: center;
         color: var(--text-muted);
         margin-bottom: 35px;
         font-size: 15px;
@@ -302,17 +299,16 @@
 {% block content %}
 
 <div class="main-content">
+    <h2 class="form-title">Create Advising Session</h2>
+    <p class="form-subtitle">Create an additional tutoring session for your main class</p>
+
+    <div class="info-box">
+        <strong>Important Notes:</strong>
+        <p>• Advising session is an additional tutoring session for a specific date</p>
+        <p>• Choose from the main classes you are currently teaching</p>
+        <p>• Students in the main class will be notified about the tutoring session</p>
+    </div>
     <div class="form-container">
-        <h2 class="form-title">Create Advising Session</h2>
-        <p class="form-subtitle">Create an additional tutoring session for your main class</p>
-
-        <div class="info-box">
-            <strong>Important Notes:</strong>
-            <p>• Advising session is an additional tutoring session for a specific date</p>
-            <p>• Choose from the main classes you are currently teaching</p>
-            <p>• Students in the main class will be notified about the tutoring session</p>
-        </div>
-
         <form method="post" id="advisingForm">
             {% csrf_token %}
 

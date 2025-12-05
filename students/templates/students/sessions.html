@@ -473,7 +473,7 @@
                         {% elif enrollment.session.status == 'scheduled' or enrollment.session.status == 'ongoing' %}
                             <a href="{% url 'tutoring_sessions:cancel_enrollment' enrollment.id %}" 
                                class="action-btn action-cancel" 
-                               onclick="return confirm('Bạn có chắc muốn hủy session này?')">
+                               onclick="return confirm('Are you sure you want to cancel this session?')">
                                 Cancel
                             </a>
                         {% endif %}
@@ -484,9 +484,8 @@
         </table>
         {% else %}
         <div class="empty-state">
-            <div class="empty-state-icon">📚</div>
-            <h3>Chưa có Sessions</h3>
-            <p>Bạn chưa đăng ký session nào. Hãy tìm và đăng ký các sessions phù hợp với bạn!</p>
+            <h3>No session</h3>
+            <p>You haven't registered for any sessions yet. Find and register for sessions that are right for you!</p>
         </div>
         {% endif %}
     </div>
@@ -523,14 +522,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 4000);
     }
 
-    // Enhanced confirm dialog
-    document.querySelectorAll('.action-cancel').forEach(link => {
-        link.addEventListener('click', function(e) {
-            if (!confirm('Bạn có chắc muốn hủy session này?\n\nSession sẽ bị hủy khỏi danh sách của bạn.')) {
-                e.preventDefault();
-            }
-        });
-    });
 });
 </script>
 {% endblock %}
