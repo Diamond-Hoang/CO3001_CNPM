@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'accounts',
     'students',
     'tutors',
-    'offices',
     'tutoring_sessions',
     'feedback',
     'notification',
