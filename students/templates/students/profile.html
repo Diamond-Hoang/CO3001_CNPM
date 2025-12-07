@@ -1,117 +1,633 @@
+{% extends 'student_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-</head>
-<body>
-    <nav class="sidebar">
-        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
-        <a href="{% url 'profile' %}"><img src="{% static 'images/Selected_user.svg' %}" alt="profile_icon" class="sidebar-icon-active"></a>
-        <a href="{% url 'sessions' %}"><img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
-        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
-        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
-    </nav>
+{% load avatar_tags %}
 
-    <div class="adjust_ellipse">
-        <img src="{% static 'images/Ellipse2.svg' %}" alt="ellipse2">
-        <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
-    </div>
+{% block title %}<title>Profile</title>{% endblock %}
 
-    <div class="notify_curve">
-        <img id="notifyBtn" src="{% static 'images/notify_curve.svg' %}" alt="curve">  
-    </div>
+{% block extra_css %}
+<style>
+    /* -------------------------------------- */
+    /* 1. CSS Variables (Easier Maintenance) */
+    /* -------------------------------------- */
+    :root {
+        --primary-blue: #3478F6; /* Vô cùng hiện đại và rõ ràng */
+        --primary-hover: #216CE7;
+        --secondary-bg: #F0F4F8; /* Nền xanh xám nhạt */
+        --text-dark: #333333;
+        --text-muted: #6C757D;
+        --success-color: #28A745;
+        --error-color: #DC3545;
+    }
+    
+    .main-content,
+    .main-content *,
+    .profile-card,
+    .profile-card *,
+    .modal-body,
+    .modal-body * {
+        box-sizing: border-box;
+    }
 
-    <!-- NOTIFICATION POPUP -->
-    <div id="notificationBox" class="notification-box hidden">
-        <div class="notify-header">
-            <span>Notifications</span>
-            <span class="checkmark">
-                <img src="{% static 'images/check-mark.svg' %}" alt="check_mark">
-            </span>
+    /* -------------------------------------- */
+    /* 2. Layout & Main Content */
+    /* -------------------------------------- */
+     .main-content {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 50px 120px 90px 150px;
+        z-index: -1;
+    }
+
+    @media (max-width: 100%) {
+        .main-content {
+            padding-left: 100px;
+            padding-right: 80px;
+        }
+    }
+
+    @media (max-width: 100%) {
+        .main-content {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+    }
+
+    @media (max-width: 100%) {
+        .main-content {
+            padding: 30px 20px 60px 20px;
+        }
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 18px; /* Bo góc lớn hơn chút */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow rõ ràng hơn */
+        overflow: hidden;
+    }
+    
+    /* -------------------------------------- */
+    /* 3. Banner & Avatar */
+    /* -------------------------------------- */
+    .profile-banner {
+        height: 125px;
+        /* Thay thế gradient bằng màu phẳng */
+        background-color: var(--primary-blue); 
+        position: relative;
+    }
+    
+    .avatar-section {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        margin-top: -80px;
+    }
+    
+    .avatar-container {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .profile-avatar {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        border: 8px solid white; /* Viền dày hơn cho nổi bật */
+        object-fit: cover;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        background: white;
+    }
+    
+      .edit-avatar-overlay {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        background: var(--primary-blue);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        border: 3px solid white;
+    }
+    
+    .edit-avatar-overlay:hover {
+        background: var(--primary-hover);
+        transform: scale(1.05); /* Hiệu ứng hover nhẹ nhàng hơn */
+    }
+    
+    .edit-avatar-overlay img {
+        width: 20px; /* Icon lớn hơn */
+        height: 20px;
+        filter: brightness(0) invert(1);
+    }
+    
+    /* -------------------------------------- */
+    /* 4. Profile Body & Info Grid */
+    /* -------------------------------------- */
+    .profile-body {
+        padding: 40px;
+    }
+    
+    .profile-name {
+        text-align: center;
+        font-size: 32px; /* Tên lớn hơn */
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+    
+    .profile-id {
+        text-align: center;
+        font-size: 16px;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px; /* Khoảng cách lớn hơn */
+        margin-top: 30px;
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .info-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+        font-size: 16px;
+        color: var(--text-dark);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 15px;
+        background: var(--secondary-bg);
+        border-radius: 10px; /* Bo góc lớn hơn */
+        min-height: 52px; /* Chiều cao tối thiểu lớn hơn */
+    }
+    
+    .info-value.editable {
+        position: relative;
+    }
+    
+    .info-value-text {
+        flex: 1;
+    }
+    
+    .edit-btn {
+        width: 36px; /* Kích thước lớn hơn */
+        height: 36px;
+        min-width: 36px;
+        background: var(--primary-blue);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-left: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .edit-btn:hover {
+        background: var(--primary-hover);
+        transform: scale(1.05);
+    }
+    
+    .edit-btn img {
+        width: 16px; /* Icon lớn hơn */
+        height: 16px;
+        filter: brightness(0) invert(1);
+    }
+    
+    /* -------------------------------------- */
+    /* 5. Modal Styles */
+    /* -------------------------------------- */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Nền tối hơn chút */
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(6px); /* Blur mạnh hơn */
+    }
+    
+    .modal-content {
+        background-color: white;
+        padding: 0;
+        border-radius: 18px;
+        width: 90%;
+        max-width: 500px; /* Giảm max-width chút cho gọn */
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+    
+    /* Keyframes giữ nguyên */
+    
+    .modal-header {
+        padding: 25px 30px;
+        border-bottom: 1px solid #e9ecef; /* Đường kẻ mỏng hơn */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+    
+    .close-modal {
+        width: 36px;
+        height: 36px;
+        font-size: 26px;
+        color: var(--text-muted);
+        transition: all 0.2s;
+    }
+    
+    .close-modal:hover {
+        background: var(--secondary-bg);
+        color: var(--text-dark);
+    }
+    
+    .modal-body {
+        padding: 30px;
+    }
+
+    .modal-body textarea {
+        width: 100%;
+        min-height: 150px;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        font-family: inherit;
+        resize: vertical;
+        transition: all 0.3s ease;
+        line-height: 1.6;
+    }
+
+    .modal-body textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    .modal-footer {
+        padding: 20px 30px;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        background: #fcfcfc; /* Nền footer sáng hơn */
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+    }
+    
+    .btn-modal {
+        padding: 12px 24px;
+        border-radius: 10px; /* Bo góc nút lớn hơn */
+        font-size: 15px;
+        font-weight: 600;
+    }
+    
+    .btn-cancel {
+        color: var(--text-muted);
+        border: 2px solid #ced4da;
+    }
+    
+    .btn-cancel:hover {
+        background-color: #f8f9fa;
+        border-color: #adb5bd;
+    }
+    
+    .btn-save {
+        /* Thay thế gradient bằng màu phẳng */
+        background-color: var(--primary-blue);
+        color: white;
+    }
+    
+    .btn-save:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(52, 120, 246, 0.4);
+    }
+    
+    /* -------------------------------------- */
+    /* 6. Notification */
+    /* -------------------------------------- */
+    .notification {
+        top: 30px; /* Đẩy xuống chút */
+        right: 30px;
+        padding: 18px 28px;
+        border-radius: 12px;
+        font-weight: 700;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+    
+    .notification.success {
+        /* Thay thế gradient bằng màu phẳng */
+        background-color: var(--success-color);
+    }
+    
+    .notification.error {
+        /* Thay thế gradient bằng màu phẳng */
+        background-color: var(--error-color);
+    }
+    
+    /* Keyframes giữ nguyên */
+    
+    /* -------------------------------------- */
+    /* 7. Responsive Adjustments */
+    /* -------------------------------------- */
+    @media (max-width: 768px) {
+        .profile-banner {
+            height: 140px;
+        }
+        
+        .avatar-section {
+            margin-top: -60px;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-width: 5px;
+        }
+        
+        .edit-avatar-overlay {
+            width: 38px;
+            height: 38px;
+            border-width: 3px;
+        }
+        
+        .profile-body {
+            padding: 25px;
+        }
+        
+        .profile-name {
+            font-size: 24px;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .modal-content {
+            width: 95%;
+        }
+        
+        .modal-header,
+        .modal-body,
+        .modal-footer {
+            padding: 20px;
+        }
+        
+        .btn-modal {
+            flex: 1;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="profile-card">
+        <div class="profile-banner"></div>
+        
+        <div class="avatar-section">
+            <div class="avatar-container">
+                <img src="{% if student.avatar|valid_avatar %}{{ student.avatar.url }}{% else %}{% static 'images/avatar.svg' %}{% endif %}"
+                     alt="avatar" 
+                     class="profile-avatar"
+                     id="avatar-display">
+                <form id="avatar-form" enctype="multipart/form-data" style="display: none;">
+                    {% csrf_token %}
+                    <input type="file" name="avatar" id="avatar-input" accept="image/*">
+                </form>
+                <div class="edit-avatar-overlay" id="edit-avatar-btn">
+                    <img src="{% static 'images/pencil.svg' %}" alt="edit">
+                </div>
+            </div>
         </div>
 
-        <div class="notify-body">
-            You have no notifications
-        </div>
-
-        <div class="notify-footer">
-            <a href="#">See all</a>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="profile-container">
-            <div class="profile_ellipse">
-                <img src="{% static 'images/Ellipse2.svg' %}" alt="ellipse2">
-                <div class="adjust_profile">
-                    <img src="{% static 'images/avatar.svg' %}"  alt="avatar">
-                    <div class="edit-avatar-btn">
-                        <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
+        <div class="profile-body">
+            <h1 class="profile-name">{{ student.full_name }}</h1>
+            <p class="profile-id">Student ID: {{ student.student_id }}</p>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <label class="info-label">Date of Birth</label>
+                    <div class="info-value">
+                        {{ student.dob|date:"d/m/Y"|default:"Not provided" }}
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <label class="info-label">Major</label>
+                    <div class="info-value">
+                        {{ student.major|default:"Not provided" }}
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <label class="info-label">Phone Number</label>
+                    <div class="info-value">
+                        {{ student.phone|default:"Not provided" }}
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <label class="info-label">Email</label>
+                    <div class="info-value">
+                        {{ student.email|default:"Not provided" }}
+                    </div>
+                </div>
+                
+                <div class="info-item" style="grid-column: 1 / -1;">
+                    <label class="info-label">Support Needs</label>
+                    <div class="info-value editable">
+                        <div class="info-value-text" id="sp-needs-display">
+                            {{ student.sp_needs|default:"Not provided" }}
+                        </div>
+                        <div class="edit-btn" id="edit-sp-needs-btn">
+                            <img src="{% static 'images/pencil.svg' %}" alt="edit">
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="profile-header"></div>
-            <div class="profile-info">
-                <table class="info-table">
-                    <tr>
-                        <td>Full name</td>
-                        <td>Nguyen Van A</td>
-                    </tr>
-                    <tr>
-                        <td>Student's ID</td>
-                        <td>235xxxx</td>
-                    </tr>
-                    <tr>
-                        <td>Date of birth</td>
-                        <td>dd/mm/yyyy</td>
-                    </tr>
-                    <tr>
-                        <td>Major</td>
-                        <td>Computer Science</td>
-                    </tr>
-                    <tr>
-                        <td>Phone number</td>
-                        <td>0123456789</td>
-                    </tr>
-                    <tr>
-                        <td>Email</td>
-                        <td>a.nguyenvan@hcmut.edu.vn</td>
-                    </tr>
-                    <tr>
-                        <td>Support needs</td>
-                        <td>
-                            Calculus 1
-                            <div class="edit-field-btn">
-                                <img src="{% static 'images/pencil.svg' %}" alt="edit-icon">
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
         </div>
     </div>
-    <div class="footer">
-        <a href="#">Technical Support</a>
+</div>
+
+<!-- Modal for editing support needs -->
+<div id="sp-needs-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Support Needs</h3>
+            <span class="close-modal" id="close-modal">&times;</span>
+        </div>
+        
+        <div class="modal-body">
+            <form id="sp-needs-form">
+                {% csrf_token %}
+                <textarea id="sp-needs-input" name="sp_needs" placeholder="Enter the subject or field you need support in...">{{ student.sp_needs }}</textarea>
+            </form>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn-modal btn-cancel" id="cancel-btn">Cancel</button>
+            <button type="submit" form="sp-needs-form" class="btn-modal btn-save">Save Changes</button>
+        </div>
     </div>
-    <script>
-        const notifyBtn = document.getElementById("notifyBtn");
-        const notificationBox = document.getElementById("notificationBox");
+</div>
 
-        notifyBtn.addEventListener("click", function() {
-            notificationBox.classList.toggle("hidden");
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Profile script loaded');
+    
+    // Avatar upload functionality
+    const editAvatarBtn = document.getElementById('edit-avatar-btn');
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarDisplay = document.getElementById('avatar-display');
+    
+    if (editAvatarBtn) {
+        editAvatarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Avatar button clicked');
+            avatarInput.click();
         });
+    }
+    
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch("{% url 'students:update_avatar' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    avatarDisplay.src = data.avatar_url;
+                    showNotification('Avatar updated successfully!', 'success');
+                } else {
+                    showNotification('Failed to update avatar', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred', 'error');
+            });
+        }
+    });
+    
+    // Support needs edit functionality
+    const editSpNeedsBtn = document.getElementById('edit-sp-needs-btn');
+    const spNeedsModal = document.getElementById('sp-needs-modal');
+    const closeModal = document.getElementById('close-modal');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const spNeedsForm = document.getElementById('sp-needs-form');
+    const spNeedsDisplay = document.getElementById('sp-needs-display');
+    
+    if (editSpNeedsBtn) {
+        editSpNeedsBtn.addEventListener('click', function() {
+            spNeedsModal.style.display = 'flex';
+        });
+    }
+    
+    if (closeModal) {
+        closeModal.addEventListener('click', function() {
+            spNeedsModal.style.display = 'none';
+        });
+    }
+    
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            spNeedsModal.style.display = 'none';
+        });
+    }
+    
+    window.addEventListener('click', function(e) {
+        if (e.target === spNeedsModal) {
+            spNeedsModal.style.display = 'none';
+        }
+    });
+    
+    if (spNeedsForm) {
+        spNeedsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(spNeedsForm);
+            
+            fetch("{% url 'students:update_support_needs' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    spNeedsDisplay.textContent = data.sp_needs || 'Not provided';
+                    spNeedsModal.style.display = 'none';
+                    showNotification('Support needs updated successfully!', 'success');
+                } else {
+                    showNotification('Failed to update support needs', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred', 'error');
+            });
+        });
+    }
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+</script>
 
-        // Click outside to close
-        document.addEventListener("click", function(e) {
-            if (!notificationBox.contains(e.target) && e.target !== notifyBtn) {
-                notificationBox.classList.add("hidden");
-            }
-        });
-    </script>
-</body>
-</html>
+{% endblock %}

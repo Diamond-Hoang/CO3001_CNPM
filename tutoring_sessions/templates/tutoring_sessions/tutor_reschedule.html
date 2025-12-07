@@ -1,0 +1,301 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+
+{% block title %}<title>Reschedule Session</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reschedule-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 40px 20px;
+        margin-left: 150px;
+        margin-right: 120px;
+    }
+    
+    .reschedule-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+    
+    .page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+    }
+    
+    .current-schedule {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        border-left: 4px solid #007bff;
+    }
+    
+    .current-schedule h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 15px;
+    }
+    
+    .schedule-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .schedule-info p {
+        margin: 0;
+        font-size: 14px;
+        color: #555;
+    }
+    
+    .schedule-info strong {
+        color: #333;
+        font-weight: 600;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #333;
+        font-size: 15px;
+    }
+    
+    .form-group input[type="time"] {
+        width: 100%;
+        max-width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+    
+    .form-group input[type="time"]:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    }
+    
+    .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .checkbox-item {
+        flex: 0 0 auto;
+    }
+    
+    .checkbox-item label {
+        display: flex;
+        align-items: center;
+        padding: 10px 18px;
+        background: #f8f9fa;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+        font-size: 14px;
+        user-select: none;
+    }
+    
+    .checkbox-item input[type="checkbox"] {
+        margin-right: 8px;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    
+    .checkbox-item label:hover {
+        background: #e9ecef;
+        border-color: #007bff;
+    }
+    
+    .checkbox-item input[type="checkbox"]:checked + span {
+        font-weight: 600;
+    }
+    
+    .checkbox-item label:has(input:checked) {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+    
+    .btn-primary {
+        background: #007bff;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #545b62;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(108,117,125,0.3);
+    }
+    
+    .time-inputs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .schedule-info {
+            grid-template-columns: 1fr;
+        }
+        
+        .time-inputs {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="reschedule-container">
+    <div class="reschedule-card">
+        <h2 class="page-title">Reschedule Session: {{ session.class_code }}</h2>
+        
+        <div class="current-schedule">
+            <h3>Current Schedule</h3>
+            <div class="schedule-info">
+                <p><strong>Subject:</strong> {{ session.subject.name }}</p>
+                <p><strong>Days:</strong> {{ session.day }}</p>
+                <p><strong>Time:</strong> {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}</p>
+                <p><strong>Enrollments:</strong> {{ session.enrolled_count }}/{{ session.capacity }}</p>
+            </div>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Select Study Day:</label>
+                <div class="checkbox-group">
+                    {% for value, label in day_choices %}
+                    <div class="checkbox-item">
+                        <label>
+                            <input type="checkbox" name="days" value="{{ value }}"
+                                {% if label == current_day_label %}checked{% endif %}>
+                            <span>{{ label }}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            
+            <div class="time-inputs">
+                <div class="form-group">
+                    <label for="start_time">Start Time:</label>
+                    <input type="time" id="start_time" name="start_time" 
+                           value="{{ session.start_time|time:'H:i' }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="end_time">End Time:</label>
+                    <input type="time" id="end_time" name="end_time" 
+                           value="{{ session.end_time|time:'H:i' }}" required>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'tutors:sessions' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Schedule</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Handle multiple checkbox selection for days
+    document.querySelectorAll('input[name="days"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const checkedBoxes = document.querySelectorAll('input[name="days"]:checked');
+            if (checkedBoxes.length === 0) {
+                alert('Please select at least one day');
+                this.checked = true;
+            }
+        });
+    });
+    
+    // Validate time range
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+    
+    function validateTimeRange() {
+        if (startTimeInput.value && endTimeInput.value) {
+            if (startTimeInput.value >= endTimeInput.value) {
+                endTimeInput.setCustomValidity('End time must be after start time');
+            } else {
+                endTimeInput.setCustomValidity('');
+            }
+        }
+    }
+    
+    startTimeInput.addEventListener('change', validateTimeRange);
+    endTimeInput.addEventListener('change', validateTimeRange);
+</script>
+{% endblock %}

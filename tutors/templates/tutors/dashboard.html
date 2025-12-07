@@ -1,1 +1,252 @@
-<h2>This is tutor dashboard</h2>
+{% extends 'tutor_base.html' %}
+{% load static %}
+
+{% block title %}<title>Dashboard</title>{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* CSS Variables for Flat Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --bg-light: #F0F4F8; /* Light background for the overall page */
+        --card-bg: white;
+        --text-dark: #333;
+        --text-muted: #666;
+    }
+    
+    .main-content {
+        padding: 30px;
+        /* Replaced #e8e8e8 with a slightly more modern light background */
+        min-height: 100vh;
+    }
+
+    .section {
+        margin-bottom: 40px;
+    }
+
+    .section h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: grid;
+        /* Kept the original grid structure */
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+        gap: 5px;
+    }
+
+    .session-item {
+        height: 65px;
+        border-radius: 10px;
+        padding: 15px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+        /* Default background for all sessions before color class is applied */
+        background-color: var(--primary-blue);
+        box-shadow: 0 4px 10px rgba(52, 120, 246, 0.2); 
+    }
+
+    .session-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .session-item h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 5px 0;
+    }
+
+    .session-item p {
+        font-size: 13px;
+        margin: 3px 0;
+        opacity: 0.9;
+    }
+
+    .session-time {
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 5px;
+    }
+
+    /* Color variations - Replaced all gradients with solid flat colors */
+    /* Note: These colors use the original names but now use flat backgrounds */
+    .session-blue {
+        background-color: #3478F6;
+        box-shadow: 0 4px 10px rgba(52, 120, 246, 0.2);
+    }
+
+    .session-green {
+        background-color: #56ab2f;
+        box-shadow: 0 4px 10px rgba(86, 171, 47, 0.2);
+    }
+
+    .session-mint {
+        background-color: #2ebf91;
+        box-shadow: 0 4px 10px rgba(46, 191, 145, 0.2);
+    }
+
+    .session-pink {
+        background-color: #f5576c;
+        box-shadow: 0 4px 10px rgba(245, 87, 108, 0.2);
+    }
+
+    .session-peach {
+        background-color: #ffa751;
+        box-shadow: 0 4px 10px rgba(255, 167, 81, 0.2);
+    }
+
+    .session-purple {
+        background-color: #a044ff;
+        box-shadow: 0 4px 10px rgba(160, 68, 255, 0.2);
+    }
+
+    .session-orange {
+        background-color: #ff6a00;
+        box-shadow: 0 4px 10px rgba(255, 106, 0, 0.2);
+    }
+
+    .session-teal {
+        background-color: #0ba360;
+        box-shadow: 0 4px 10px rgba(11, 163, 96, 0.2);
+    }
+
+    .session-light-blue {
+        background-color: #66a6ff;
+        box-shadow: 0 4px 10px rgba(102, 166, 255, 0.2);
+    }
+
+    .session-light-pink {
+        background-color: #a6c1ee;
+        box-shadow: 0 4px 10px rgba(166, 193, 238, 0.2);
+    }
+
+    .session-light-purple {
+        background-color: #e0c3fc;
+        box-shadow: 0 4px 10px rgba(224, 195, 252, 0.2);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-muted);
+    }
+
+    .empty-state p {
+        font-size: 16px;
+    }
+
+    .add-advising-link {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 25px;
+        /* Use the flat primary blue */
+        background-color: var(--primary-blue);
+        color: white;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .add-advising-link:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+    .date-badge {
+        display: inline-block;
+        /* Light background for visibility against the session card */
+        background-color: rgba(255,255,255,0.4); 
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="section">
+        <h2>Today Sessions</h2>
+        <div class="card">
+            {% if today_sessions %}
+                {% for session in today_sessions %}
+                <div class="session-item session-{{ colors|random }}">
+                    <div>
+                        <h3>{{ session.class_code }} {{ session.subject.name }}</h3>
+                    </div>
+                    <div class="session-time">
+                        {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>There is no sessions for today</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Advising Sessions</h2>
+        <div class="card">
+            {% if upcoming_advising %}
+                {% for advising in upcoming_advising %}
+                <div class="session-item session-{{ colors|random }}">
+                    <div>
+                        <h3>{{ advising.main_session.class_code }} {{ advising.main_session.subject.name }}</h3>
+                    </div>
+                    <div>
+                        <div class="date-badge">
+                            {% if advising.date == today %}
+                                Today
+                            {% else %}
+                                {{ advising.date|date:"d/m" }}
+                            {% endif %}
+                        </div>
+                        <div class="session-time">
+                            {{ advising.start_time|time:"H:i" }} - {{ advising.end_time|time:"H:i" }}
+                            {% if advising.location %}
+                            At: {{ advising.location }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No advising session has been scheduled yet</p>
+                    <a href="{% url 'tutors:create_advising_session' %}" class="add-advising-link">
+                        + Create Advising Session
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+{% endblock %}

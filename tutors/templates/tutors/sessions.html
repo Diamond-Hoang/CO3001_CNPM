@@ -1,0 +1,600 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+
+{% block title %}<title>My Sessions</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CSS Variables for Flat Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --text-dark: #333;
+        --text-muted: #666;
+        --color-success: #4CAF50;
+        --color-error: #f44336;
+        --color-info: #2196F3;
+        /* Status colors */
+        --status-scheduled-bg: #fff3cd;
+        --status-scheduled-color: #856404;
+        --status-ongoing-bg: #d4edda;
+        --status-ongoing-color: #155724;
+        --status-completed-bg: #d1ecf1;
+        --status-completed-color: #0c5460;
+        --status-cancelled-bg: #f8d7da;
+        --status-cancelled-color: #721c24;
+    }
+
+    .sessions-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 40px 20px;
+        margin-left: 150px;
+        margin-right: 120px;
+        margin-bottom: 90px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .add-session-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(52, 120, 246, 0.3); /* Updated shadow color */
+        border: none;
+        cursor: pointer;
+    }
+
+    .add-session-btn:hover {
+        transform: translateY(-2px);
+        background-color: var(--primary-hover);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4); /* Updated shadow color */
+    }
+
+    .add-session-btn::before {
+        content: "+";
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .sessions-table-wrapper {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .sessions-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .sessions-table thead {
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
+    }
+
+    .sessions-table th {
+        padding: 18px 20px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .sessions-table tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s;
+    }
+
+    .sessions-table tbody tr:hover {
+        background-color: #f8faff; /* Light blue hover */
+        transform: scale(1.01);
+    }
+
+    .sessions-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .sessions-table td {
+        padding: 18px 20px;
+        color: var(--text-dark);
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .class-code {
+        font-weight: 600;
+        color: var(--primary-blue);
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .subject-name {
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .capacity-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .capacity-text {
+        font-weight: 600;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .status-scheduled {
+        background: var(--status-scheduled-bg);
+        color: var(--status-scheduled-color);
+    }
+
+    .status-ongoing {
+        background: var(--status-ongoing-bg);
+        color: var(--status-ongoing-color);
+    }
+
+    .status-completed {
+        background: var(--status-completed-bg);
+        color: var(--status-completed-color);
+    }
+
+    .status-cancelled {
+        background: var(--status-cancelled-bg);
+        color: var(--status-cancelled-color);
+    }
+
+    /* Icon Buttons with Tooltips */
+    .icon-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 25px;
+        height: 25px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+
+    .icon-btn:hover {
+        /* Use primary blue for hover background */
+        background-color: var(--primary-blue);
+        border-color: var(--primary-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 120, 246, 0.3);
+    }
+
+    .icon-btn img {
+        width: 20px;
+        height: 20px;
+        transition: all 0.3s;
+    }
+
+    .icon-btn:hover img {
+        /* Invert color on hover to white */
+        filter: brightness(1.5);
+    }
+
+    /* Tooltip */
+    .icon-btn::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        padding: 8px 12px;
+        background: var(--text-dark);
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+
+    .icon-btn::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-2px);
+        border: 6px solid transparent;
+        border-top-color: var(--text-dark);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+
+    .icon-btn:hover::after,
+    .icon-btn:hover::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-4px);
+    }
+
+    /* Action Buttons */
+    .action-btn {
+        display: inline-block;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: 2px solid;
+    }
+
+    .action-cancel {
+        background: white;
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .action-cancel:hover {
+        background: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    .action-feedback {
+        background: white;
+        color: var(--primary-blue);
+        border-color: var(--primary-blue);
+    }
+
+    .action-feedback:hover {
+        background: var(--primary-blue);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 120, 246, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    .empty-state h3 {
+        font-size: 22px;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        font-size: 15px;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+    }
+
+    .empty-state-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(52, 120, 246, 0.3);
+    }
+
+    .empty-state-btn:hover {
+        transform: translateY(-2px);
+        background-color: var(--primary-hover);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4);
+    }
+
+    /* Notification Toast */
+    .toast-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideInRight 0.3s ease-out;
+        max-width: 400px;
+    }
+
+    .toast-notification.success {
+        border-left: 4px solid var(--color-success);
+    }
+
+    .toast-notification.error {
+        border-left: 4px solid var(--color-error);
+    }
+
+    .toast-notification.info {
+        border-left: 4px solid var(--color-info);
+    }
+
+    .toast-icon {
+        font-size: 24px;
+    }
+
+    .toast-message {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .sessions-table {
+            font-size: 13px;
+        }
+
+        .sessions-table th,
+        .sessions-table td {
+            padding: 14px 12px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sessions-container {
+            padding: 20px 10px;
+            margin-left: 0; /* Adjusted for mobile view */
+            margin-right: 0; /* Adjusted for mobile view */
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+
+        .add-session-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .sessions-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .sessions-table {
+            min-width: 900px;
+        }
+
+        .icon-btn::after {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="sessions-container">
+    <div class="page-header">
+        <h1 class="page-title">My Teaching Sessions</h1>
+        <a href="{% url 'tutors:create_advising_session' %}" class="add-session-btn">
+            New Advising Session
+        </a>
+    </div>
+
+    <div class="sessions-table-wrapper">
+        {% if sessions %}
+        <table class="sessions-table">
+            <thead>
+                <tr>
+                    <th>Class Code</th>
+                    <th>Subject</th>
+                    <th>Days</th>
+                    <th>Time</th>
+                    <th>Enrollment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in sessions %}
+                <tr>
+                    <td>
+                        <div class="class-code">
+                            {{ session.class_code }}
+                            {% if session.status == 'ongoing' %}
+                            <a href="{% url 'tutoring_sessions:tutor_reschedule_session' session.id %}" 
+                               class="icon-btn" 
+                               data-tooltip="Reschedule Session">
+                                <img src="{% static 'images/reschedule.svg' %}" alt="reschedule">
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="subject-name">
+                            {{ session.subject.name }}
+                            {% if session.status == 'ongoing' %}
+                            <a href="{% url 'tutors:session_materials' session.id %}" 
+                               class="icon-btn" 
+                               data-tooltip="Session Materials">
+                                <img src="{% static 'images/session material.svg' %}" alt="materials">
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>{{ session.days }}</td>
+                    <td>{{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}</td>
+                    <td>
+                        <div class="capacity-info">
+                            <span class="capacity-text">{{ session.capacity_display }}</span>
+                            {% if session.status == 'ongoing' %}
+                            <a href="{% url 'tutoring_sessions:view_students' session.id %}" 
+                               class="icon-btn" 
+                               data-tooltip="View Students">
+                                <img src="{% static 'images/Student list.svg' %}" alt="students">
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ session.status }}">
+                            {{ session.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if session.status == 'scheduled' or session.status == 'ongoing' %}
+                            <a href="{% url 'tutoring_sessions:tutor_cancel_session' session.id %}" 
+                               class="action-btn action-cancel" 
+                               onclick="return confirm('Are you sure you want to cancel this session? All enrolled students will be unenrolled.')">
+                                Cancel
+                            </a>
+                        {% elif session.status == 'completed' %}
+                            <a href="{% url 'feedback:view_feedback' session.id %}" 
+                               class="action-btn action-feedback">
+                                View Feedback
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📚</div>
+            <h3>No Sessions Yet</h3>
+            <p>You haven't created any teaching sessions. Start by creating your first session!</p>
+            <a href="{% url 'tutors:create_advising_session' %}" class="empty-state-btn">
+                + Create Your First Session
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toast notification system
+    {% if messages %}
+        {% for message in messages %}
+            showToast("{{ message }}", "{{ message.tags|default:'info' }}");
+        {% endfor %}
+    {% endif %}
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        
+        const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+        
+        toast.innerHTML = `
+            <span class="toast-icon">${icon}</span>
+            <span class="toast-message">${message}</span>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // Enhanced confirm dialog
+    document.querySelectorAll('.action-cancel').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to cancel this session?\n\nAll enrolled students will be automatically unenrolled and notified.')) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,481 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}<title>Notifications</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .main-content {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 40px 20px;
+        margin-left: 150px;
+        margin-right: 120px;
+        margin-bottom: 90px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .page-header {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .notifications-stats {
+        display: flex;
+        gap: 20px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .stat-badge {
+        background-color: #ff4444;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .mark-all-read-btn {
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+
+    .mark-all-read-btn:hover {
+        background-color: #45a049;
+    }
+
+    .notifications-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .notification-item {
+        padding: 16px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        position: relative;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-item.unread {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196F3;
+    }
+
+    .notification-item.unread::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background-color: #2196F3;
+        border-radius: 50%;
+    }
+
+    .notification-content {
+        margin-left: 20px;
+    }
+
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .notification-type-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .type-session_request {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .type-session_confirmed {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .type-session_cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .type-session_completed {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .type-announcement {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+
+    .type-feedback_received {
+        background-color: #e7d4f5;
+        color: #6f42c1;
+    }
+
+    .type-technical_report {
+        background-color: #f5f5f5;
+        color: #666;
+    }
+
+    .notification-time {
+        font-size: 12px;
+        color: #999;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .notification-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    .notification-message {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .notification-footer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+        font-size: 12px;
+    }
+
+    .broadcast-badge {
+        background-color: #ff9800;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .read-badge {
+        color: #28a745;
+        font-weight: 500;
+    }
+
+    .action-link {
+        color: #2196F3;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .action-link:hover {
+        text-decoration: underline;
+    }
+
+    .no-notifications {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+
+    .no-notifications-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    .no-notifications-text {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    .no-notifications-subtext {
+        font-size: 14px;
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .filter-tab {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .filter-tab:hover {
+        background-color: #f0f0f0;
+    }
+
+    .filter-tab.active {
+        background-color: #2196F3;
+        color: white;
+        border-color: #2196F3;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 30px;
+        padding: 20px;
+    }
+
+    .pagination-btn {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .pagination-btn:hover {
+        background-color: #2196F3;
+        color: white;
+        border-color: #2196F3;
+    }
+
+    .pagination-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="page-header">Notifications</div>
+
+    <div class="notifications-header">
+        <div class="notifications-stats">
+            <div class="stat-item">
+                <span>Total:</span>
+                <strong>{{ notifications.count }}</strong>
+            </div>
+            <div class="stat-item">
+                <span>Unread:</span>
+                <span class="stat-badge">{{ unread_count }}</span>
+            </div>
+        </div>
+        
+        {% if unread_count > 0 %}
+        <button class="mark-all-read-btn" onclick="markAllAsRead()">
+            ✓ Mark all as read
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="unread">Unread</button>
+        <button class="filter-tab" data-filter="session_request">Session Requests</button>
+        <button class="filter-tab" data-filter="announcement">Announcements</button>
+    </div>
+
+    <div class="notifications-container">
+        {% if notifications %}
+            {% for notification in notifications %}
+            <div class="notification-item {% if not notification.is_read %}unread{% endif %}"
+                 data-id="{{ notification.id }}"
+                 data-type="{{ notification.notification_type }}"
+                 onclick="handleNotificationClick({{ notification.id }}, '{{ notification.action_url }}')">
+                
+                <div class="notification-content">
+                    <div class="notification-header">
+                        <span class="notification-type-badge type-{{ notification.notification_type }}">
+                            {{ notification.get_notification_type_display }}
+                        </span>
+                        <div class="notification-time">
+                            <span>{{ notification.created_at|timesince }} ago</span>
+                        </div>
+                    </div>
+
+                    <div class="notification-title">
+                        {{ notification.title }}
+                    </div>
+
+                    <div class="notification-message">
+                        {{ notification.message }}
+                    </div>
+
+                    <div class="notification-footer">
+                        {% if notification.is_broadcast %}
+                        <span class="broadcast-badge">Broadcast</span>
+                        {% endif %}
+                        
+                        {% if notification.is_read %}
+                        <span class="read-badge">✓ Read</span>
+                        {% endif %}
+
+                        {% if notification.action_url %}
+                        <a href="{{ notification.action_url }}" class="action-link" onclick="event.stopPropagation()">
+                            View Details →
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-notifications">
+                <div class="no-notifications-text">No notifications yet</div>
+                <div class="no-notifications-subtext">
+                    You'll see notifications here when you have updates
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Handle notification click
+    function handleNotificationClick(notificationId, actionUrl) {
+        fetch(`/notifications/${notificationId}/read/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const notificationItem = document.querySelector(`[data-id="${notificationId}"]`);
+                if (notificationItem) {
+                    notificationItem.classList.remove('unread');
+                }
+
+                // Cập nhật badge số lượng unread
+                const badge = document.querySelector('.notification-badge');
+                if (badge) {
+                    let count = parseInt(badge.textContent);
+                    count = count > 0 ? count - 1 : 0;
+                    badge.textContent = count;
+                    if (count === 0) badge.style.display = 'none';
+                }
+
+                // Redirect nếu có actionUrl
+                if (actionUrl) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 50); // delay nhỏ để UI update
+                }
+            }
+        });
+    }
+
+
+    // Mark all as read
+    function markAllAsRead() {
+        if (!confirm('Mark all notifications as read?')) {
+            return;
+        }
+
+        fetch('/notifications/mark-all-read/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+
+    // Filter functionality
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const notificationItems = document.querySelectorAll('.notification-item');
+
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Update active tab
+            filterTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            const filter = this.dataset.filter;
+
+            // Filter notifications
+            notificationItems.forEach(item => {
+                if (filter === 'all') {
+                    item.style.display = 'block';
+                } else if (filter === 'unread') {
+                    item.style.display = item.classList.contains('unread') ? 'block' : 'none';
+                } else {
+                    item.style.display = item.dataset.type === filter ? 'block' : 'none';
+                }
+            });
+        });
+    });
+
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,408 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+{% load math_filters %}
+
+{% block title %}<title>Student Progress - {{ student.full_name }}</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .main-content {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 40px 20px;
+        margin-left: 150px;
+        margin-right: 120px;
+        margin-bottom: 90px;
+    }
+
+    .page-header {
+        background-color: #0047AB;
+        padding: 20px 30px;
+        border-radius: 10px;
+        color: white;
+        margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .progress-container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .progress-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .progress-item {
+        margin-bottom: 25px;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .progress-label span {
+        font-size: 18px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .progress-score {
+        background-color: white;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 8px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .progress-bar-container {
+        width: 100%;
+        height: 30px;
+        background-color: #f0f0f0;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-bar {
+        height: 100%;
+        transition: width 0.3s ease;
+        position: relative;
+    }
+
+    .progress-bar.attendance {
+        background-color: #DC143C;
+    }
+
+    .progress-bar.topics {
+        background-color: #32CD32;
+    }
+
+    .progress-bar.comprehension {
+        background-color: #1E90FF;
+    }
+
+    .progress-bar.goals {
+        background-color: #FFD700;
+    }
+
+    .input-section {
+        margin-top: 40px;
+    }
+
+    .input-group {
+        margin-bottom: 25px;
+    }
+
+    .input-group label {
+        display: block;
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="number"] {
+        width: 100%;
+        max-width: 400px;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .input-group textarea {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        resize: vertical;
+        min-height: 200px;
+        font-family: Arial, sans-serif;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 20px;
+        justify-content: flex-end;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-confirm {
+        background-color: #4169E1;
+        color: white;
+    }
+
+    .btn-confirm:hover {
+        background-color: #315bb5;
+    }
+
+    .btn-clear {
+        background-color: #4169E1;
+        color: white;
+    }
+
+    .btn-clear:hover {
+        background-color: #315bb5;
+    }
+
+    .slider-group {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 6px;
+    }
+
+    .slider-group input[type="range"] {
+        flex: 1;
+        height: 8px;
+        border-radius: 5px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    .slider-group input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #0047AB;
+        cursor: pointer;
+    }
+
+    .slider-group input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #0047AB;
+        cursor: pointer;
+        border: none;
+    }
+
+    .slider-value {
+        font-size: 18px;
+        font-weight: 600;
+        color: #0047AB;
+        min-width: 30px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Teacher's Feedback_{{ student.full_name }}_{{ session.subject.name }}</h1>
+    </div>
+
+    <!-- Progress Container -->
+    <div class="progress-container">
+        <h2 class="progress-title">Student's Progress</h2>
+
+        <form method="post" id="progressForm">
+            {% csrf_token %}
+
+            <!-- Attendance -->
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Attendance</span>
+                    <div class="progress-score">
+                        <span id="attendanceDisplay">{{ progress.attendance }}</span>/10
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <input type="range" 
+                           name="attendance" 
+                           id="attendanceSlider" 
+                           min="0" 
+                           max="10" 
+                           value="{{ progress.attendance }}"
+                           oninput="updateProgress('attendance', this.value)">
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar attendance" 
+                         id="attendanceBar" 
+                         style="width: {{ progress.attendance|multiply:10}}%"></div>
+                </div>
+            </div>
+
+            <!-- Topic Covered -->
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Topic covered</span>
+                    <div class="progress-score">
+                        <span id="topicsDisplay">{{ progress.topics_covered }}</span>/10
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <input type="range" 
+                           name="topics_covered" 
+                           id="topicsSlider" 
+                           min="0" 
+                           max="10" 
+                           value="{{ progress.topics_covered }}"
+                           oninput="updateProgress('topics', this.value)">
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar topics" 
+                         id="topicsBar" 
+                         style="width: {{ progress.topics_covered|multiply:10 }}%"></div>
+                </div>
+            </div>
+
+            <!-- Comprehension Level -->
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Comprehension level</span>
+                    <div class="progress-score">
+                        <span id="comprehensionDisplay">{{ progress.comprehension_level }}</span>/10
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <input type="range" 
+                           name="comprehension_level" 
+                           id="comprehensionSlider" 
+                           min="0" 
+                           max="10" 
+                           value="{{ progress.comprehension_level }}"
+                           oninput="updateProgress('comprehension', this.value)">
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar comprehension" 
+                         id="comprehensionBar" 
+                         style="width: {{ progress.comprehension_level|multiply:10 }}%"></div>
+                </div>
+            </div>
+
+            <!-- Goals Achieved -->
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Goals achieved</span>
+                    <div class="progress-score">
+                        <span id="goalsDisplay">{{ progress.goals_achieved }}</span>/10
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <input type="range" 
+                           name="goals_achieved" 
+                           id="goalsSlider" 
+                           min="0" 
+                           max="10" 
+                           value="{{ progress.goals_achieved }}"
+                           oninput="updateProgress('goals', this.value)">
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar goals" 
+                         id="goalsBar" 
+                         style="width: {{ progress.goals_achieved|multiply:10 }}%"></div>
+                </div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <!-- Area for Improvement -->
+                <div class="input-group">
+                    <label for="improvement">Area for improvement</label>
+                    <input type="text" 
+                           id="improvement" 
+                           name="area_for_improvement" 
+                           value="{{ progress.area_for_improvement }}"
+                           placeholder="Enter areas that need improvement...">
+                </div>
+
+                <!-- Notes -->
+                <div class="input-group">
+                    <label for="notes">Note:</label>
+                    <textarea id="notes" 
+                              name="notes" 
+                              placeholder="Enter your notes here...">{{ progress.notes }}</textarea>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn btn-confirm">Confirm</button>
+                <button type="button" class="btn btn-clear" onclick="clearForm()">Clear</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateProgress(type, value) {
+        // Update display
+        document.getElementById(type + 'Display').textContent = value;
+        
+        // Update progress bar width
+        const percentage = (value / 10) * 100;
+        document.getElementById(type + 'Bar').style.width = percentage + '%';
+    }
+
+    function clearForm() {
+        if (confirm('Are you sure you want to delete all data?')) {
+            // Reset all sliders
+            ['attendance', 'topics', 'comprehension', 'goals'].forEach(type => {
+                const slider = document.getElementById(type + 'Slider');
+                slider.value = 0;
+                updateProgress(type, 0);
+            });
+            
+            // Clear text inputs
+            document.getElementById('improvement').value = '';
+            document.getElementById('notes').value = '';
+        }
+    }
+
+    // Prevent form submission on Enter key in text inputs
+    document.querySelectorAll('input[type="text"]').forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+{% endblock %}

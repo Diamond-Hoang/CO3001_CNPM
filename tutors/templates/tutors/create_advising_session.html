@@ -1,0 +1,426 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+
+{% block title %}<title>Create Advising Session</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CSS Variables for Flat Blue Theme */
+    :root {
+        --primary-blue-dark: #0047AB; /* Dark blue */
+        --primary-blue-light: #0066ff; /* Medium blue */
+        --primary-hover: #003380; /* Darker hover */
+        --text-dark: #333;
+        --text-muted: #666;
+        --border-color: #e0e0e0;
+        --light-bg-color: #f8f9fa;
+        --info-bg-color: #e3f2fd; /* Light blue for info box */
+        --info-border-color: #2196F3;
+        --info-text-color: #1565C0;
+    }
+
+    .main-content,
+    .form-container,
+    .form-container *,
+    .form-group,
+    .form-group *,
+    .form-row,
+    .form-row * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .main-content {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 50px 120px 90px 150px;
+        z-index: -1;
+    }
+    
+    @media (max-width: 1200px) {
+        .main-content {
+            padding-left: 100px;
+            padding-right: 80px;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .main-content {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 30px 20px 60px 20px;
+        }
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        /* Removed gradient, set solid background */
+        background-color: white; 
+        padding: 45px;
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0, 71, 171, 0.12);
+        border: 1px solid rgba(0, 71, 171, 0.08);
+    }
+
+    .form-title {
+        font-size: 32px;
+        font-weight: 700;
+        
+        background: none;
+        -webkit-background-clip: unset;
+        -webkit-text-fill-color: initial;
+        background-clip: unset;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+    }
+
+    .form-subtitle {
+        color: var(--text-muted);
+        margin-bottom: 35px;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        width: 100%;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background-color: white;
+        font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary-blue-dark);
+        box-shadow: 0 0 0 4px rgba(0, 71, 171, 0.1);
+        background-color: #ffffff;
+    }
+
+    .form-group input:hover,
+    .form-group select:hover,
+    .form-group textarea:hover {
+        border-color: #b0b0b0;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.6;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .info-box {
+        /* Removed gradient, set solid background */
+        background-color: var(--info-bg-color); 
+        border-left: 5px solid var(--info-border-color);
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+    }
+
+    .info-box strong {
+        color: var(--info-text-color);
+        font-size: 16px;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .info-box p {
+        margin: 8px 0;
+        color: var(--info-text-color);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: right;
+        margin-top: 35px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 14px 45px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-primary {
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-dark);
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 71, 171, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 71, 171, 0.4);
+        /* Darker solid hover color */
+        background-color: var(--primary-hover);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        /* Replaced gradient with solid color */
+        background-color: #6c757d; 
+        color: white;
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+        /* Darker solid hover color */
+        background-color: #5a6268;
+    }
+
+    .btn-secondary:active {
+        transform: translateY(0);
+    }
+
+    .required {
+        color: #e74c3c;
+        font-weight: 700;
+    }
+
+    .session-preview {
+        display: none;
+        /* Removed gradient, set solid background */
+        background-color: var(--light-bg-color); 
+        padding: 18px;
+        border-radius: 10px;
+        margin-top: 12px;
+        border: 2px solid #dee2e6;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .session-preview.show {
+        display: block;
+    }
+
+    .session-preview strong {
+        color: var(--primary-blue-dark);
+        display: block;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    .session-preview br {
+        line-height: 1.8;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 30px 20px;
+        }
+
+        .form-title {
+            font-size: 26px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 15px;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <h2 class="form-title">Create Advising Session</h2>
+    <p class="form-subtitle">Create an additional tutoring session for your main class</p>
+
+    <div class="info-box">
+        <strong>Important Notes:</strong>
+        <p>• Advising session is an additional tutoring session for a specific date</p>
+        <p>• Choose from the main classes you are currently teaching</p>
+        <p>• Students in the main class will be notified about the tutoring session</p>
+    </div>
+    <div class="form-container">
+        <form method="post" id="advisingForm">
+            {% csrf_token %}
+
+            <!-- Main Session -->
+            <div class="form-group">
+                <label for="main_session">Select Main Class <span class="required">*</span></label>
+                <select id="main_session" name="main_session" required onchange="showSessionInfo()">
+                    <option value="">-- Select Class --</option>
+                    {% for session in tutor_sessions %}
+                    <option value="{{ session.id }}" 
+                            data-subject="{{ session.subject.name }}"
+                            data-code="{{ session.class_code }}"
+                            data-students="{{ session.enrolled_count }}">
+                        {{ session.class_code }} - {{ session.subject.name }} ({{ session.enrolled_count }} students)
+                    </option>
+                    {% endfor %}
+                </select>
+                <div id="sessionPreview" class="session-preview"></div>
+            </div>
+
+            <!-- Date -->
+            <div class="form-group">
+                <label for="date">Tutoring Date <span class="required">*</span></label>
+                <input type="date" id="date" name="date" required min="{{ today|date:'Y-m-d' }}">
+            </div>
+
+            <!-- Time Row -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="start_time">Start Time <span class="required">*</span></label>
+                    <input type="time" id="start_time" name="start_time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="end_time">End Time <span class="required">*</span></label>
+                    <input type="time" id="end_time" name="end_time" required>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="E.g., Room B1-201, Google Meet link, ...">
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" placeholder="Session content, required materials, preparation notes, ..."></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">Create Advising Session</button>
+                <a href="{% url 'tutors:sessions' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set min date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+        dateInput.value = today;
+    });
+
+    // Show session info when selected
+    function showSessionInfo() {
+        const select = document.getElementById('main_session');
+        const preview = document.getElementById('sessionPreview');
+        const option = select.options[select.selectedIndex];
+        
+        if (select.value) {
+            const subject = option.getAttribute('data-subject');
+            const code = option.getAttribute('data-code');
+            const students = option.getAttribute('data-students');
+            
+            preview.innerHTML = `
+                <strong>Class Information:</strong>
+                Class Code: ${code}<br>
+                Subject: ${subject}<br>
+                Number of Students: ${students}
+            `;
+            preview.classList.add('show');
+        } else {
+            preview.classList.remove('show');
+        }
+    }
+
+    // Validate time
+    document.getElementById('advisingForm').addEventListener('submit', function(e) {
+        const startTime = document.getElementById('start_time').value;
+        const endTime = document.getElementById('end_time').value;
+        
+        if (startTime && endTime && startTime >= endTime) {
+            e.preventDefault();
+            alert('End time must be after start time!');
+        }
+    });
+</script>
+
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+{% endblock %}

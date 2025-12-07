@@ -1,0 +1,430 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}<title>Library</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CSS Variables for a clean Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --text-dark: #333;
+        --text-muted: #6C757D;
+        --icon-bg-light: #F0F4F8; /* Light background for icons */
+        --success-green: #00c853;
+        --link-blue: #3478F6; /* Using primary blue for links/actions */
+        --border-light: #e0e0e0; /* New light border color */
+    }
+
+    .main-content,
+    .main-content *,
+    .filters-container,
+    .filters-container * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .main-content {
+        max-width: 100%;
+        margin: 0 auto;
+        /* Optimized padding structure */
+        padding: 50px 120px 90px 150px; 
+        z-index: -1;
+    }
+    
+    /* Optimized Media Queries */
+    @media (max-width: 1200px) {
+        .main-content {
+            padding-left: 100px;
+            padding-right: 100px;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .main-content {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 30px 20px 60px 20px;
+        }
+    }
+
+    .header-filter-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-header {
+        font-size: 32px;
+        font-weight: 700;
+        /* Replaced gradient text with solid color */
+        margin-bottom: 30px;
+        letter-spacing: -0.5px;
+        /* Translated Text: Uploaded Materials */
+    }
+
+    .filters-container {
+        margin-bottom: 30px;
+        display: flex;
+        /* Translated Text: Filters/Search container */
+    }
+
+    .search-wrapper {
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        padding: 8px 12px;
+        width: 600px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-wrapper:focus-within {
+        border-color: var(--primary-blue);
+        box-shadow: 0 4px 16px rgba(52, 120, 246, 0.15);
+    }
+
+    .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        background: transparent;
+    }
+
+    .search-input::placeholder {
+        color: #999;
+        /* Translated Placeholder: Search materials by title or type... */
+    }
+
+    .filter-search-btn {
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-search-btn:hover {
+        background-color: var(--primary-hover);
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(52, 120, 246, 0.3);
+    }
+
+    .filter-search-btn img {
+        width: 20px;
+        height: 20px;
+        filter: brightness(0) invert(1);
+        /* Image tag placeholder: 
+
+[Image of search icon]
+ */
+    }
+
+    .info-table {
+        width: 100%;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        
+        /* ADJUSTMENT 1: Use border-collapse for clean cell borders */
+        border-collapse: collapse; 
+        border-spacing: 0;
+        border: 1px solid var(--border-light); /* Added main table border */
+    }
+
+    .info-table th {
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
+        color: white;
+        padding: 18px 20px;
+        text-align: left;
+        font-weight: 700;
+        font-size: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        
+        /* ADJUSTMENT 2: Added cell border */
+        border: 1px solid var(--primary-hover); /* Darker border for header */
+        /* Translated Text: Title, Upload Date, Type, Size, Actions */
+    }
+    
+    /* Removed individual border-radius on th since we use border-collapse now */
+    .info-table th:first-child {
+        border-top-left-radius: 15px;
+    }
+
+    .info-table th:last-child {
+        border-top-right-radius: 15px;
+    }
+    
+    .info-table th:not(:last-child) {
+        border-right-color: var(--primary-hover);
+    }
+
+
+    .info-table td {
+        padding: 18px 20px;
+        /* ADJUSTMENT 3: Used full border instead of just border-bottom */
+        border: 1px solid var(--border-light); 
+        color: var(--text-dark);
+        font-size: 15px;
+        vertical-align: middle;
+    }
+    
+    /* Removed redundant border-bottom none */
+    .info-table tr:last-child td {
+        /* border-bottom is now handled by the general td rule */
+    }
+
+    .info-table tr:hover {
+        background-color: #f8faff;
+    }
+
+    .material-title-cell {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .material-icon {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Replaced gradient with solid color */
+        background-color: var(--icon-bg-light); 
+        border-radius: 10px;
+        padding: 8px;
+    }
+
+    .material-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        /* Image tag placeholder: 
+
+[Image of PDF icon or link icon]
+ */
+    }
+
+    .material-title {
+        font-weight: 600;
+        color: var(--link-blue);
+    }
+
+    .action-view,
+    .action-download {
+        color: var(--link-blue);
+        text-decoration: none;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        /* Translated Text: View */
+    }
+
+    .action-view:hover {
+        background-color: #e3f2fd;
+        transform: translateY(-1px);
+    }
+
+    .action-download {
+        color: var(--success-green);
+        /* Translated Text: Download */
+    }
+
+    .action-download:hover {
+        background-color: #e8f5e9;
+        transform: translateY(-1px);
+    }
+
+    .action-divider {
+        color: #ddd;
+        margin: 0 5px;
+    }
+
+    .no-materials {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-muted);
+        font-size: 16px;
+        /* Translated Text: No materials uploaded yet. */
+    }
+
+    .no-materials::before {
+        display: block;
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    /* Badge for file type */
+    .file-type-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-left: 8px;
+        /* Translated Text: PDF, VIDEO, DOC, PPT, LINK */
+    }
+
+    .badge-pdf {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+
+    .badge-video {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .badge-doc {
+        background-color: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .badge-ppt {
+        background-color: #fff3e0;
+        color: #e65100;
+    }
+
+    .badge-link {
+        background-color: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .table-header {
+            font-size: 24px;
+        }
+        
+        /* Ensure responsive padding is applied */
+        .main-content {
+            padding: 30px 20px 60px 20px;
+        }
+
+        .info-table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        .info-table th,
+        .info-table td {
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+
+        .material-title-cell {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .search-wrapper {
+            max-width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="header-filter-container">
+        <div class="table-header">Search for Your Materials</div>
+
+        <form method="get" class="filters-container">
+            <div class="search-wrapper">
+                <input type="text" name="search" value="{{ search }}" class="search-input" placeholder="Search by title, subject, or author...">
+
+                <button class="filter-search-btn" type="submit">
+                    <img src="{% static 'images/search.svg' %}" alt="Search" />
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <table class="info-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Subject</th>
+                <th>Authored By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in materials %}
+            <tr>
+                <td>
+                    <div class="material-title-cell">
+                        <div class="material-icon">
+                            {% if material.has_file %}
+                                {% if material.file.url|slice:"-4:" == ".pdf" %}
+                                    <img src="{% static 'images/dashicons_pdf.svg' %}" alt="PDF">
+                                {% elif material.file.url|slice:"-4:" == ".mp4" or material.file.url|slice:"-4:" == ".avi" or material.file.url|slice:"-5:" == ".webm" %}
+                                    <img src="{% static 'images/video.svg' %}" alt="Video">
+                                {% elif material.file.url|slice:"-4:" == ".doc" or material.file.url|slice:"-5:" == ".docx" %}
+                                    <img src="{% static 'images/doc_icon.svg' %}" alt="Word">
+                                {% elif material.file.url|slice:"-4:" == ".ppt" or material.file.url|slice:"-5:" == ".pptx" %}
+                                    <img src="{% static 'images/ppt_icon.svg' %}" alt="PowerPoint">
+                                {% else %}
+                                    <img src="{% static 'images/file_icon.svg' %}" alt="File">
+                                {% endif %}
+                            {% elif material.has_external_url %}
+                                <img src="{% static 'images/file_icon.svg' %}" alt="Link">
+                            {% else %}
+                                <img src="{% static 'images/file_icon.svg' %}" alt="File">
+                            {% endif %}
+                        </div>
+                        <span class="material-title">{{ material.title }}</span>
+                    </div>
+                </td>
+                <td>{{ material.subject.name }}</td>
+                <td>{{ material.authors_display }}</td>
+                <td>
+                    {% if material.has_file %}
+                        <a href="{{ material.file.url }}" class="action-view" target="_blank">View</a>
+                        <span class="action-divider">|</span>
+                        <a href="{{ material.file.url }}" class="action-download" download>Download</a>
+                    {% elif material.has_external_url %}
+                        <a href="{{ material.external_url }}" class="action-view" target="_blank">Open Link</a>
+                    {% else %}
+                        <span style="color: #999;">No file available</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="no-materials">
+                    No materials found. Try a different search term.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

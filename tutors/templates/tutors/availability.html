@@ -1,0 +1,588 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+{% load schedule_filters %}
+
+{% block title %}<title>Weekly Schedule</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CSS Variables for Flat Blue Theme */
+    :root {
+        --primary-blue-dark: #0047AB; 
+        --primary-blue-medium: #0052cc;
+        --primary-hover: #003087;
+        --success-color: #4CAF50;
+        --success-hover: #45a049;
+        --error-color: #f44336;
+        --error-hover: #d32f2f;
+        --booked-color: #ffa500;
+        --available-color: #90ee90;
+        --default-cell-bg: #f5f8fb;
+        --cell-hover-bg: #e3eaf2;
+        --text-dark: #333;
+        --text-white: white;
+    }
+
+    .main-content {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 50px 120px 90px 150px;
+        z-index: -1;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    @media (max-width: 1200px) {
+        .main-content {
+            padding-left: 100px;
+            padding-right: 80px;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .main-content {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 30px 20px 60px 20px;
+        }
+    }
+    
+    .schedule-header {
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-dark);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 20px rgba(0, 48, 135, 0.15);
+    }
+    
+    .schedule-header h1 {
+        color: var(--text-white);
+        margin: 0 0 25px 0;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    
+    .schedule-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .schedule-form select,
+    .schedule-form input {
+        padding: 12px 15px;
+        border: 2px solid rgba(255, 255, 255, 0.5); /* Lighter border for contrast on dark background */
+        border-radius: 8px;
+        font-size: 14px;
+        background-color: rgba(255, 255, 255, 0.95);
+        transition: all 0.3s ease;
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+    
+    .schedule-form select:focus,
+    .schedule-form input:focus {
+        outline: none;
+        border-color: var(--text-white);
+        background-color: var(--text-white);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-set-availability {
+        /* Replaced gradient with solid color */
+        background-color: var(--success-color);
+        color: var(--text-white);
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-set-availability:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 200, 83, 0.4);
+        background-color: var(--success-hover);
+    }
+    
+    .btn-set-availability:active {
+        transform: translateY(0);
+    }
+    
+    .schedule-container {
+        background-color: var(--text-white);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .schedule-table-wrapper {
+        overflow-x: auto;
+    }
+    
+    .schedule-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 1200px;
+    }
+    
+    .schedule-table th {
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-dark);
+        color: var(--text-white);
+        padding: 18px 10px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .schedule-table th:first-child {
+        border-top-left-radius: 15px;
+    }
+    
+    .schedule-table th:last-child {
+        border-top-right-radius: 15px;
+    }
+    
+    .schedule-table td {
+        padding: 0;
+        border: 1px solid #e8e8e8;
+        text-align: center;
+        position: relative;
+    }
+    
+    .schedule-table .time-column {
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-medium);
+        color: var(--text-white);
+        font-weight: 700;
+        padding: 18px 15px;
+        white-space: nowrap;
+        font-size: 14px;
+        border-right: 2px solid var(--primary-hover);
+    }
+    
+    .schedule-cell {
+        min-height: 60px;
+        background-color: var(--default-cell-bg);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 12px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-dark);
+    }
+    
+    .schedule-cell:hover {
+        background-color: var(--cell-hover-bg);
+        transform: scale(1.02);
+        box-shadow: inset 0 0 0 2px var(--primary-blue-dark);
+    }
+    
+    .schedule-cell.available {
+        /* Replaced gradient with solid color */
+        background-color: var(--available-color);
+        font-weight: 600;
+    }
+    
+    .schedule-cell.available:hover {
+        /* Lighter green hover */
+        background-color: #80e880; 
+    }
+    
+    .schedule-cell.booked {
+        /* Replaced gradient with solid color */
+        background-color: var(--booked-color);
+        cursor: not-allowed;
+        color: var(--text-white);
+        font-weight: 600;
+    }
+    
+    .schedule-cell.has-subject {
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue-dark);
+        color: var(--text-white);
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0, 48, 135, 0.3);
+    }
+    
+    .schedule-cell.has-subject:hover {
+        background-color: var(--primary-blue-medium);
+    }
+    
+    .cell-content {
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .delete-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        /* Replaced gradient with solid color */
+        background-color: var(--error-color);
+        color: var(--text-white);
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+        cursor: pointer;
+        opacity: 0;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(255, 68, 68, 0.4);
+    }
+    
+    .delete-btn:hover {
+        transform: scale(1.1) rotate(90deg);
+        background-color: var(--error-hover);
+    }
+    
+    .schedule-cell:hover .delete-btn {
+        opacity: 1;
+    }
+    
+    .legend {
+        display: flex;
+        gap: 25px;
+        margin-top: 30px;
+        padding: 20px 30px;
+        background: var(--text-white);
+        border-radius: 15px;
+        flex-wrap: wrap;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        justify-content: center;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .legend-color {
+        width: 40px;
+        height: 28px;
+        border-radius: 6px;
+        border: 2px solid #ddd;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Assign flat colors to legend items */
+    .legend-color.default { background-color: var(--default-cell-bg); }
+    .legend-color.available { background-color: var(--available-color); }
+    .legend-color.booked { background-color: var(--booked-color); }
+    .legend-color.has-subject { background-color: var(--primary-blue-dark); }
+    
+    .legend-item span {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-dark);
+    }
+    
+    .notification {
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        padding: 18px 25px;
+        border-radius: 10px;
+        color: var(--text-white);
+        z-index: 9999;
+        animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        font-weight: 600;
+        font-size: 15px;
+        min-width: 250px;
+    }
+    
+    .notification.success {
+        /* Replaced gradient with solid color */
+        background-color: var(--success-color);
+    }
+    
+    .notification.error {
+        /* Replaced gradient with solid color */
+        background-color: var(--error-color);
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(120%) scale(0.8);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(120%) scale(0.8);
+            opacity: 0;
+        }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 30px 20px 60px 20px;
+        }
+        
+        .schedule-header {
+            padding: 20px;
+        }
+        
+        .schedule-header h1 {
+            font-size: 24px;
+        }
+        
+        .schedule-form {
+            grid-template-columns: 1fr;
+        }
+        
+        .legend {
+            gap: 15px;
+            padding: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div style="width: 100%;">
+        <div class="schedule-header">
+            <h1>Weekly Schedule</h1>
+            
+            <form class="schedule-form" id="availability-form">
+                {% csrf_token %}
+                <select name="weekday" id="weekday-select" required>
+                    <option value="">Select Day</option>
+                    <option value="0">Monday</option>
+                    <option value="1">Tuesday</option>
+                    <option value="2">Wednesday</option>
+                    <option value="3">Thursday</option>
+                    <option value="4">Friday</option>
+                    <option value="5">Saturday</option>
+                    <option value="6">Sunday</option>
+                </select>
+                
+                <input type="time" name="start_time" id="start-time" placeholder="Start time" required>
+                <input type="time" name="end_time" id="end-time" placeholder="End time" required>
+                
+                <select name="subject_id" id="subject-select">
+                    <option value="">No Subject</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}">{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <button type="submit" class="btn-set-availability">Set Availability</button>
+            </form>
+        </div>
+        
+        <div class="schedule-container">
+            <div class="schedule-table-wrapper">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                            <th>Sunday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for slot in time_slots %}
+                        <tr>
+                            <td class="time-column">{{ slot.label }}</td>
+                            {% for day_num in "0123456" %}
+                                <td>
+                                    {% with time_key=slot.start|time:"H:i" %}
+                                        {% with key=day_num|add:"_"|add:time_key %}
+                                            {% with availability=schedule_data|get_item:key %}
+                                                <div class="schedule-cell {% if availability %}{% if availability.subject %}has-subject{% else %}available{% endif %}{% endif %}"
+                                                    data-weekday="{{ day_num }}"
+                                                    data-start="{{ slot.start|time:'H:i' }}"
+                                                    data-end="{{ slot.end|time:'H:i' }}"
+                                                    {% if availability %}data-availability-id="{{ availability.id }}"{% endif %}>
+                                                    <div class="cell-content">
+                                                        {% if availability %}
+                                                            {% if availability.subject %}
+                                                                {{ availability.subject.name }}
+                                                            {% else %}
+                                                                Available
+                                                            {% endif %}
+                                                            <button class="delete-btn" onclick="deleteAvailability(event, {{ availability.id }})">✕</button>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #f5f8fb 0%, #e3eaf2 100%);"></div>
+                <span>Empty Slot</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #90ee90 0%, #7ad87a 100%);"></div>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #003087 0%, #0052cc 100%);"></div>
+                <span>With Subject</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);"></div>
+                <span>Booked</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('availability-form');
+    const cells = document.querySelectorAll('.schedule-cell');
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        
+        fetch("{% url 'tutors:set_availability' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('✓ Availability set successfully!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showNotification('✗ Error: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('✗ An error occurred', 'error');
+        });
+    });
+    
+    // Click on cell to auto-fill form
+    cells.forEach(cell => {
+        cell.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-btn')) return;
+            
+            const weekday = this.dataset.weekday;
+            const startTime = this.dataset.start;
+            const endTime = this.dataset.end;
+            
+            document.getElementById('weekday-select').value = weekday;
+            document.getElementById('start-time').value = startTime;
+            document.getElementById('end-time').value = endTime;
+            
+            // Scroll to form
+            document.querySelector('.schedule-header').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    });
+});
+
+function deleteAvailability(event, availabilityId) {
+    event.stopPropagation();
+    
+    if (!confirm('Are you sure you want to delete this availability?')) {
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('availability_id', availabilityId);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    
+    fetch("{% url 'tutors:delete_availability' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('✓ Availability deleted successfully!', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showNotification('✗ Error: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('✗ An error occurred', 'error');
+    });
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045)';
+        setTimeout(() => notification.remove(), 400);
+    }, 3000);
+}
+</script>
+{% endblock %}

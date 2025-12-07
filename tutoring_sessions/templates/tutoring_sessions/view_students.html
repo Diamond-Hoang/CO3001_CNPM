@@ -1,0 +1,265 @@
+{% extends 'tutor_base.html' %}
+{% load static %}
+
+{% block title %}<title>Session Students - {{ session.class_code }}</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .main-content {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 40px 20px;
+        margin-left: 150px;
+        margin-right: 120px;
+        margin-bottom: 90px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        background-color: #0047AB;
+        padding: 20px 30px;
+        border-radius: 10px;
+        color: white;
+    }
+
+    .page-header h1 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        min-width: 400px;
+    }
+
+    .search-container input {
+        border: none;
+        outline: none;
+        flex: 1;
+        font-size: 16px;
+        padding: 5px;
+    }
+
+    .search-container button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .search-icon {
+        width: 24px;
+        height: 24px;
+        fill: #0047AB;
+    }
+
+    .students-table {
+        width: 100%;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .students-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .students-table thead {
+        background-color: #5B8CD3;
+        color: white;
+    }
+
+    .students-table th {
+        padding: 20px;
+        text-align: left;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .students-table tbody tr {
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .students-table tbody tr:nth-child(even) {
+        background-color: #D5DFEF;
+    }
+
+    .students-table tbody tr:nth-child(odd) {
+        background-color: #E8EDF5;
+    }
+
+    .students-table tbody tr:hover {
+        background-color: #C5D5E8;
+    }
+
+    .students-table td {
+        padding: 20px;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .view-progress-link {
+        color: #0047AB;
+        text-decoration: underline;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .view-progress-link:hover {
+        color: #003380;
+    }
+
+    .no-students {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+        font-size: 16px;
+    }
+
+    .session-info {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .session-info h2 {
+        color: #0047AB;
+        margin-bottom: 15px;
+        font-size: 20px;
+    }
+
+    .session-info p {
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    .session-info strong {
+        color: #333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <!-- Session Info -->
+    <div class="session-info">
+        <h2>{{ session.class_code }} - {{ session.subject.name }}</h2>
+        <p><strong>Tutor:</strong> {{ session.tutor.full_name }}</p>
+        <p><strong>Schedule:</strong> {{ session.days }} | {{ session.start_time|time:"H\hi" }}-{{ session.end_time|time:"H\hi" }}</p>
+        <p><strong>Status:</strong> {{ session.get_status_display }}</p>
+        <p><strong>Students Enrolled:</strong> {{ session.enrolled_count }}/{{ session.capacity }}</p>
+    </div>
+
+    <!-- Page Header with Search -->
+    <div class="page-header">
+        <h1>Tracking progress</h1>
+        <div class="search-container">
+            <input type="text" 
+                   id="searchInput" 
+                   placeholder="Search by name or ID..." 
+                   value="{{ search_query }}">
+            <button type="button" onclick="searchStudents()">
+                <svg class="search-icon" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Students Table -->
+    <div class="students-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Attendance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+                {% for enrollment in enrollments %}
+                <tr class="student-row" 
+                    data-name="{{ enrollment.student.full_name|lower }}" 
+                    data-id="{{ enrollment.student.student_id|lower }}">
+                    <td>{{ enrollment.student.student_id }}</td>
+                    <td>{{ enrollment.student.full_name }}</td>
+                    <td>
+                        {% if enrollment.attendance_count %}
+                            {{ enrollment.attendance_count }}/{{ session.total_sessions|default:"5" }}
+                        {% else %}
+                            0/{{ session.total_sessions|default:"5" }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'tutors:student_progress' enrollment.student.id session.id %}" 
+                           class="view-progress-link">
+                            View progress
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="no-students">
+                        Chưa có học sinh nào đăng ký lớp này
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    function searchStudents() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.student-row');
+        
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name');
+            const id = row.getAttribute('data-id');
+            
+            if (name.includes(searchTerm) || id.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Search on Enter key
+    document.getElementById('searchInput').addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+            searchStudents();
+        } else {
+            // Real-time search
+            searchStudents();
+        }
+    });
+
+    // Clear search on ESC
+    document.getElementById('searchInput').addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            this.value = '';
+            searchStudents();
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,118 @@
+.main-content {
+    margin-left: 100px;
+    margin-right: 20px;
+    flex: 1;
+    padding: 30px 60px;
+    padding-top: 140px;
+    margin-bottom: 90px;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 55px;
+    right: 0;
+    background: #4a4a4a;
+    padding: 30px 60px;
+    color: white;
+}
+
+.footer a {
+color: white;
+text-decoration: underline;
+font-size: 14px;
+}
+.review-header {
+    background-color: #0033a0;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.star-rating {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.star {
+    width: 45px;
+    height: 45px;
+    background-color: #0033a0;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.star:hover {
+    transform: scale(1.1);
+}
+
+.star.active {
+    background-color: #ffd700;
+}
+
+.review-textarea {
+    width: 100%;
+    height: 350px;
+    background-color: #f9f2a1;
+    border: none;
+    padding: 20px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    resize: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.note-text {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    padding: 12px 35px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.3s;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.btn-submit {
+    background-color: #4169e1;
+    color: white;
+}
+
+.btn-clear {
+    background-color: #5b8fd4;
+    color: white;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    color: #0033a0;
+    text-decoration: underline;
+    font-size: 24px;
+}

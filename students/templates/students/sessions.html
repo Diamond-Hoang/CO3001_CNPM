@@ -1,171 +1,527 @@
+{% extends 'student_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Session</title>
-    <link rel="stylesheet" href="{% static 'css/sessions.css' %}">
-</head>
-<body>
-    <nav class="sidebar">
-        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
-        <a href="{% url 'profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
-        <a href="{% url 'sessions' %}"><img src="{% static 'images/Selected_session.svg' %}" alt="sessions_icon" class="sidebar-icon-active"></a>
-        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon"></a>
-        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
-    </nav>
 
-    <div class="adjust_ellipse">
-        <img src="{% static 'images/Ellipse2.svg' %}" alt="ellipse2">
-        <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
+{% block title %}<title>My Sessions</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CSS Variables for a clean Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --text-dark: #333;
+        --text-muted: #6C757D;
+        --status-scheduled-bg: #fff3cd;
+        --status-scheduled-text: #856404;
+        --status-ongoing-bg: #d4edda;
+        --status-ongoing-text: #155724;
+        --status-completed-bg: #d1ecf1;
+        --status-completed-text: #0c5460;
+        --status-cancelled-bg: #f8d7da;
+        --status-cancelled-text: #721c24;
+    }
+
+    .sessions-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding-top: 100px;
+        margin-left: 150px;
+        margin-right: 120px;
+        margin-bottom: 90px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .sessions-table-wrapper {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Shadow rõ ràng hơn */
+        overflow: hidden;
+    }
+
+    .sessions-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    /* REMOVED GRADIENT, USED SOLID PRIMARY BLUE */
+    .sessions-table thead {
+        background-color: var(--primary-blue);
+    }
+
+    .sessions-table th {
+        padding: 18px 20px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .sessions-table tbody tr {
+        border-bottom: 1px solid #e9ecef; /* Màu viền nhẹ nhàng hơn */
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .sessions-table tbody tr:hover {
+        background-color: #f8faff;
+        transform: none; /* Bỏ scale, chỉ giữ hover background */
+    }
+
+    .sessions-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .sessions-table td {
+        padding: 18px 20px;
+        color: var(--text-dark);
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .class-code {
+        font-weight: 600;
+        color: var(--primary-blue);
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .subject-name {
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .capacity-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .capacity-text {
+        font-weight: 600;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .status-scheduled {
+        background: var(--status-scheduled-bg);
+        color: var(--status-scheduled-text);
+    }
+
+    .status-ongoing {
+        background: var(--status-ongoing-bg);
+        color: var(--status-ongoing-text);
+    }
+
+    .status-completed {
+        background: var(--status-completed-bg);
+        color: var(--status-completed-text);
+    }
+
+    .status-cancelled {
+        background: var(--status-cancelled-bg);
+        color: var(--status-cancelled-text);
+    }
+
+    /* Icon Buttons with Tooltips */
+    .icon-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 25px; /* Kích thước lớn hơn chút */
+        height: 25px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+
+    .icon-btn:hover {
+        background: var(--primary-blue);
+        border-color: var(--primary-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 120, 246, 0.3); /* Shadow từ màu mới */
+    }
+
+    .icon-btn img {
+        width: 20px;
+        height: 20px;
+        transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover img {
+        filter: brightness(1.5)
+    }
+
+    /* Tooltip */
+    .icon-btn::after {
+        /* Translated Text: View Details */
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        padding: 8px 12px;
+        background: #333;
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease;
+        z-index: 1000;
+    }
+
+    .icon-btn::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-2px);
+        border: 6px solid transparent;
+        border-top-color: #333;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease;
+        z-index: 1000;
+    }
+
+    .icon-btn:hover::after,
+    .icon-btn:hover::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-4px);
+    }
+
+    /* Action Buttons */
+    .action-btn {
+        display: inline-block;
+        padding: 8px 18px;
+        border-radius: 8px; /* Bo góc lớn hơn chút */
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: 2px solid;
+    }
+
+    .action-cancel {
+        background: white;
+        color: var(--status-cancelled-text);
+        border-color: var(--status-cancelled-text);
+    }
+
+    .action-cancel:hover {
+        background: var(--status-cancelled-text);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    .action-feedback {
+        background: white;
+        color: var(--primary-blue);
+        border-color: var(--primary-blue);
+    }
+
+    .action-feedback:hover {
+        background: var(--primary-blue);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 120, 246, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        opacity: 0.3;
+        /* Note: Icon content will need to be translated in HTML */
+    }
+
+    .empty-state h3 {
+        font-size: 22px;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        font-weight: 600;
+        /* Translated Text: No Sessions Found */
+    }
+
+    .empty-state p {
+        font-size: 15px;
+        color: #999;
+        margin-bottom: 30px;
+        /* Translated Text: Your scheduled or completed sessions will appear here. */
+    }
+
+    /* Notification Toast */
+    .toast-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideInRight 0.3s ease-out;
+        max-width: 400px;
+    }
+
+    .toast-notification.success {
+        border-left: 4px solid var(--success-color, #4CAF50);
+    }
+
+    .toast-notification.error {
+        border-left: 4px solid var(--error-color, #f44336);
+    }
+
+    .toast-notification.info {
+        border-left: 4px solid #2196F3;
+    }
+
+    .toast-icon {
+        font-size: 24px;
+    }
+
+    .toast-message {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-dark);
+        /* Note: Toast messages will need to be translated in JavaScript/HTML */
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .sessions-table {
+            font-size: 13px;
+        }
+
+        .sessions-table th,
+        .sessions-table td {
+            padding: 14px 12px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sessions-container {
+            padding: 20px 10px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+
+        .sessions-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .sessions-table {
+            min-width: 900px;
+        }
+
+        .icon-btn::after {
+            /* Tooltips hidden on small screens */
+            display: none;
+        }
+        
+        .icon-btn:hover::before {
+            /* Tooltip arrow hidden on small screens */
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="sessions-container">
+    <div class="page-header">
+        <h1 class="page-title">My Learning Sessions</h1>
     </div>
 
-    <div class="notify_curve">
-        <img id="notifyBtn" src="{% static 'images/notify_curve.svg' %}" alt="curve">  
-    </div>
-
-    <!-- NOTIFICATION POPUP -->
-    <div id="notificationBox" class="notification-box hidden">
-        <div class="notify-header">
-            <span>Notifications</span>
-            <span class="checkmark">
-                <img src="{% static 'images/check-mark.svg' %}" alt="check_mark">
-            </span>
-        </div>
-
-        <div class="notify-body">
-            You have no notifications
-        </div>
-
-        <div class="notify-footer">
-            <a href="#">See all</a>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="table-header">My Sessions Table</div>
-        <table class="info-table">
-            <tr>
-                <th>Class</th>
-                <th>Subject</th>
-                <th>Tutor</th>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Capacity</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-            <tr>
-                <td>CCO1</td>
-                <td>Calculus 1</td>
-                <td>Le Van A</td>
-                <td>2-3-4</td>
-                <td>7h00-9h00</td>
-                <td>15/30</td>
-                <td>Completed</td>
-                <td><a href="#" class="action">Feedback</a></td>
-            </tr>
-            <tr>
-                <td>CCO2</td>
-                <td>Calculus 2</td>
-                <td>Nguyen Thi B</td>
-                <td>3-5</td>
-                <td>7h00-9h00</td>
-                <td>15/30</td>
-                <td>Completed</td>
-                <td><a href="#" class="action">Feedback</a></td>
-            </tr>
-            <tr>
-                <td>CCO3</td>
-                <td>Linear Algebra</td>
-                <td>Tran Van C</td>
-                <td>2-5</td>
-                <td>7h00-9h00</td>
-                <td>15/30</td>
-                <td>Completed</td>
-                <td><a href="#" class="action">Feedback</a></td>
-            </tr>
-            <tr>
-                <td>CCO4 <a href="#"><img src="{% static 'images/reschedule.svg' %}" class="reschedule-icon" alt="reschedule_icon"></a></td>
-                <td>Software Engineering <a href="{% url 'session_material' %}"><img src="{% static 'images/session material.svg' %}" class="material-icon" alt="material_icon"></a></td>
-                <td>Hoang Thi D</td>
-                <td>3-6</td>
-                <td>7h00-9h00</td>
-                <td>15/30</td>
-                <td>Ongoing</td>
-                <td><a href="#" class="action">Cancel</a></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+    <div class="sessions-table-wrapper">
+        {% if enrollments %}
+        <table class="sessions-table">
+            <thead>
+                <tr>
+                    <th>Class Code</th>
+                    <th>Subject</th>
+                    <th>Tutor</th>
+                    <th>Days</th>
+                    <th>Time</th>
+                    <th>Capacity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enrollment in enrollments %}
+                <tr>
+                    <td>
+                        <div class="class-code">
+                            {{ enrollment.session.class_code }}
+                            {% if enrollment.session.status == 'ongoing' %}
+                            <a href="{% url 'tutoring_sessions:reschedule_session' enrollment.id %}" 
+                               class="icon-btn" 
+                               data-tooltip="Reschedule Session">
+                                <img src="{% static 'images/reschedule.svg' %}" alt="reschedule">
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="subject-name">
+                            {{ enrollment.session.subject.name }}
+                            {% if enrollment.session.status == 'ongoing' %}
+                            <a href="{% url 'students:session_material' enrollment.session.id %}" 
+                               class="icon-btn" 
+                               data-tooltip="Session Materials">
+                                <img src="{% static 'images/session material.svg' %}" alt="materials">
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>{{ enrollment.session.tutor.full_name }}</td>
+                    <td>{{ enrollment.session.days }}</td>
+                    <td>{{ enrollment.session.start_time|time:"H:i" }} - {{ enrollment.session.end_time|time:"H:i" }}</td>
+                    <td>
+                        <span class="capacity-text">{{ enrollment.session.capacity_display }}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ enrollment.session.status }}">
+                            {{ enrollment.session.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if enrollment.session.status == 'completed' %}
+                            <a href="{% url 'feedback:feedback' enrollment.id %}" 
+                               class="action-btn action-feedback">
+                                Feedback
+                            </a>
+                        {% elif enrollment.session.status == 'scheduled' or enrollment.session.status == 'ongoing' %}
+                            <a href="{% url 'tutoring_sessions:cancel_enrollment' enrollment.id %}" 
+                               class="action-btn action-cancel" 
+                               onclick="return confirm('Are you sure you want to cancel this session?')">
+                                Cancel
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
+        {% else %}
+        <div class="empty-state">
+            <h3>No session</h3>
+            <p>You haven't registered for any sessions yet. Find and register for sessions that are right for you!</p>
+        </div>
+        {% endif %}
     </div>
-    <div class="footer">
-        <a href="#">Technical Support</a>
-    </div>
-    <script>
-        const notifyBtn = document.getElementById("notifyBtn");
-        const notificationBox = document.getElementById("notificationBox");
+</div>
 
-        notifyBtn.addEventListener("click", function() {
-            notificationBox.classList.toggle("hidden");
-        });
+{% endblock %}
 
-        // Click outside to close
-        document.addEventListener("click", function(e) {
-            if (!notificationBox.contains(e.target) && e.target !== notifyBtn) {
-                notificationBox.classList.add("hidden");
-            }
-        });
-    </script>
-</body>
-</html> 
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toast notification system
+    {% if messages %}
+        {% for message in messages %}
+            showToast("{{ message }}", "{{ message.tags|default:'info' }}");
+        {% endfor %}
+    {% endif %}
 
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        
+        const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+        
+        toast.innerHTML = `
+            <span class="toast-icon">${icon}</span>
+            <span class="toast-message">${message}</span>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,593 @@
+{% extends 'student_base.html' %}
+{% load static %}
+
+{% block title %}<title>Request Session</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CSS Variables for a clean Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --secondary-bg-light: #F0F4F8; 
+        --text-dark: #333;
+        --text-muted: #6C757D;
+        --error-color: #dc3545;
+    }
+
+    .request-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding-top: 100px;
+        margin-left: 150px;
+        margin-right: 120px;
+        margin-bottom: 90px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .page-header {
+        margin-bottom: 40px;
+    }
+
+    .page-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .page-title::before {
+        /* Content placeholder for an icon/emoji like 📝 */
+        font-size: 40px;
+    }
+
+    .page-subtitle {
+        font-size: 15px;
+        color: var(--text-muted);
+        font-weight: 400;
+        /* Translated Text: Please fill out the form below to submit a new session request. */
+    }
+
+    /* Messages/Notifications */
+    .messages-container {
+        margin-bottom: 30px;
+    }
+
+    .message-item {
+        padding: 16px 24px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideInDown 0.3s ease-out;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .message-item::before {
+        font-size: 20px;
+    }
+
+    .message-success {
+        background: #d4edda;
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+
+    .message-success::before {
+        content: "✓";
+    }
+
+    .message-error {
+        background: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid var(--error-color);
+    }
+
+    .message-error::before {
+        content: "✕";
+    }
+
+    .message-warning {
+        background: #fff3cd;
+        color: #856404;
+        border-left: 4px solid #ffc107;
+    }
+
+    .message-warning::before {
+        content: "⚠";
+    }
+
+    .message-info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border-left: 4px solid #17a2b8;
+    }
+
+    .message-info::before {
+        content: "ℹ";
+    }
+
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Form Container */
+    .form-wrapper {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+    }
+
+    .form-section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        /* Translated Text: Session Details, Scheduling, Contact Info */
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+
+    .form-label .required {
+        color: var(--error-color);
+        margin-left: 4px;
+        /* Translated Text: (Required) or just the asterisk * */
+    }
+
+    /* Form Inputs */
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s;
+        outline: none;
+        background: white;
+        box-sizing: border-box;
+    }
+    
+    .form-input::placeholder {
+        color: #999;
+        /* Translated Text: e.g., Calculus I (MATH 101) */
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 4px rgba(52, 120, 246, 0.15);
+    }
+
+    .form-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        padding-right: 40px;
+    }
+
+    /* Time Row */
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .form-row .form-input {
+        width: 100%;
+    }
+
+    /* Error Messages */
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-top: 8px;
+        border-left: 3px solid var(--error-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .error-message::before {
+        content: "⚠";
+        font-size: 16px;
+    }
+
+    /* Buttons */
+    .button-container {
+        display: flex;
+        gap: 15px;
+        justify-content: right;
+        margin-top: 35px;
+        padding-top: 25px;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    .btn-request {
+        padding: 16px 50px;
+        /* Replaced gradient with solid color */
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(52, 120, 246, 0.3);
+        /* Translated Text: Submit Request */
+    }
+
+    .btn-request:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4);
+    }
+
+    .btn-request:active {
+        transform: translateY(0);
+    }
+
+    .btn-cancel {
+        padding: 16px 40px;
+        background: white;
+        color: var(--text-muted);
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        /* Translated Text: Cancel */
+    }
+
+    .btn-cancel:hover {
+        background: #f8f9fa;
+        border-color: #999;
+        transform: translateY(-2px);
+    }
+
+    /* Info Box */
+    .info-box {
+        /* Replaced gradient with solid background color */
+        background-color: var(--secondary-bg-light);
+        border-left: 4px solid var(--primary-blue);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+    .info-box-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--primary-blue);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-box-title::before {
+        /* Content placeholder for an icon/emoji like 💡 */
+        font-size: 20px;
+    }
+
+    .info-box-content {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.6;
+        /* Translated Text: Key points/instructions will go here. */
+    }
+
+    .info-box-content ul {
+        margin: 10px 0;
+        padding-left: 20px;
+    }
+
+    .info-box-content li {
+        margin-bottom: 5px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .request-container {
+            /* Reset padding/margins for smaller screens */
+            padding: 20px 15px; 
+            margin: 0;
+        }
+
+        .form-wrapper {
+            padding: 25px 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .button-container {
+            flex-direction: column;
+        }
+
+        .btn-request,
+        .btn-cancel {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    /* Loading State */
+    .btn-request.loading {
+        position: relative;
+        color: transparent;
+        pointer-events: none;
+    }
+
+    .btn-request.loading::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin-left: -10px;
+        margin-top: -10px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spinner 0.8s linear infinite;
+    }
+
+    @keyframes spinner {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="request-container">
+    <div class="page-header">
+        <h1 class="page-title">Request New Session</h1>
+        <p class="page-subtitle">Fill out the form below to request a tutoring session</p>
+    </div>
+    
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message-item message-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="info-box">
+        <div class="info-box-title">How it works</div>
+        <div class="info-box-content">
+            <ul>
+                <li>Submit your session request with your preferred subject, date, and time</li>
+                <li>Our team will review your request and match you with an available tutor</li>
+                <li>You'll receive a notification once your session is confirmed</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="form-wrapper">
+        <form method="post" id="sessionForm">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <div class="form-section-title">
+                    Session Details
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Subject <span class="required">*</span>
+                    </label>
+                    {{ form.subject }}
+                    {% if form.subject.errors %}
+                        <div class="error-message">
+                            {% for error in form.subject.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Delivery Mode <span class="required">*</span>
+                    </label>
+                    {{ form.delivery_mode }}
+                    {% if form.delivery_mode.errors %}
+                        <div class="error-message">
+                            {% for error in form.delivery_mode.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">
+                    Schedule
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Date <span class="required">*</span>
+                        </label>
+                        {{ form.date }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            Start Time <span class="required">*</span>
+                        </label>
+                        {{ form.start_time }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            End Time <span class="required">*</span>
+                        </label>
+                        {{ form.end_time }}
+                    </div>
+                </div>
+                
+                {% if form.date.errors %}
+                    <div class="error-message">
+                        {% for error in form.date.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if form.start_time.errors %}
+                    <div class="error-message">
+                        {% for error in form.start_time.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if form.end_time.errors %}
+                    <div class="error-message">
+                        {% for error in form.end_time.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if form.non_field_errors %}
+                    <div class="error-message">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="button-container">
+                <a href="{% url 'tutoring_sessions:available_sessions' %}" class="btn-cancel">
+                    Cancel
+                </a>
+                <button type="submit" class="btn-request" id="submitBtn">
+                    Submit Request
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set minimum date to today
+    const dateInput = document.getElementById('id_date');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+        dateInput.classList.add('form-input');
+    }
+    
+    // Add classes to form elements
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        select.classList.add('form-select');
+    });
+    
+    const inputs = document.querySelectorAll('input[type="time"]');
+    inputs.forEach(input => {
+        input.classList.add('form-input');
+    });
+    
+    // Auto-hide messages after 5 seconds
+    const messages = document.querySelectorAll('.message-item');
+    messages.forEach(function(message) {
+        setTimeout(function() {
+            message.style.opacity = '0';
+            setTimeout(function() {
+                message.remove();
+            }, 300);
+        }, 5000);
+    });
+    
+    // Form submission loading state
+    const form = document.getElementById('sessionForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', function() {
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+    });
+    
+    // Validate time inputs
+    const startTimeInput = document.querySelector('input[name="start_time"]');
+    const endTimeInput = document.querySelector('input[name="end_time"]');
+    
+    if (startTimeInput && endTimeInput) {
+        endTimeInput.addEventListener('change', function() {
+            const startTime = startTimeInput.value;
+            const endTime = endTimeInput.value;
+            
+            if (startTime && endTime && endTime <= startTime) {
+                alert('End time must be after start time');
+                endTimeInput.value = '';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

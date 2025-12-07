@@ -1,160 +1,809 @@
+{% extends 'student_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Session</title>
-    <link rel="stylesheet" href="{% static 'css/find_sessions.css' %}">
-</head>
-<body>
-    <nav class="sidebar">
-        <a href="{% url 'student_dashboard' %}"><img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon"></a>
-        <a href="{% url 'profile' %}"><img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon"></a>
-        <a href="{% url 'sessions' %}"><img src="{% static 'images/session.svg' %}" alt="sessions_icon" class="sidebar-icon"></a>
-        <a href="{% url 'find_sessions' %}"><img src="{% static 'images/selected_find_session.svg' %}" alt="find_sessions_icon" class="sidebar-icon-active"></a>
-        <a href="{% url 'library' %}"><img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon"></a>
-    </nav>
 
-    <div class="adjust_ellipse">
-        <img src="{% static 'images/Ellipse2.svg' %}" alt="ellipse2">
-        <div class="adjust_avatar"><img src="{% static 'images/avatar.svg' %}"  alt="avatar"></div>
-    </div>
+{% block title %}<title>Find Sessions</title>{% endblock %}
 
-    <div class="notify_curve">
-        <img id="notifyBtn" src="{% static 'images/notify_curve.svg' %}" alt="curve">  
-    </div>
+{% block extra_css %}
+<style>
+    /* CSS Variables for a clean Blue Theme */
+    :root {
+        --primary-blue: #3478F6;
+        --primary-hover: #216CE7;
+        --secondary-bg-light: #F0F4F8;
+        --text-dark: #333;
+        --text-muted: #6C757D;
+        --success-color: #28a745;
+        --error-color: #dc3545;
+        --warning-color: #ffc107;
+    }
 
-    <!-- NOTIFICATION POPUP -->
-    <div id="notificationBox" class="notification-box hidden">
-        <div class="notify-header">
-            <span>Notifications</span>
-            <span class="checkmark">
-                <img src="{% static 'images/check-mark.svg' %}" alt="check_mark">
-            </span>
-        </div>
+    .find-sessions-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 40px 120px 90px 150px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        <div class="notify-body">
-            You have no notifications
-        </div>
-
-        <div class="notify-footer">
-            <a href="#">See all</a>
-        </div>
-    </div>
+    @media (max-width: 1200px) {
+        .find-sessions-container {
+            padding-left: 100px;
+            padding-right: 100px;
+        }
+    }
     
-    <div class="main-content">
-        <div class="search-container">
-            <img src="{% static 'images/search.svg' %}" alt="search_icon" class="search-icon">
-            <input type="text" placeholder="Search for your sessions" />
-        </div>
+    @media (max-width: 992px) {
+        .find-sessions-container {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .find-sessions-container {
+            padding: 30px 20px 60px 20px;
+            margin: 0;
+        }
+    }
 
-        <div class="table-header">Available Sessions</div>
-        <table class="info-table">
-            <tr>
-                <th>Class</th>
-                <th>Subject</th>
-                <th>Tutor</th>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Capacity</th>
-                <th>Action</th>
-            </tr>
-            <tr>
-                <td>CCO5</td>
-                <td>Database System</td>
-                <td>Tran Thi E</td>
-                <td>2-3</td>
-                <td>13h00-15h00</td>
-                <td>1/30</td>
-                <td><a href="#" class="action">Join</a></td>
-            </tr>
-            <tr>
-                <td>CCO1</td>
-                <td>Data structure and algorithm</td>
-                <td>Hoang Thi D</td>
-                <td>2-4</td>
-                <td>13h00-15h00</td>
-                <td>1/30</td>
-                <td><a href="#" class="action">Join</a></td>
-            </tr>
-            <tr>
-                <td>CCO2</td>
-                <td>Physics 1</td>
-                <td>Nguyen Van A</td>
-                <td>5-6</td>
-                <td>13h00-15h00</td>
-                <td>1/30</td>
-                <td><a href="#" class="action">Join</a></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-title::before {
+        font-size: 32px;
+    }
+
+    /* Search Bar */
+    .search-wrapper {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-form {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        width: 20px;
+        height: 20px;
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 15px 20px 15px 50px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 4px rgba(52, 120, 246, 0.15);
+    }
+
+    .search-input::placeholder {
+        color: #999;
+    }
+
+    .search-btn {
+        padding: 15px 35px;
+        background-color: var(--primary-blue); 
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+    }
+
+    .search-btn:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4);
+    }
+
+    /* Request Button */
+    .request-session-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        background-color: var(--primary-blue); 
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(52, 120, 246, 0.3);
+    }
+
+    .request-session-btn:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4);
+    }
+
+    .request-session-btn::before {
+        content: "+";
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    /* Messages/Notifications */
+    .messages-container {
+        margin-bottom: 25px;
+    }
+
+    .message-item {
+        padding: 16px 24px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideInDown 0.3s ease-out;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .message-item::before {
+        font-size: 20px;
+    }
+
+    .message-success {
+        background: #d4edda;
+        color: #155724;
+        border-left: 4px solid var(--success-color);
+    }
+
+    .message-success::before {
+        content: "✓";
+    }
+
+    .message-error {
+        background: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid var(--error-color);
+    }
+
+    .message-error::before {
+        content: "✕";
+    }
+
+    .message-warning {
+        background: #fff3cd;
+        color: #856404;
+        border-left: 4px solid var(--warning-color);
+    }
+
+    .message-warning::before {
+        content: "⚠";
+    }
+
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Sessions Table */
+    .sessions-table-wrapper {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+    }
+
+    .sessions-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .sessions-table thead {
+        background-color: var(--primary-blue);
+    }
+
+    .sessions-table th {
+        padding: 18px 20px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .sessions-table tbody tr {
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .sessions-table tbody tr:hover {
+        background-color: #f8faff;
+    }
+
+    .sessions-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .sessions-table td {
+        padding: 18px 20px;
+        color: var(--text-dark);
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .class-code {
+        font-weight: 600;
+        color: var(--primary-blue);
+        font-size: 15px;
+    }
+
+    /* ===== TUTOR HOVER CARD STYLES ===== */
+    .tutor-name-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tutor-name {
+        color: var(--text-dark);
+        cursor: pointer;
+        transition: all 0.2s;
+        border-bottom: 2px solid transparent;
+    }
+
+    .tutor-name:hover {
+        color: var(--primary-blue);
+        border-bottom-color: var(--primary-blue);
+    }
+
+    .tutor-info-card {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        padding: 0;
+        width: 320px;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        margin-top: 8px;
+    }
+
+    .tutor-name-wrapper:hover .tutor-info-card {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Arrow indicator */
+    .tutor-info-card::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid white;
+    }
+
+    .tutor-card-header {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-hover) 100%);
+        padding: 20px;
+        border-radius: 12px 12px 0 0;
+        text-align: center;
+    }
+
+    .tutor-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tutor-avatar-placeholder {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 4px solid white;
+        background: #667eea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+        margin: 0 auto 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tutor-card-name {
+        color: white;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 4px 0;
+    }
+
+    .tutor-card-id {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .tutor-card-body {
+        padding: 20px;
+    }
+
+    .tutor-info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+        font-size: 13px;
+    }
+
+    .tutor-info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .tutor-info-icon {
+        width: 18px;
+        height: 18px;
+        color: var(--primary-blue);
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .tutor-info-label {
+        font-weight: 600;
+        color: var(--text-muted);
+        min-width: 60px;
+    }
+
+    .tutor-info-value {
+        color: var(--text-dark);
+        flex: 1;
+    }
+
+    .tutor-expertise-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .expertise-tag {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-hover) 100%);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* Responsive adjustment for tooltip */
+    @media (max-width: 768px) {
+        .tutor-info-card {
+            left: 0;
+            transform: translateX(0) translateY(10px);
+            width: 280px;
+        }
+
+        .tutor-name-wrapper:hover .tutor-info-card {
+            transform: translateX(0) translateY(0);
+        }
+
+        .tutor-info-card::before {
+            left: 40px;
+        }
+    }
+
+    /* ===== END TUTOR HOVER CARD STYLES ===== */
+
+    .capacity-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .capacity-available {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .capacity-full {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .capacity-limited {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    /* Action Buttons */
+    .btn-join {
+        display: inline-block;
+        padding: 8px 20px;
+        background: white;
+        color: var(--success-color);
+        border: 2px solid var(--success-color);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .btn-join:hover {
+        background: var(--success-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-full {
+        display: inline-block;
+        padding: 8px 20px;
+        background: #f8d7da;
+        color: #721c24;
+        border: 2px solid var(--error-color);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    .empty-state h3 {
+        font-size: 22px;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        font-size: 15px;
+        color: #999;
+        margin-bottom: 30px;
+    }
+
+    .empty-state-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        background-color: var(--primary-blue);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s;
+    }
+
+    .empty-state-btn:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 120, 246, 0.4);
+    }
+
+    /* Request Section */
+    .request-section {
+        text-align: center;
+        padding: 30px;
+        background-color: var(--secondary-bg-light); 
+        border-radius: 12px;
+        margin-top: 30px;
+    }
+
+    .request-section h3 {
+        font-size: 20px;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .request-section p {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .sessions-table {
+            font-size: 13px;
+        }
+
+        .sessions-table th,
+        .sessions-table td {
+            padding: 14px 12px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .find-sessions-container {
+            padding: 20px 10px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+
+        .request-session-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .search-form {
+            flex-direction: column;
+        }
+        
+        .search-input {
+            width: 100%; 
+            padding-left: 20px;
+        }
+        
+        .search-icon {
+            left: 10px;
+        }
+
+        .search-btn {
+            width: 100%;
+        }
+
+        .sessions-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .sessions-table {
+            min-width: 900px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="find-sessions-container">
+    <div class="page-header">
+        <h1 class="page-title">Find Sessions</h1>
+        <a href="{% url 'feedback:request_session' %}" class="request-session-btn">
+            Request New Session
+        </a>
+    </div>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message-item message-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="search-wrapper">
+        <form method="GET" action="{% url 'students:find_sessions' %}" class="search-form">
+            <img src="{% static 'images/search.svg' %}" alt="search" class="search-icon">
+            <input type="text" 
+                   name="search" 
+                   placeholder="Search by class code, subject, or tutor name..." 
+                   value="{{ search_query }}" 
+                   class="search-input">
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+
+    <div class="sessions-table-wrapper">
+        {% if sessions %}
+        <table class="sessions-table">
+            <thead>
+                <tr>
+                    <th>Class Code</th>
+                    <th>Subject</th>
+                    <th>Tutor</th>
+                    <th>Days</th>
+                    <th>Time</th>
+                    <th>Capacity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in sessions %}
+                <tr>
+                    <td>
+                        <span class="class-code">{{ session.class_code }}</span>
+                    </td>
+                    <td>{{ session.subject.name }}</td>
+                    <td>
+                        <div class="tutor-name-wrapper">
+                            <span class="tutor-name">{{ session.tutor.full_name }}</span>
+                            
+                            <!-- Tutor Info Card -->
+                            <div class="tutor-info-card">
+                                <div class="tutor-card-header">
+                                    {% if session.tutor.avatar %}
+                                        <img src="{{ session.tutor.avatar.url }}" alt="{{ session.tutor.full_name }}" class="tutor-avatar">
+                                    {% else %}
+                                        <div class="tutor-avatar-placeholder">
+                                            {{ session.tutor.full_name|slice:":1"|upper }}
+                                        </div>
+                                    {% endif %}
+                                    <h4 class="tutor-card-name">{{ session.tutor.full_name }}</h4>
+                                    <p class="tutor-card-id">ID: {{ session.tutor.tutor_id }}</p>
+                                </div>
+                                
+                                <div class="tutor-card-body">
+                                    {% if session.tutor.email %}
+                                    <div class="tutor-info-item">
+                                        <svg class="tutor-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <div class="tutor-info-value">{{ session.tutor.email }}</div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if session.tutor.phone %}
+                                    <div class="tutor-info-item">
+                                        <svg class="tutor-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                        </svg>
+                                        <div class="tutor-info-value">{{ session.tutor.phone }}</div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if session.tutor.major %}
+                                    <div class="tutor-info-item">
+                                        <svg class="tutor-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                        </svg>
+                                        <div class="tutor-info-value">{{ session.tutor.major }}</div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if session.tutor.expertise.all %}
+                                    <div class="tutor-info-item">
+                                        <svg class="tutor-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <div>
+                                            <div class="tutor-expertise-tags">
+                                                {% for subject in session.tutor.expertise.all %}
+                                                    <span class="expertise-tag">{{ subject.name }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ session.days }}</td>
+                    <td>{{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}</td>
+                    <td>
+                        {% if session.enrolled_count >= session.capacity %}
+                            <span class="capacity-badge capacity-full">
+                                {{ session.capacity_display }}
+                            </span>
+                        {% elif session.enrolled_count >= session.capacity|floatformat:0|add:"-2" %}
+                            <span class="capacity-badge capacity-limited">
+                                {{ session.capacity_display }}
+                            </span>
+                        {% else %}
+                            <span class="capacity-badge capacity-available">
+                                {{ session.capacity_display }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if session.enrolled_count < session.capacity %}
+                            <form method="POST" action="{% url 'tutoring_sessions:enroll_session' session.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <a href="#"
+                                   class="btn-join"
+                                   onclick="event.preventDefault();
+                                           if (confirm('Are you sure you want to join this session?')) {
+                                               this.closest('form').submit();
+                                           }">
+                                    Join Session
+                                </a>
+                            </form>
+                        {% else %}
+                            <span class="btn-full">Full</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
-        <div class="request-btn">
-            <a href="#" >Request new session</a>
+        {% else %}
+        <div class="empty-state">
+            {% if search_query %}
+                <h3>No Results Found</h3>
+                <p>No sessions match your search for "{{ search_query }}". Try different keywords or browse all sessions.</p>
+            {% else %}
+                <h3>No Sessions Available</h3>
+                <p>There are currently no sessions available. Check back later or request a new session!</p>
+            {% endif %}
+            <a href="{% url 'feedback:request_session' %}" class="empty-state-btn">
+                + Request New Session
+            </a>
         </div>
+        {% endif %}
     </div>
-    <div class="footer">
-        <a href="#">Technical Support</a>
-    </div>
-    <script>
-        const notifyBtn = document.getElementById("notifyBtn");
-        const notificationBox = document.getElementById("notificationBox");
+</div>
 
-        notifyBtn.addEventListener("click", function() {
-            notificationBox.classList.toggle("hidden");
-        });
-
-        // Click outside to close
-        document.addEventListener("click", function(e) {
-            if (!notificationBox.contains(e.target) && e.target !== notifyBtn) {
-                notificationBox.classList.add("hidden");
-            }
-        });
-    </script>
-</body>
-</html> 
-
+{% endblock %}

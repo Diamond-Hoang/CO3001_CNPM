@@ -1,0 +1,177 @@
+{% load static %}
+{% load avatar_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/student_base.css' %}"> 
+    {% block title %}{% endblock %} 
+    {% block extra_css %}{% endblock %}      
+</head>
+<body>
+    <div class="sidebar">
+        <span class="top_curve"></span>
+        <div class="profile">
+            <img src="{% if request.user.student.avatar|valid_avatar %}{{ request.user.student.avatar.url }}{% else %}{% static 'images/avatar.svg' %}{% endif %}" alt="profile">
+        </div>
+        <span class="bottom_curve"></span>
+        <nav class="item">
+            <a href="{% url 'students:student_dashboard' %}" data-label="Home">
+                <img src="{% static 'images/Home.svg' %}" alt="home_icon" class="sidebar-icon">
+            </a>
+            <a href="{% url 'students:profile' %}" data-label="Profile">
+                <img src="{% static 'images/User.svg' %}" alt="profile_icon" class="sidebar-icon">
+            </a>
+            <a href="{% url 'students:sessions' %}" data-label="Sessions">
+                <img src="{% static 'images/Session.svg' %}" alt="sessions_icon" class="sidebar-icon">
+            </a>
+            <a href="{% url 'students:find_sessions' %}" data-label="Find Sessions">
+                <img src="{% static 'images/findsession.svg' %}" alt="find_sessions_icon" class="sidebar-icon">
+            </a>
+            <a href="{% url 'library:list' %}" data-label="Library">
+                <img src="{% static 'images/Material.svg' %}" alt="library_icon" class="sidebar-icon">
+            </a>
+        </nav>
+    </div>
+   
+    <div class="notify_curve">
+        <img id="notifyBtn" src="{% static 'images/notify_curve.svg' %}" alt="curve">
+        {% if unread_count > 0 %}
+        <span class="notification-badge">{{ unread_count }}</span>
+        {% endif %}
+    </div>
+
+    <!-- NOTIFICATION POPUP -->
+    <div id="notificationBox" class="notification-box hidden">
+        <div class="notify-header">
+            <span>Notifications</span>
+            <span class="checkmark" onclick="markAllRead()">
+                <img src="{% static 'images/check-mark.svg' %}" alt="check_mark" title="Mark all as read">
+            </span>
+        </div>
+
+        <div class="notify-body">
+            {% if user_notifications %}
+                {% for notification in user_notifications %}
+                <div class="notification-item {% if not notification.is_read %}unread{% endif %}" 
+                     data-id="{{ notification.id }}"
+                     onclick="handleNotificationClick({{ notification.id }}, '{{ notification.action_url }}')">
+                    <div class="notification-header">
+                        <span class="notification-type {{ notification.notification_type }}">
+                            {{ notification.get_notification_type_display }}
+                        </span>
+                        <span class="notification-time">{{ notification.created_at|timesince }} ago</span>
+                    </div>
+                    <div class="notification-title">{{ notification.title }}</div>
+                    <div class="notification-message">{{ notification.message|truncatewords:15 }}</div>
+                    {% if notification.is_broadcast %}
+                    <span class="broadcast-badge">Broadcast</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-notifications">
+                    You have no notifications
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="notify-footer">
+            <a href="{% url 'notification:notifications_list' %}">See all</a>
+        </div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <div class="footer">
+        <a href="{% url 'feedback:technical_report' %}">Technical Support</a>
+    </div>
+    
+    <script>
+        const notifyBtn = document.getElementById("notifyBtn");
+        const notificationBox = document.getElementById("notificationBox");
+
+        notifyBtn.addEventListener("click", function() {
+            notificationBox.classList.toggle("hidden");
+        });
+
+        // Click outside to close
+        document.addEventListener("click", function(e) {
+            if (!notificationBox.contains(e.target) && e.target !== notifyBtn) {
+                notificationBox.classList.add("hidden");
+            }
+        });
+
+        // Handle notification click
+        function handleNotificationClick(notificationId, actionUrl) {
+            fetch(`/notifications/${notificationId}/read/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const notificationItem = document.querySelector(`[data-id="${notificationId}"]`);
+                    if (notificationItem) {
+                        notificationItem.classList.remove('unread');
+                    }
+
+                    // Cập nhật badge số lượng unread
+                    const badge = document.querySelector('.notification-badge');
+                    if (badge) {
+                        let count = parseInt(badge.textContent);
+                        count = count > 0 ? count - 1 : 0;
+                        badge.textContent = count;
+                        if (count === 0) badge.style.display = 'none';
+                    }
+
+                    // Redirect nếu có actionUrl
+                    if (actionUrl) {
+                        setTimeout(() => {
+                            window.location.href = actionUrl;
+                        }, 50); // delay nhỏ để UI update
+                    }
+                }
+            });
+        }
+
+        // Mark all as read
+        function markAllRead() {
+            fetch('/notifications/mark-all-read/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            });
+        }
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!-- tutoring_sessions/templates/tutoring_sessions/reschedule_session.html -->
+{% extends 'student_base.html' %}
+{% load static %}
+
+{% block title %}<title>Reschedule Session</title>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reschedule-container {
+        margin-left: 150px;
+        margin-right: 120px;
+        display: fixed;
+        gap: 80px;
+        padding-top: 140px;
+        z-index: -1;
+        margin-bottom: 90px;
+    }
+    
+    .current-session {
+        background-color: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+    
+    .current-session h3 {
+        color: #495057;
+        margin-bottom: 15px;
+    }
+    
+    .session-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .session-info-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    .session-info-item strong {
+        min-width: 120px;
+        color: #6c757d;
+    }
+    
+    .available-sessions h3 {
+        color: #495057;
+        margin-bottom: 20px;
+    }
+    
+    .sessions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+    
+    .session-card {
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        background-color: white;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .session-card:hover {
+        border-color: #007bff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .session-card input[type="radio"] {
+        display: none;
+    }
+    
+    .session-card input[type="radio"]:checked + .card-content {
+        background-color: #e7f3ff;
+    }
+    
+    .session-card label {
+        cursor: pointer;
+        display: block;
+    }
+    
+    .card-content {
+        padding: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .card-header {
+        font-size: 18px;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .card-info {
+        margin-bottom: 8px;
+        color: #495057;
+    }
+    
+    .card-info strong {
+        color: #6c757d;
+        min-width: 100px;
+        display: inline-block;
+    }
+    
+    .capacity-indicator {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .capacity-low {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .capacity-good {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .buttons-container {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+    
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    
+    .btn-primary:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+    
+    .no-sessions {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+        font-size: 16px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reschedule-container">
+    <div class="current-session">
+        <h3>Current Session</h3>
+        <div class="session-info">
+            <div class="session-info-item">
+                <strong>Class Code:</strong>
+                <span>{{ current_session.class_code }}</span>
+            </div>
+            <div class="session-info-item">
+                <strong>Subject:</strong>
+                <span>{{ current_session.subject.name }}</span>
+            </div>
+            <div class="session-info-item">
+                <strong>Tutor:</strong>
+                <span>{{ current_session.tutor.full_name }}</span>
+            </div>
+            <div class="session-info-item">
+                <strong>Time:</strong>
+                <span>{{ current_session.days }} - {{ current_session.start_time|time:"H\hi" }} to {{ current_session.end_time|time:"H\hi" }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="available-sessions">
+        <h3>Select a New Session (Same Subject and Tutor)</h3>
+        
+        {% if available_sessions %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="sessions-grid">
+                {% for session in available_sessions %}
+                <div class="session-card">
+                    <label for="session_{{ session.id }}">
+                        <input type="radio" 
+                               name="new_session_id" 
+                               value="{{ session.id }}" 
+                               id="session_{{ session.id }}"
+                               required>
+                        <div class="card-content">
+                            <div class="card-header">{{ session.class_code }}</div>
+                            <div class="card-info">
+                                <strong>Day:</strong> {{ session.days }}
+                            </div>
+                            <div class="card-info">
+                                <strong>Time:</strong> {{ session.start_time|time:"H\hi" }} - {{ session.end_time|time:"H\hi" }}
+                            </div>
+                            <div class="card-info">
+                                <strong>Capacity:</strong>
+                                {% widthratio session.enrolled_count session.capacity 100 as percentage %}
+                                <span class="capacity-indicator {% if percentage >= 80 %}capacity-low{% else %}capacity-good{% endif %}">
+                                    {{ session.capacity_display }}
+                                </span>
+                            </div>
+                            <div class="card-info">
+                                <strong>Status:</strong> {{ session.get_status_display }}
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="buttons-container">
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Are you sure you want to switch to this session?')">
+                    Confirm Reschedule
+                </button>
+                <a href="{% url 'students:sessions' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+        {% else %}
+        <div class="no-sessions">
+            <p>No other suitable sessions are available.</p>
+            <p>Sessions must have the same subject and tutor as the current one.</p>
+            <a href="{% url 'students:sessions' %}" class="btn btn-secondary" style="margin-top: 20px;">Back</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
