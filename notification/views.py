@@ -10,7 +10,7 @@ from .notification_service import NotificationService
 @login_required
 def notifications_list(request):
     """View to display all notifications, setting the correct base template based on user role"""
-    # 🔥 Select base template based on role
+    # Select base template based on role
     if request.user.userprofile.role == 'tutor':
         base_template = 'tutor_base.html'
         dashboard_url = 'tutors:tutor_dashboard'

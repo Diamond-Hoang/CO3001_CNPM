@@ -219,7 +219,7 @@ def tutor_cancel_session(request, session_id):
     # Check if user is a tutor
     if not hasattr(request.user, 'tutor'):
         messages.error(request, 'You do not have permission to perform this action.')
-        return redirect('home')
+        return redirect('accounts:login')
     
     # Get session and check ownership
     session = get_object_or_404(Session, id=session_id, tutor=request.user.tutor)
@@ -255,7 +255,7 @@ def view_session_students(request, session_id):
     # Check access permission
     if not hasattr(request.user, 'tutor'):
         messages.error(request, 'You do not have permission to access this page.')
-        return redirect('home')
+        return redirect('accounts:login')
     
     session = get_object_or_404(Session, id=session_id, tutor=request.user.tutor)
     

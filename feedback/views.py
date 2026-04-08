@@ -103,7 +103,11 @@ def view_feedback(request, session_id):
     View to display all feedback for a specific session.
     Only accessible by the tutor of that session.
     """
-    # Get session and verify it belongs to the logged-in tutor
+    # Verify user is a tutor and get the session
+    if not hasattr(request.user, 'tutor'):
+        from django.http import Http404
+        raise Http404("User is not a tutor.")
+        
     session = get_object_or_404(Session, id=session_id, tutor=request.user.tutor)
     
     # Get all enrollments for this session

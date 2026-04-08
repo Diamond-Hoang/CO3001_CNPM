@@ -9,6 +9,8 @@ from django.contrib.auth.hashers import check_password
 from django.test import RequestFactory
 from django.urls import resolve
 from .models import UserProfile, CASSimulatorUser
+from students.models import Student
+from tutors.models import Tutor
 
 # --------------------  CAS CONFIG --------------------
 CAS_SERVER_URL = "http://127.0.0.1:8000/cas"
@@ -60,6 +62,26 @@ def sso_callback(request):
         profile.role = role
         profile.save()
 
+    # Provision profile objects for students and tutors if they don't exist
+    if role == "student":
+        Student.objects.get_or_create(
+            user=user, 
+            defaults={
+                'full_name': username.capitalize(),
+                'student_id': username, # Using username as placeholder ID
+                'email': email
+            }
+        )
+    elif role == "tutor":
+        Tutor.objects.get_or_create(
+            user=user,
+            defaults={
+                'full_name': username.capitalize(),
+                'tutor_id': username, # Using username as placeholder ID
+                'email': email
+            }
+        )
+
     login(request, user)
 
     # Redirect by role
@@ -70,7 +92,7 @@ def sso_callback(request):
     # elif role == "admin":
     #     return redirect("admin_dashboard")
     elif role == "office":
-        return redirect("office_dashboard")
+        return redirect("accounts:login")
     else:
         return redirect("/")
 

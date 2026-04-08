@@ -16,7 +16,7 @@ def dashboard(request):
         student = request.user.student
     except:
         messages.error(request, 'You do not have permission to access this page.')
-        return redirect('home')
+        return redirect('accounts:login')
     
     today = timezone.now().date()
     

@@ -56,7 +56,7 @@ class SessionRequestForm(forms.ModelForm):
 class TechnicalReportForm(forms.ModelForm):
     class Meta:
         model = TechnicalReport
-        fields = ['problem_description']
+        fields = ['problem_description', 'priority']
         widgets = {
             'problem_description': forms.Textarea(attrs={
                 'class': 'report-textarea',

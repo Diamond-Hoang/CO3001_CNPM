@@ -16,7 +16,7 @@ def dashboard(request):
     """Tutor dashboard - display today sessions and upcoming advising sessions"""
     if not hasattr(request.user, 'tutor'):
         messages.error(request, 'You do not have permission to access this page.')
-        return redirect('home')
+        return redirect('accounts:login')
     
     tutor = request.user.tutor
     today = timezone.now().date()
@@ -343,7 +343,7 @@ def create_advising_session(request):
     """Tutor creates an advising session (extra class) from a main session"""
     if not hasattr(request.user, 'tutor'):
         messages.error(request, 'You do not have permission to access this page.')
-        return redirect('home')
+        return redirect('accounts:login')
     
     tutor = request.user.tutor
     
