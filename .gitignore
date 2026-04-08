@@ -1,1 +1,7 @@
 /media
+/static_root
+/db.sqlite3
+.env
+__pycache__/
+
+

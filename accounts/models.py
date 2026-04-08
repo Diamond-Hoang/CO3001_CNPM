@@ -13,5 +13,16 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} ({self.role})"
+class CASSimulatorUser(models.Model):
+    username = models.CharField(max_length=150, unique=True)
+    password = models.CharField(max_length=128) # To store hashed password
+    role = models.CharField(max_length=20, choices=UserProfile.ROLE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"SIM: {self.username} ({self.role})"
 
+    class Meta:
+        verbose_name = "CAS Simulation User"
+        verbose_name_plural = "CAS Simulation Users"

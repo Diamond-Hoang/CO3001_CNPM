@@ -1,20 +1,14 @@
+import uuid
+import xml.etree.ElementTree as ET
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.views.decorators.csrf import csrf_exempt
-import xml.etree.ElementTree as ET, uuid
-from .models import UserProfile
+from django.contrib.auth.hashers import check_password
 from django.test import RequestFactory
 from django.urls import resolve
-
-# --------------------  USER DATABASE --------------------
-USERS = {
-    "student01": {"password": "123", "role": "student"},
-    "tutor01": {"password": "123", "role": "tutor"},
-    # "admin01": {"password": "123", "role": "admin"},
-    "office01": {"password": "123", "role": "office"},
-}
+from .models import UserProfile, CASSimulatorUser
 
 # --------------------  CAS CONFIG --------------------
 CAS_SERVER_URL = "http://127.0.0.1:8000/cas"
@@ -89,15 +83,18 @@ def cas_login(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-        user_info = USERS.get(username)
-
-        if user_info and user_info["password"] == password:
-            token = f"ST-{uuid.uuid4()}"
-            request.session["token_user"] = username
-            request.session["token_role"] = user_info["role"]
-            request.session["token_value"] = token
-            return redirect(f"{service}?token={token}")
-        else:
+        
+        try:
+            sim_user = CASSimulatorUser.objects.get(username=username)
+            if check_password(password, sim_user.password):
+                token = f"ST-{uuid.uuid4()}"
+                request.session["token_user"] = username
+                request.session["token_role"] = sim_user.role
+                request.session["token_value"] = token
+                return redirect(f"{service}?token={token}")
+            else:
+                context["error"] = "Invalid username or password"
+        except CASSimulatorUser.DoesNotExist:
             context["error"] = "Invalid username or password"
 
     return render(request, "accounts/hcmut_sso.html", context)
